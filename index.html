@@ -44,18 +44,15 @@
          KONFIGURASI REST API
     ========================================== -->
     <script>
-        // ⚠️ PENTING: GANTI URL DI BAWAH INI DENGAN LINK WEB APP ANDA
+        // URL Web App Google Apps Script Anda yang sudah dimasukkan
         const API_URL = "https://script.google.com/macros/s/AKfycbwAcQzXv3gQLuAwSJz0QU57rivGZ-1ifP8-2gzpHkLe3RjL-fBUccKrOxaaMbf2aVuRGg/exec"; 
         
         // FUNGSI INTI UNTUK MENGIRIM PERINTAH KE GOOGLE SCRIPT
         async function apiCall(action, payload = {}) {
-            if (API_URL === "https://script.google.com/macros/s/AKfycbwAcQzXv3gQLuAwSJz0QU57rivGZ-1ifP8-2gzpHkLe3RjL-fBUccKrOxaaMbf2aVuRGg/exec") {
-                throw new Error("Anda belum memasukkan API_URL di dalam kode index.html!");
-            }
-
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
+                    redirect: 'follow', // Penting agar Google Script tidak memblokir pengalihan
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify({ action: action, payload: payload })
                 });
