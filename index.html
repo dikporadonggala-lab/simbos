@@ -44,22 +44,26 @@
          KONFIGURASI REST API
     ========================================== -->
     <script>
-        // URL Web App Google Apps Script Anda yang sudah dimasukkan
-        const API_URL = "https://script.google.com/macros/s/AKfycbwAcQzXv3gQLuAwSJz0QU57rivGZ-1ifP8-2gzpHkLe3RjL-fBUccKrOxaaMbf2aVuRGg/exec"; 
+        // URL Web App Google Apps Script Anda yang baru
+        const API_URL = "https://script.google.com/macros/s/AKfycbwJdidMcCOfjUaz8jhBL7ML6AINNPYJRJr8al8xa7MX_tIIJa9moLQhTK4RXHnXzuNAEQ/exec"; 
         
-        // FUNGSI INTI UNTUK MENGIRIM PERINTAH KE GOOGLE SCRIPT
+        // FUNGSI INTI UNTUK MENGIRIM PERINTAH KE GOOGLE SCRIPT MENGGUNAKAN FORM DATA
         async function apiCall(action, payload = {}) {
             try {
+                // Menggunakan URLSearchParams agar lolos blokir CORS dari Google
+                const formData = new URLSearchParams();
+                formData.append('action', action);
+                formData.append('payload', JSON.stringify(payload));
+
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    redirect: 'follow', // Penting agar Google Script tidak memblokir pengalihan
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: action, payload: payload })
+                    body: formData
                 });
+                
                 return await response.json();
             } catch (error) {
                 console.error("API Fetch Error:", error);
-                throw new Error("Gagal terhubung ke Server Database.");
+                throw new Error("Gagal terhubung ke Server Database Google.");
             }
         }
 
