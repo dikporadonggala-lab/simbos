@@ -6,7 +6,7 @@
     <title>Sistem Informasi Belanja Modal BOS</title>
     
     <!-- Favicon (Logo di Tab Browser) -->
-    <link rel="icon" href="https://i.ibb.co.com/V095gTcn/sombosc.png" type="image/png">
+    <link rel="icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" type="image/png">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -104,7 +104,7 @@
     <!-- Header Atas -->
     <header class="w-full bg-white shadow-sm px-4 md:px-6 py-3 flex justify-between items-center z-50 fixed top-0">
         <div class="flex items-center gap-3 relative z-10">
-            <img src="https://i.ibb.co.com/V095gTcn/sombosc.png" alt="Logo" class="h-8 w-8 md:h-10 md:w-10 object-contain drop-shadow-md rounded-xl">
+            <img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" alt="Logo" class="h-8 w-8 md:h-10 md:w-10 object-contain drop-shadow-md rounded-xl">
             <div>
                 <h1 class="text-sm font-bold text-gray-800 leading-tight">SIMBOS</h1>
                 <p class="text-[9px] md:text-xs text-gray-500">Belanja Sekolah</p>
@@ -130,7 +130,7 @@
             <div class="glass-login login-slide-in w-full max-w-md rounded-[2rem] p-8 relative transition-all duration-300">
                 <div class="text-center mb-6">
                     <div class="inline-block p-2 bg-white/40 backdrop-blur-md rounded-full mb-3 shadow-sm border border-white/60">
-                        <img src="https://i.ibb.co.com/V095gTcn/sombosc.png" alt="Logo Donggala" class="h-14 w-14 object-contain drop-shadow-md rounded-full">
+                        <img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" alt="Logo Donggala" class="h-14 w-14 object-contain drop-shadow-md rounded-full">
                     </div>
                     <h2 class="text-2xl font-bold text-gray-800 mb-1">Selamat Datang</h2>
                     <p class="text-sm text-gray-700 font-medium">Silakan login untuk mengakses SIMBOS</p>
@@ -773,7 +773,7 @@
                     document.getElementById('btn-force-distribusi').classList.add('hidden');
                 }
 
-                const sapaan = `<img src="https://i.ibb.co.com/V095gTcn/sombosc.png" class="h-4 w-4 mr-2 object-contain drop-shadow-sm inline"> ${currentUser.nama_sekolah}`;
+                const sapaan = `<img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" class="h-4 w-4 mr-2 object-contain drop-shadow-sm inline"> ${currentUser.nama_sekolah}`;
                 safeSetHTML('userGreeting', sapaan); safeSetHTML('userGreetingMobile', sapaan); safeSetText('dashboardTitle', `Dasbor (${currentUser.nama_sekolah})`);
                 
                 let menuHtml = createNavItem('Beranda', 'fa-chart-pie', 'view-dashboard', true);
@@ -1033,7 +1033,7 @@
         
         async function selectSchoolProgres(npsn) { 
             document.getElementById('list-sekolah-progres').classList.add('hidden'); const user = currentUsersData.find(u => u.npsn && u.npsn.toString() === npsn.toString()); if(!user) return; 
-            document.getElementById('prog_npsn_selected').value = npsn; document.getElementById('inp-search-progres').value = `${user.npsn} - ${user.nama}`; document.getElementById('progres-school-details').classList.remove('hidden'); safeSetHTML('progres-school-title', `<img src="https://i.ibb.co.com/V095gTcn/sombosc.png" class="h-6 w-6 mr-2 object-contain drop-shadow-sm inline"> ${user.nama} (${user.jenjang})`); 
+            document.getElementById('prog_npsn_selected').value = npsn; document.getElementById('inp-search-progres').value = `${user.npsn} - ${user.nama}`; document.getElementById('progres-school-details').classList.remove('hidden'); safeSetHTML('progres-school-title', `<img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" class="h-6 w-6 mr-2 object-contain drop-shadow-sm inline"> ${user.nama} (${user.jenjang})`); 
             
             let nowaStr = user.nowa ? String(user.nowa).trim() : '';
             let waContainer = document.getElementById('prog-wa-container');
