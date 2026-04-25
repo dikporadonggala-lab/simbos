@@ -1196,12 +1196,33 @@
                 pTot = pTot - t1.total; pPeg = pPeg - t1.pegawai; pBar = pBar - t1.barjas; pAla = pAla - t1.alat; pAse = pAse - t1.aset;
             }
             
-            safeSetText('dash-pagu-total', formatUang(pTot)); safeSetText('dash-pagu-pegawai', formatUang(pPeg)); safeSetText('dash-pagu-barjas', formatUang(pBar)); safeSetText('dash-pagu-alat', formatUang(pAla)); safeSetText('dash-pagu-aset', formatUang(pAse)); 
-            safeSetText('dash-pagu-total-utuh', formatUang(globalPagu.total)); safeSetText('dash-pagu-pegawai-utuh', formatUang(globalPagu.pegawai)); safeSetText('dash-pagu-barjas-utuh', formatUang(globalPagu.barjas)); safeSetText('dash-pagu-alat-utuh', formatUang(globalPagu.alat)); safeSetText('dash-pagu-aset-utuh', formatUang(globalPagu.aset));
+            // Penggabungan untuk Kartu Belanja Modal
+            let pMod = pAla + pAse;
+            let pModUtuh = globalPagu.alat + globalPagu.aset;
+            let rMod = globalRealisasi.alat + globalRealisasi.aset;
+
+            safeSetText('dash-pagu-total', formatUang(pTot)); 
+            safeSetText('dash-pagu-pegawai', formatUang(pPeg)); 
+            safeSetText('dash-pagu-barjas', formatUang(pBar)); 
+            safeSetText('dash-pagu-modal', formatUang(pMod)); 
             
-            safeSetText('dash-real-total', formatUang(globalRealisasi.total)); safeSetText('dash-real-pegawai', formatUang(globalRealisasi.pegawai)); safeSetText('dash-real-barjas', formatUang(globalRealisasi.barjas)); safeSetText('dash-real-alat', formatUang(globalRealisasi.alat)); safeSetText('dash-real-aset', formatUang(globalRealisasi.aset)); 
+            safeSetText('dash-pagu-total-utuh', formatUang(globalPagu.total)); 
+            safeSetText('dash-pagu-pegawai-utuh', formatUang(globalPagu.pegawai)); 
+            safeSetText('dash-pagu-barjas-utuh', formatUang(globalPagu.barjas)); 
+            safeSetText('dash-pagu-modal-utuh', formatUang(pModUtuh));
             
-            safeSetText('dash-selisih-total', formatUang(pTot - globalRealisasi.total)); safeSetText('dash-selisih-pegawai', formatUang(pPeg - globalRealisasi.pegawai)); safeSetText('dash-selisih-barjas', formatUang(pBar - globalRealisasi.barjas)); safeSetText('dash-selisih-alat', formatUang(pAla - globalRealisasi.alat)); safeSetText('dash-selisih-aset', formatUang(pAse - globalRealisasi.aset)); 
+            safeSetText('dash-rincian-alat', formatUang(pAla)); 
+            safeSetText('dash-rincian-aset', formatUang(pAse));
+
+            safeSetText('dash-real-total', formatUang(globalRealisasi.total)); 
+            safeSetText('dash-real-pegawai', formatUang(globalRealisasi.pegawai)); 
+            safeSetText('dash-real-barjas', formatUang(globalRealisasi.barjas)); 
+            safeSetText('dash-real-modal', formatUang(rMod)); 
+            
+            safeSetText('dash-selisih-total', formatUang(pTot - globalRealisasi.total)); 
+            safeSetText('dash-selisih-pegawai', formatUang(pPeg - globalRealisasi.pegawai)); 
+            safeSetText('dash-selisih-barjas', formatUang(pBar - globalRealisasi.barjas)); 
+            safeSetText('dash-selisih-modal', formatUang(pMod - rMod)); 
         }
         
         function renderTableAset(data) { 
