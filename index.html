@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistem Informasi Belanja Modal BOS</title>
     
-    <!-- Favicon (Logo di Tab Browser) -->
-    <link rel="icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" type="image/png">
+    <!-- Favicon (Logo di Tab Browser) - Dioptimalkan -->
+    <link rel="icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" sizes="16x16" type="image/png">
+    <link rel="apple-touch-icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -98,6 +100,32 @@
         function hideLoading() { document.getElementById('api-loading-overlay').style.display = 'none'; }
         function safeSetText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
         function safeSetHTML(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+        
+        // Format String ke Angka (Hilangkan titik/koma)
+        function parseUang(val) {
+            if (typeof val === 'number') return val;
+            if (!val) return 0;
+            const cleanStr = val.toString().replace(/[^0-9]/g, '');
+            return parseInt(cleanStr, 10) || 0;
+        }
+
+        // Auto-Format saat user mengetik angka
+        function formatInputUang(el) {
+            let cursorPosition = el.selectionStart;
+            let oldLength = el.value.length;
+            
+            let val = parseUang(el.value);
+            if (val === 0 && el.value.replace(/[^0-9]/g, '') === '') {
+                el.value = '';
+            } else {
+                el.value = val.toLocaleString('id-ID');
+            }
+            
+            let newLength = el.value.length;
+            cursorPosition = cursorPosition + (newLength - oldLength);
+            el.setSelectionRange(cursorPosition, cursorPosition);
+        }
+
         function formatUang(val) { return val < 0 ? `-Rp ${Math.abs(val).toLocaleString('id-ID')}` : `Rp ${val.toLocaleString('id-ID')}`; }
     </script>
 
@@ -124,7 +152,7 @@
         </div>
     </header>
 
-    <!-- TAMPILAN LOGIN (Hanya 1 buah) -->
+    <!-- TAMPILAN LOGIN -->
     <main id="loginPage" class="flex-1 flex flex-col md:flex-row items-center mt-12 md:mt-16 p-4 relative overflow-hidden h-full">
         <div class="w-full md:w-1/2 flex justify-center md:justify-start md:pl-16 lg:pl-32 z-20 h-full items-center">
             <div class="glass-login login-slide-in w-full max-w-md rounded-[2rem] p-8 relative transition-all duration-300">
@@ -160,6 +188,12 @@
             <i class="fa-solid fa-laptop text-[8rem] text-sky-500/30 absolute bottom-[10%] left-[20%] rotate-6 icon-float float-delay-1"></i>
             <i class="fa-solid fa-chart-pie text-[7rem] text-blue-500/30 absolute bottom-[12%] right-[20%] -rotate-12 icon-float float-delay-4"></i>
         </div>
+        <div class="md:hidden absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-30">
+            <i class="fa-solid fa-school text-[6rem] text-indigo-500/40 absolute top-[5%] right-[10%] rotate-12 icon-float float-delay-1"></i>
+            <i class="fa-solid fa-chart-column text-[5rem] text-orange-500/40 absolute top-[35%] left-[5%] -rotate-12 icon-float float-delay-2"></i>
+            <i class="fa-solid fa-laptop text-[6rem] text-sky-500/40 absolute bottom-[25%] right-[10%] rotate-6 icon-float float-delay-3"></i>
+            <i class="fa-solid fa-chart-pie text-[5.5rem] text-blue-500/40 absolute bottom-[5%] left-[10%] -rotate-6 icon-float float-delay-4"></i>
+        </div>
     </main>
 
     <!-- DASHBOARD AREA & KONTEN -->
@@ -168,7 +202,6 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <ul id="navMenuDesktop" class="mobile-bottom-nav"></ul>
-                    <!-- TAHAP SELECTOR -->
                     <div class="hidden sm:flex items-center gap-2 border-l pl-4 border-gray-200">
                         <i class="fa-solid fa-calendar-days text-primary"></i>
                         <select id="globalTahap" onchange="changeGlobalTahap(this.value)" class="text-xs font-bold text-primary bg-indigo-50 border border-indigo-100 outline-none rounded p-1.5 cursor-pointer shadow-sm hover:bg-indigo-100 transition-colors">
@@ -195,7 +228,6 @@
                 </div>
             </div>
             
-            <!-- 4 KARTU GRID SEJAJAR -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <!-- 1. Total Pagu -->
                 <div class="card-wrapper opacity-0 h-full">
@@ -258,7 +290,6 @@
                                 <div class="p-2 bg-sky-50 text-sky-500 rounded-lg"><i class="fa-solid fa-computer text-lg"></i></div>
                             </div>
                             <p class="text-[9px] text-gray-400 truncate mb-0.5">Pagu 1 Thn: <span id="dash-pagu-modal-utuh" class="font-bold">Rp 0</span></p>
-                            <!-- Rincian Kecil Modal dipadatkan -->
                             <div class="text-[8.5px] leading-tight text-gray-400 mt-1.5 space-y-0.5 px-1.5 border-l-2 border-gray-200">
                                 <div class="flex justify-between"><span>Peralatan:</span> <span id="dash-rincian-alat" class="font-medium text-gray-500">Rp 0</span></div>
                                 <div class="flex justify-between"><span>Aset Lain:</span> <span id="dash-rincian-aset" class="font-medium text-gray-500">Rp 0</span></div>
@@ -297,7 +328,6 @@
                 <button id="btn-tambah-aset-tabel" onclick="openInputData()" class="hidden bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md"><i class="fa-solid fa-plus mr-1"></i> Tambah Data</button>
             </div>
             
-            <!-- TABS UNTUK MENU DATA REALISASI -->
             <div class="flex flex-wrap md:flex-nowrap bg-gray-100 p-1.5 rounded-xl w-full mx-2 md:mx-6 md:w-auto shadow-inner gap-1" style="max-width: fit-content;">
                 <button type="button" id="tab-data-pegawai" onclick="switchDataTab('pegawai')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-users mr-1"></i> Belanja Pegawai</button>
                 <button type="button" id="tab-data-barjas" onclick="switchDataTab('barjas')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-box-open mr-1"></i> Barang & Jasa</button>
@@ -328,7 +358,7 @@
                 <div id="progres-school-details" class="hidden mt-6 border-t pt-6"> 
                     <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3">
                         <h3 class="text-xl font-bold text-gray-800 flex items-center" id="progres-school-title">
-                            <img src="https://i.ibb.co.com/5xhN0cm1/Logo-Donggala.png" class="h-6 w-6 mr-2 object-contain drop-shadow-sm inline"> Nama Sekolah
+                            <img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" class="h-6 w-6 mr-2 object-contain drop-shadow-sm inline"> Nama Sekolah
                         </h3>
                         <div id="prog-wa-container" class="text-sm font-semibold bg-gray-100 text-gray-500 px-4 py-1.5 rounded-full flex items-center shadow-sm w-max transition-colors">
                             <i class="fa-brands fa-whatsapp mr-2 text-gray-400 text-lg" id="prog-wa-icon"></i> <span id="prog-nowa">Belum Diisi</span>
@@ -424,7 +454,11 @@
                     </div> 
                     <div class="space-y-4"> 
                         <h4 class="text-sm font-bold border-b pb-1 text-gray-700">3. Harga & Dokumen</h4> 
-                        <div><label class="block text-xs font-semibold mb-1">Harga Satuan (Rp)</label><input type="number" id="inp-harga" required oninput="calculateTotalHarga()" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-primary focus:border-primary"></div> 
+                        <div>
+                            <label class="block text-xs font-semibold mb-1">Harga Satuan (Rp)</label>
+                            <!-- Diubah menjadi text + format oninput -->
+                            <input type="text" inputmode="numeric" id="inp-harga" required oninput="formatInputUang(this); calculateTotalHarga()" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-primary focus:border-primary">
+                        </div> 
                         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-inner"><p class="text-xs font-bold text-emerald-800 uppercase mb-1">Jumlah Total</p><p class="text-xl font-bold text-secondary" id="txt-total-harga">Rp 0</p></div> 
                         <div id="container-no-bast">
                             <label id="lbl-no-bast" class="block text-xs font-semibold mb-1">No Kuitansi / Nota</label>
@@ -434,7 +468,6 @@
                             <label id="lbl-tgl-bast" class="block text-xs font-semibold mb-1">Tanggal Kuitansi <span class="font-normal text-gray-400">(Penentu Tahap)</span></label>
                             <input type="date" id="inp-tgl-bast" required onchange="updateInfoSisaPagu()" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-primary focus:border-primary">
                         </div>
-                        <!-- SPV DIPINDAH KE BAWAH KUITANSI DAN DISEMBUNYIKAN OTOMATIS JIKA PEGAWAI/BARJAS -->
                         <div id="group-spv-modal" class="space-y-4 pt-2">
                             <div><label class="block text-xs font-semibold mb-1">No SPV</label><input type="text" id="inp-no-spv" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-primary focus:border-primary"></div> 
                             <div><label class="block text-xs font-semibold mb-1">Tgl SPV</label><input type="date" id="inp-tgl-spv" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-primary focus:border-primary"></div> 
@@ -512,7 +545,10 @@
                         <div><label class="block text-xs font-semibold mb-1">Jenjang</label><select id="inp-jenjang" required class="w-full px-3 py-2 border rounded-lg text-sm"><option value="PAUD">PAUD</option><option value="SD">SD</option><option value="SMP">SMP</option></select></div> 
                         <div><label class="block text-xs font-semibold mb-1">Kecamatan</label><select id="inp-kecamatan" required class="w-full px-3 py-2 border rounded-lg text-sm"><option value="Banawa">Banawa</option><option value="Banawa Tengah">Banawa Tengah</option><option value="Banawa Selatan">Banawa Selatan</option><option value="Rio Pakava">Rio Pakava</option><option value="Pinembani">Pinembani</option><option value="Tanantovea">Tanantovea</option><option value="Labuan">Labuan</option><option value="Sindue">Sindue</option><option value="Sindue Tombusabora">Sindue Tombusabora</option><option value="Sindue Tobata">Sindue Tobata</option><option value="Sirenja">Sirenja</option><option value="Balaesang">Balaesang</option><option value="Balaesang Tanjung">Balaesang Tanjung</option><option value="Dampelas">Dampelas</option><option value="Sojol">Sojol</option><option value="Sojol Utara">Sojol Utara</option><option value="Lainnya">Lainnya</option></select></div> 
                         
-                        <div class="md:col-span-2"><label class="block text-xs font-semibold mb-1 text-primary">Total Pagu Keseluruhan (Satu Tahun) Rp</label><input type="number" id="inp-total-pagu-admin" required class="w-full px-4 py-3 border border-indigo-200 bg-indigo-50 rounded-lg font-bold text-lg text-primary focus:ring-primary focus:border-primary"></div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold mb-1 text-primary">Total Pagu Keseluruhan (Satu Tahun) Rp</label>
+                            <input type="text" inputmode="numeric" id="inp-total-pagu-admin" required oninput="formatInputUang(this)" class="w-full px-4 py-3 border border-indigo-200 bg-indigo-50 rounded-lg font-bold text-lg text-primary focus:ring-primary focus:border-primary">
+                        </div>
                         <div class="md:col-span-2 hidden" id="container-reset-lock">
                             <label class="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200 cursor-pointer">
                                 <input type="checkbox" id="inp-reset-lock" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
@@ -536,25 +572,25 @@
                 <div class="p-6 overflow-y-auto">
                     <div class="bg-gray-100 p-4 rounded-xl mb-6 text-center border border-gray-200">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Pagu Tersedia (Setahun) Rp</label>
-                        <!-- INPUT TOTAL PAGU BISA DIUBAH OLEH SEKOLAH -->
-                        <input type="number" id="inp-dist-total" class="w-full max-w-sm mx-auto text-center text-3xl font-extrabold text-primary bg-white border border-gray-300 rounded-xl py-2 focus:ring-2 focus:ring-primary outline-none" value="0" oninput="calcDistribusi()">
+                        <!-- Total Pagu dikunci oleh Admin, Sekolah hanya membagi nominal -->
+                        <input type="text" id="inp-dist-total" readonly class="w-full max-w-sm mx-auto text-center text-3xl font-extrabold text-primary bg-gray-100 border border-gray-300 rounded-xl py-2 cursor-not-allowed outline-none" value="0">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                         <div class="space-y-3 p-4 bg-amber-50 rounded-xl border border-amber-100">
                             <label class="block text-xs font-bold text-amber-800"><i class="fa-solid fa-users mr-1"></i> Belanja Pegawai (Rp)</label>
-                            <input type="number" id="dist-pegawai" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-amber-500" value="0" oninput="calcDistribusi()">
+                            <input type="text" inputmode="numeric" id="dist-pegawai" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-amber-500" value="0" oninput="formatInputUang(this); calcDistribusi()">
                         </div>
                         <div class="space-y-3 p-4 bg-purple-50 rounded-xl border border-purple-100">
                             <label class="block text-xs font-bold text-purple-800"><i class="fa-solid fa-box-open mr-1"></i> Belanja Barang & Jasa (Rp)</label>
-                            <input type="number" id="dist-barjas" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500" value="0" oninput="calcDistribusi()">
+                            <input type="text" inputmode="numeric" id="dist-barjas" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-purple-500" value="0" oninput="formatInputUang(this); calcDistribusi()">
                         </div>
                         <div class="space-y-3 p-4 bg-sky-50 rounded-xl border border-sky-100">
                             <label class="block text-xs font-bold text-sky-800"><i class="fa-solid fa-computer mr-1"></i> Belanja Modal Peralatan (Rp)</label>
-                            <input type="number" id="dist-alat" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-sky-500" value="0" oninput="calcDistribusi()">
+                            <input type="text" inputmode="numeric" id="dist-alat" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-sky-500" value="0" oninput="formatInputUang(this); calcDistribusi()">
                         </div>
                         <div class="space-y-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100">
                             <label class="block text-xs font-bold text-emerald-800"><i class="fa-solid fa-book mr-1"></i> Belanja Modal Aset Lain (Rp)</label>
-                            <input type="number" id="dist-aset" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-emerald-500" value="0" oninput="calcDistribusi()">
+                            <input type="text" inputmode="numeric" id="dist-aset" class="w-full px-3 py-2 rounded border-none font-bold text-gray-800 shadow-sm focus:ring-2 focus:ring-emerald-500" value="0" oninput="formatInputUang(this); calcDistribusi()">
                         </div>
                     </div>
                     <div class="flex justify-between items-center bg-gray-50 p-4 rounded-xl border mb-6">
@@ -799,12 +835,12 @@
             modal.classList.remove('hidden'); modal.classList.add('flex');
             
             let t = parseInt(currentUser.total_pagu) || 0; 
-            document.getElementById('inp-dist-total').value = t; 
+            document.getElementById('inp-dist-total').value = t.toLocaleString('id-ID'); 
             
-            document.getElementById('dist-pegawai').value = currentUser.paguPegawai || 0;
-            document.getElementById('dist-barjas').value = currentUser.paguBarjas || 0;
-            document.getElementById('dist-alat').value = currentUser.paguAlat || 0;
-            document.getElementById('dist-aset').value = currentUser.paguAset || 0;
+            document.getElementById('dist-pegawai').value = (parseInt(currentUser.paguPegawai) || 0).toLocaleString('id-ID');
+            document.getElementById('dist-barjas').value = (parseInt(currentUser.paguBarjas) || 0).toLocaleString('id-ID');
+            document.getElementById('dist-alat').value = (parseInt(currentUser.paguAlat) || 0).toLocaleString('id-ID');
+            document.getElementById('dist-aset').value = (parseInt(currentUser.paguAset) || 0).toLocaleString('id-ID');
             
             let nowaStr = currentUser.nowa ? String(currentUser.nowa).trim() : '';
             if(nowaStr === '0' || nowaStr === '-') nowaStr = '';
@@ -813,11 +849,11 @@
         }
 
         function calcDistribusi() {
-            let total = parseInt(document.getElementById('inp-dist-total').value) || 0; 
-            let peg = parseInt(document.getElementById('dist-pegawai').value) || 0; 
-            let bar = parseInt(document.getElementById('dist-barjas').value) || 0; 
-            let ala = parseInt(document.getElementById('dist-alat').value) || 0; 
-            let ase = parseInt(document.getElementById('dist-aset').value) || 0;
+            let total = parseUang(document.getElementById('inp-dist-total').value) || 0; 
+            let peg = parseUang(document.getElementById('dist-pegawai').value) || 0; 
+            let bar = parseUang(document.getElementById('dist-barjas').value) || 0; 
+            let ala = parseUang(document.getElementById('dist-alat').value) || 0; 
+            let ase = parseUang(document.getElementById('dist-aset').value) || 0;
             
             let sisa = total - (peg + bar + ala + ase); 
             let lblSisa = document.getElementById('lbl-dist-sisa'); 
@@ -836,11 +872,11 @@
         }
 
         async function submitDistribusi() {
-            const totalPagu = parseInt(document.getElementById('inp-dist-total').value) || 0;
-            const peg = parseInt(document.getElementById('dist-pegawai').value) || 0; 
-            const bar = parseInt(document.getElementById('dist-barjas').value) || 0; 
-            const ala = parseInt(document.getElementById('dist-alat').value) || 0; 
-            const ase = parseInt(document.getElementById('dist-aset').value) || 0; 
+            const totalPagu = parseUang(document.getElementById('inp-dist-total').value) || 0;
+            const peg = parseUang(document.getElementById('dist-pegawai').value) || 0; 
+            const bar = parseUang(document.getElementById('dist-barjas').value) || 0; 
+            const ala = parseUang(document.getElementById('dist-alat').value) || 0; 
+            const ase = parseUang(document.getElementById('dist-aset').value) || 0; 
             const wa = document.getElementById('dist-nowa').value;
             
             if(!wa || wa.trim() === '') { Swal.fire('Perhatian', 'Harap isi Nomor WhatsApp Anda untuk memudahkan koordinasi.', 'warning'); return; }
@@ -875,7 +911,10 @@
         async function saveUser(e) { 
             e.preventDefault(); const npsnInput = document.getElementById('inp-npsn').value; 
             if (!editModeUser) { const isNpsnExist = currentUsersData.some(u => u.npsn.toString() === npsnInput.toString()); if (isNpsnExist) { Swal.fire({ icon: 'warning', title: 'NPSN Ditolak!', text: 'NPSN tersebut sudah terdaftar.', confirmButtonColor: '#ef4444' }); return; } } 
-            const total = parseInt(document.getElementById('inp-total-pagu-admin').value)||0; const resetLock = document.getElementById('inp-reset-lock') ? document.getElementById('inp-reset-lock').checked : false;
+            
+            const total = parseUang(document.getElementById('inp-total-pagu-admin').value) || 0; 
+            const resetLock = document.getElementById('inp-reset-lock') ? document.getElementById('inp-reset-lock').checked : false;
+            
             const data = { npsn: npsnInput, nama: document.getElementById('inp-nama').value, jenjang: document.getElementById('inp-jenjang').value, kecamatan: document.getElementById('inp-kecamatan').value, totalPagu: total, password: document.getElementById('inp-password').value, resetLock: resetLock }; 
             showLoading('Menyimpan Data Sekolah...'); 
             try { const res = await apiCall(editModeUser ? 'updateUserSekolah' : 'simpanUserSekolah', data); hideLoading(); if(res.success) { Swal.fire('Sukses', res.message, 'success'); loadDataUsers(); closeModalUser(); } else Swal.fire('Gagal', res.message, 'error'); } catch (err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } 
@@ -883,7 +922,13 @@
         
         async function loadDataAset() { try { const res = await apiCall('getDataAset', {role: currentRole, npsn: currentUser.npsn}); if(res.success) { currentAsetData = res.data; renderTableAset(currentAsetData); } } catch(err) { console.error(err); } }
         async function saveAsetData(e) { 
-            e.preventDefault(); const inputQty = parseFloat(document.getElementById('inp-qty').value) || 0; const inputHargaSatuan = parseFloat(document.getElementById('inp-harga').value) || 0; const totalHargaBaru = inputQty * inputHargaSatuan; const kodefikasiAset = document.getElementById('inp-kodefikasi').value; const tglBast = document.getElementById('inp-tgl-bast').value; const itemTahap = getTahapFromDate(tglBast);
+            e.preventDefault(); 
+            const inputQty = parseFloat(document.getElementById('inp-qty').value) || 0; 
+            const inputHargaSatuan = parseUang(document.getElementById('inp-harga').value); 
+            const totalHargaBaru = inputQty * inputHargaSatuan; 
+            const kodefikasiAset = document.getElementById('inp-kodefikasi').value; 
+            const tglBast = document.getElementById('inp-tgl-bast').value; 
+            const itemTahap = getTahapFromDate(tglBast);
             
             let paguKategoriSetahun = 0;
             if (kodefikasiAset.includes('PERALATAN')) paguKategoriSetahun = globalPagu.alat;
@@ -923,7 +968,7 @@
             const dataAset = { 
                 id: editModeAsetId, npsn: currentUser.npsn, nama_sekolah: currentUser.nama_sekolah, jenjang: currentUser.jenjang, kecamatan: currentUser.kecamatan || "Lainnya", 
                 no_sp: nSp, tgl_sp: tSp, penyedia: document.getElementById('inp-penyedia').value, rekening: document.getElementById('inp-rekening').value, kodefikasi: document.getElementById('inp-kodefikasi').value, 
-                uraian: document.getElementById('inp-uraian').value, merek: document.getElementById('inp-merek') ? document.getElementById('inp-merek').value : '', satuan: document.getElementById('inp-satuan').value, qty: document.getElementById('inp-qty').value, harga_satuan: document.getElementById('inp-harga').value, 
+                uraian: document.getElementById('inp-uraian').value, merek: document.getElementById('inp-merek') ? document.getElementById('inp-merek').value : '', satuan: document.getElementById('inp-satuan').value, qty: document.getElementById('inp-qty').value, harga_satuan: inputHargaSatuan, 
                 total_harga: totalHargaBaru, no_bast: nBast, tgl_bast: tglBast, no_spv: nSpv, tgl_spv: tSpv 
             }; 
             
@@ -959,7 +1004,17 @@
         function deleteDokumen(npsn, tipeDokumen) { Swal.fire({ title: 'Hapus Dokumen?', text: `Yakin ingin menghapus dokumen Tahap ${activeTahap === 'all' ? uploadTahap : activeTahap}?`, icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'Ya, Hapus!' }).then(async (result) => { if (result.isConfirmed) { let t = (activeTahap === 'all') ? uploadTahap : activeTahap; showLoading('Menghapus...'); try { const res = await apiCall('deleteDokumenDrive', { npsn: npsn, tipeDokumen: tipeDokumen, tahap: t }); hideLoading(); if(res.success) { Swal.fire('Terhapus!', res.message, 'success'); selectSchoolProgres(npsn); } else { Swal.fire('Gagal', res.message, 'error'); } } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } } }); }
         
         function openModalUser() { editModeUser = false; safeSetText('modalUserTitle', 'Tambah User Sekolah'); document.getElementById('inp-npsn').readOnly = false; document.getElementById('inp-npsn').classList.remove('bg-gray-100', 'cursor-not-allowed'); document.getElementById('inp-password').required = true; document.getElementById('form-user').reset(); document.getElementById('container-reset-lock').classList.add('hidden'); document.getElementById('modal-user').classList.remove('hidden'); }
-        function editUser(npsn) { const user = currentUsersData.find(u => u.npsn.toString() === npsn.toString()); if(!user) return; editModeUser = true; safeSetText('modalUserTitle', 'Edit User Sekolah'); document.getElementById('inp-npsn').value = user.npsn; document.getElementById('inp-npsn').readOnly = true; document.getElementById('inp-npsn').classList.add('bg-gray-100', 'cursor-not-allowed'); document.getElementById('inp-nama').value = user.nama; document.getElementById('inp-jenjang').value = user.jenjang; document.getElementById('inp-kecamatan').value = user.kecamatan; document.getElementById('inp-total-pagu-admin').value = user.totalPagu || 0; document.getElementById('inp-password').required = false; document.getElementById('inp-password').value = ''; if(user.isLocked) { document.getElementById('container-reset-lock').classList.remove('hidden'); document.getElementById('inp-reset-lock').checked = false; } else { document.getElementById('container-reset-lock').classList.add('hidden'); } document.getElementById('modal-user').classList.remove('hidden'); }
+        function editUser(npsn) { 
+            const user = currentUsersData.find(u => u.npsn.toString() === npsn.toString()); if(!user) return; 
+            editModeUser = true; safeSetText('modalUserTitle', 'Edit User Sekolah'); 
+            document.getElementById('inp-npsn').value = user.npsn; document.getElementById('inp-npsn').readOnly = true; document.getElementById('inp-npsn').classList.add('bg-gray-100', 'cursor-not-allowed'); 
+            document.getElementById('inp-nama').value = user.nama; document.getElementById('inp-jenjang').value = user.jenjang; document.getElementById('inp-kecamatan').value = user.kecamatan; 
+            document.getElementById('inp-total-pagu-admin').value = (parseInt(user.totalPagu)||0).toLocaleString('id-ID'); 
+            document.getElementById('inp-password').required = false; document.getElementById('inp-password').value = ''; 
+            if(user.isLocked) { document.getElementById('container-reset-lock').classList.remove('hidden'); document.getElementById('inp-reset-lock').checked = false; } 
+            else { document.getElementById('container-reset-lock').classList.add('hidden'); } 
+            document.getElementById('modal-user').classList.remove('hidden'); 
+        }
         function closeModalUser() { document.getElementById('modal-user').classList.add('hidden'); }
         function openModalAdmin() { editModeAdmin = false; safeSetText('modalAdminTitle', 'Tambah Admin Baru'); document.getElementById('form-admin').reset(); document.getElementById('inp-adm-user').readOnly = false; document.getElementById('inp-adm-user').classList.remove('bg-gray-100'); document.getElementById('inp-adm-pass').required = true; document.getElementById('modal-admin').classList.remove('hidden'); }
         function closeModalAdmin() { document.getElementById('modal-admin').classList.add('hidden'); }
@@ -985,7 +1040,10 @@
             
             document.getElementById('inp-uraian').value = item.uraian; 
             if(document.getElementById('inp-merek')) document.getElementById('inp-merek').value = item.merek || '';
-            document.getElementById('inp-qty').value = item.qty ? item.qty.toString().split(' ')[0] : ''; document.getElementById('inp-satuan').value = item.satuan; document.getElementById('inp-harga').value = item.harga_satuan; 
+            document.getElementById('inp-qty').value = item.qty ? item.qty.toString().split(' ')[0] : ''; document.getElementById('inp-satuan').value = item.satuan; 
+            
+            document.getElementById('inp-harga').value = (parseInt(item.harga_satuan)||0).toLocaleString('id-ID'); 
+            
             if(document.getElementById('inp-no-bast')) document.getElementById('inp-no-bast').value = item.no_bast !== '-' ? item.no_bast : ''; 
             document.getElementById('inp-tgl-bast').value = item.tgl_bast !== '-' ? item.tgl_bast : ''; calculateTotalHarga(); const navLinks = document.querySelectorAll('.nav-link'); let inputLink = null; navLinks.forEach(link => { if (link.textContent.includes('Input')) inputLink = link; }); switchView('view-input-data', inputLink); 
             
@@ -1024,7 +1082,13 @@
             safeSetHTML('info-sisa-pagu', `Sisa Anggaran (Tahap ${itemTahap}): ${sisaFormatted}`);
         }
 
-        function calculateTotalHarga() { safeSetText('txt-total-harga', formatUang((parseFloat(document.getElementById('inp-qty').value)||0) * (parseFloat(document.getElementById('inp-harga').value)||0))); updateInfoSisaPagu(); }
+        function calculateTotalHarga() { 
+            const qty = parseFloat(document.getElementById('inp-qty').value) || 0;
+            const harga = parseUang(document.getElementById('inp-harga').value) || 0;
+            safeSetText('txt-total-harga', formatUang(qty * harga)); 
+            updateInfoSisaPagu(); 
+        }
+
         function setupDokumenUI(type, url) { const container = document.getElementById('container-upload-' + type); const btnUpload = document.getElementById('btn-upload-' + type); const btnView = document.getElementById('btn-view-' + type); const status = document.getElementById('status-' + type); if(!container) return; if (url && url.trim() !== '') { container.classList.add('hidden'); btnUpload.classList.add('hidden'); btnView.classList.remove('hidden'); btnView.onclick = () => window.open(url, '_blank'); safeSetHTML('status-' + type, '<i class="fa-solid fa-check-circle text-green-500"></i> Dokumen Terunggah'); } else { container.classList.remove('hidden'); btnUpload.classList.remove('hidden'); btnView.classList.add('hidden'); safeSetHTML('status-' + type, '<i class="fa-solid fa-circle-exclamation text-amber-500"></i> Belum ada dokumen'); } }
         function handleFileChange(event, type) { const file = event.target.files[0]; const nameDisplay = document.getElementById('filename-' + type); if(!file) return; if(file.type !== 'application/pdf') { Swal.fire('Error', 'Hanya format PDF!', 'error'); event.target.value = ''; return; } if(file.size > 5242880) { Swal.fire('Error', 'Maksimal 5MB!', 'warning'); event.target.value = ''; return; } safeSetHTML('filename-' + type, `<i class="fa-solid fa-check text-green-500 mr-1"></i> ${file.name}`); }
         function logout() { localStorage.removeItem('simbos_user'); localStorage.removeItem('simbos_role'); location.reload(); }
