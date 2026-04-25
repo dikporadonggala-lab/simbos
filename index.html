@@ -75,7 +75,7 @@
         // ==========================================================
         // ⚠️ PASTE URL APPSCRIPT ANDA DI BAWAH INI ⚠️
         // ==========================================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbxGNKHtdUtRbeLuzUHrTNZhDqz1bph_Qhb3L20Vl58aLS_xKQzYRVrdbizP5Rbpe8jF/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbz310WNQYE3NWR6ErI2afr5HI30KZaCLR4yU0hfM-HXSeaysyMNvTFxb09qjBw8UmOL/exec"; 
 
         async function apiCall(action, payload = {}) {
             return new Promise((resolve, reject) => {
@@ -202,6 +202,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <ul id="navMenuDesktop" class="mobile-bottom-nav"></ul>
+                    <!-- TAHAP SELECTOR -->
                     <div class="hidden sm:flex items-center gap-2 border-l pl-4 border-gray-200">
                         <i class="fa-solid fa-calendar-days text-primary"></i>
                         <select id="globalTahap" onchange="changeGlobalTahap(this.value)" class="text-xs font-bold text-primary bg-indigo-50 border border-indigo-100 outline-none rounded p-1.5 cursor-pointer shadow-sm hover:bg-indigo-100 transition-colors">
@@ -209,7 +210,14 @@
                         </select>
                     </div>
                 </div>
-                <span id="userGreeting" class="text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1.5 rounded-md flex items-center"></span>
+                
+                <div class="flex items-center gap-2">
+                    <button onclick="refreshData()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-md text-sm font-bold transition-colors flex items-center gap-2 shadow-sm border border-indigo-100" title="Segarkan Data dari Server">
+                        <i id="icon-refresh" class="fa-solid fa-arrows-rotate"></i>
+                        <span class="hidden sm:inline">Refresh</span>
+                    </button>
+                    <span id="userGreeting" class="text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1.5 rounded-md flex items-center shadow-sm border border-gray-200"></span>
+                </div>
             </div>
         </nav>
 
@@ -222,6 +230,9 @@
                 </button>
                 <div class="md:hidden flex flex-col gap-2 w-full mt-3">
                     <div id="userGreetingMobile" class="text-xs font-bold text-gray-700 bg-gray-200 px-2 py-1 rounded inline-flex items-center w-max"></div>
+                    <button onclick="refreshData()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-2 rounded-md text-sm font-bold transition-colors flex justify-center items-center gap-2 shadow-sm border border-indigo-100">
+                        <i id="icon-refresh-mobile" class="fa-solid fa-arrows-rotate"></i> Segarkan Data
+                    </button>
                     <select id="mobileTahap" onchange="changeGlobalTahap(this.value)" class="w-full text-xs font-bold text-primary bg-indigo-100 border-none outline-none rounded p-2 shadow-sm">
                         <option value="all">Semua Tahap (Setahun)</option><option value="1">Hanya Tahap 1 (Jan-Jun)</option><option value="2">Hanya Tahap 2 (Jul-Des)</option>
                     </select>
@@ -456,7 +467,6 @@
                         <h4 class="text-sm font-bold border-b pb-1 text-gray-700">3. Harga & Dokumen</h4> 
                         <div>
                             <label class="block text-xs font-semibold mb-1">Harga Satuan (Rp)</label>
-                            <!-- Diubah menjadi text + format oninput -->
                             <input type="text" inputmode="numeric" id="inp-harga" required oninput="formatInputUang(this); calculateTotalHarga()" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-primary focus:border-primary">
                         </div> 
                         <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-inner"><p class="text-xs font-bold text-emerald-800 uppercase mb-1">Jumlah Total</p><p class="text-xl font-bold text-secondary" id="txt-total-harga">Rp 0</p></div> 
@@ -474,7 +484,6 @@
                         </div>
                     </div> 
                     
-                    <!-- INFO SISA PAGU REALTIME -->
                     <div class="md:col-span-3 border-t border-gray-100 pt-5 flex flex-col md:flex-row justify-between items-center gap-4"> 
                         <div id="info-sisa-pagu" class="text-xs md:text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200 w-full md:w-auto text-center md:text-left transition-colors">
                             Sisa Anggaran: <span class="font-bold text-gray-400">-</span>
@@ -572,7 +581,6 @@
                 <div class="p-6 overflow-y-auto">
                     <div class="bg-gray-100 p-4 rounded-xl mb-6 text-center border border-gray-200">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Total Pagu Tersedia (Setahun) Rp</label>
-                        <!-- Total Pagu dikunci oleh Admin, Sekolah hanya membagi nominal -->
                         <input type="text" id="inp-dist-total" readonly class="w-full max-w-sm mx-auto text-center text-3xl font-extrabold text-primary bg-gray-100 border border-gray-300 rounded-xl py-2 cursor-not-allowed outline-none" value="0">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
@@ -1094,6 +1102,46 @@
         function logout() { localStorage.removeItem('simbos_user'); localStorage.removeItem('simbos_role'); location.reload(); }
         function formatTglDisplay(tgl) { if(!tgl || tgl === '-') return '-'; const p = tgl.split('-'); return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : tgl; }
         function filterUserTable() { let input = document.getElementById('inp-search-user').value.toLowerCase(); let rows = document.querySelectorAll('#table-body-users tr'); rows.forEach(row => { if (row.cells.length > 1) { row.style.display = row.cells[1].textContent.toLowerCase().includes(input) ? '' : 'none'; } }); }
+        
+        // TAMBAHKAN FUNGSI REFRESH DATA DI SINI
+        async function refreshData() {
+            const iconRefresh = document.getElementById('icon-refresh');
+            const iconRefreshMobile = document.getElementById('icon-refresh-mobile');
+            if(iconRefresh) iconRefresh.classList.add('fa-spin');
+            if(iconRefreshMobile) iconRefreshMobile.classList.add('fa-spin');
+            
+            showLoading('Menyegarkan Data...');
+            try {
+                if (currentRole === 'dinas') {
+                    await Promise.all([loadDataUsers(), loadDataAset()]);
+                    if (currentUser && currentUser.level === 'superadmin') {
+                        await loadDataAdmins();
+                    }
+                } else {
+                    await Promise.all([loadDataAset(), loadDokumenUrls()]);
+                }
+                
+                // Perbarui juga data di halaman progres jika sedang dibuka
+                const npsnProg = document.getElementById('prog_npsn_selected') ? document.getElementById('prog_npsn_selected').value : null;
+                if(npsnProg && document.getElementById('view-progres').classList.contains('block')) {
+                    selectSchoolProgres(npsnProg);
+                }
+                
+                hideLoading();
+                
+                const Toast = Swal.mixin({
+                    toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, timerProgressBar: true
+                });
+                Toast.fire({ icon: 'success', title: 'Data berhasil diperbarui!' });
+                
+            } catch (err) {
+                hideLoading();
+                Swal.fire('Error', 'Gagal menyegarkan data: ' + err.message, 'error');
+            } finally {
+                if(iconRefresh) setTimeout(() => iconRefresh.classList.remove('fa-spin'), 500);
+                if(iconRefreshMobile) setTimeout(() => iconRefreshMobile.classList.remove('fa-spin'), 500);
+            }
+        }
         
         async function selectSchoolProgres(npsn) { 
             document.getElementById('list-sekolah-progres').classList.add('hidden'); const user = currentUsersData.find(u => u.npsn && u.npsn.toString() === npsn.toString()); if(!user) return; 
