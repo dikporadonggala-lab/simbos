@@ -5,53 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistem Informasi Belanja Modal BOS</title>
     
-    <!-- Favicon (Logo di Tab Browser) -->
     <link rel="icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" sizes="32x32" type="image/png">
-    <link rel="icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" sizes="16x16" type="image/png">
-    <link rel="apple-touch-icon" href="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png">
     
-    <!-- Tailwind CSS -->
+    <!-- CSS & Plugins -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
-        tailwind.config = { 
-            theme: { 
-                extend: { 
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }, 
-                    colors: { primary: '#4F46E5', secondary: '#10B981' } 
-                } 
-            } 
-        }
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { primary: '#4F46E5', secondary: '#10B981' } } } }
     </script>
+    
     <style>
         body { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); background-image: url('https://www.transparenttextures.com/patterns/cubes.png'); }
         .glass-login { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); }
         .tab-active { border-bottom: 3px solid #4F46E5; color: #4F46E5; font-weight: 600; }
         .tab-inactive { color: #6B7280; font-weight: 500; }
-        .tab-inactive:hover { color: #374151; }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         #api-loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(3px); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
         .spinner-api { border: 4px solid #e5e7eb; border-top: 4px solid #4F46E5; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .login-slide-in { animation: slideInRight 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        @keyframes slideInRight { 0% { transform: translateX(100vw); opacity: 0; } 100% { transform: translateX(0); opacity: 1; } }
-        .icon-float { animation: iconFloat 5s ease-in-out infinite; filter: drop-shadow(8px 12px 10px rgba(0,0,0,0.1)); }
-        @keyframes iconFloat { 0% { transform: translateY(0) rotate(-5deg) scale(1); } 50% { transform: translateY(-15px) rotate(5deg) scale(1.05); } 100% { transform: translateY(0) rotate(-5deg) scale(1); } }
-        .card-3d { background: linear-gradient(145deg, #ffffff, #f9fafb); box-shadow: 10px 10px 25px #d1d5db, -10px -10px 25px #ffffff; border: 2px solid transparent; transform-style: preserve-3d; transition: all 0.3s ease; }
-        .card-3d:hover { transform: perspective(1000px) translateY(-4px) scale(1.01); box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.2); }
+        .card-3d { background: linear-gradient(145deg, #ffffff, #f9fafb); box-shadow: 10px 10px 25px #d1d5db, -10px -10px 25px #ffffff; border: 2px solid transparent; transition: all 0.3s ease; }
+        .card-3d:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.2); }
         @media (max-width: 767px) {
             #dashboardPage { padding-bottom: 80px; }
-            .mobile-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-around; padding: 0.5rem 0.25rem; z-index: 50; box-shadow: 0 -4px 15px rgba(0,0,0,0.08); overflow-x: auto; }
+            .mobile-bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-around; padding: 0.5rem 0.25rem; z-index: 50; overflow-x: auto; }
             .mobile-nav-item { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0.3rem 0.5rem; border-radius: 0.5rem; min-width: 65px; }
             .mobile-nav-icon { font-size: 1.25rem; margin-bottom: 3px; }
             .mobile-nav-text { font-size: 0.65rem; text-align: center; }
@@ -62,7 +42,7 @@
             .mobile-nav-item { display: flex; flex-direction: row; align-items: center; padding: 0.5rem 0.75rem; border-radius: 0.5rem; gap: 0.5rem; }
             .mobile-nav-icon { font-size: 1rem; } .mobile-nav-text { font-size: 0.875rem; }
             .mobile-active { background-color: #4F46E5; color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-            .mobile-inactive { color: #4B5563; } .mobile-inactive:hover { background-color: #F3F4F6; }
+            .mobile-inactive { color: #4B5563; }
         }
     </style>
 </head>
@@ -70,85 +50,13 @@
 
     <div id="api-loading-overlay">
         <div class="spinner-api"></div>
-        <p class="text-sm font-bold text-gray-700" id="api-loading-text">Memproses Data...</p>
+        <p class="text-sm font-bold text-gray-700" id="api-loading-text">Memproses...</p>
     </div>
 
-    <!-- API Logic -->
-    <script>
-        // ==========================================================
-        // ⚠️ PASTE URL APPSCRIPT ANDA DI BAWAH INI DENGAN HATI-HATI ⚠️
-        // ==========================================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbyzt4b0b4fxkErt895k9pcycDp6stOTWTv9uZ5NkGs6pdXg9R0RUD5tZUbVjDinUK4O/exec"; 
-
-        async function apiCall(action, payload = {}) {
-            return new Promise((resolve, reject) => {
-                if (!API_URL || API_URL === "PASTE URL DISINI") {
-                    reject(new Error("URL AppScript belum dimasukkan! Silakan edit kode HTML dan paste URL Anda di bagian API_URL."));
-                    return;
-                }
-                fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: action, payload: payload })
-                })
-                .then(res => res.json())
-                .then(data => resolve(data))
-                .catch(err => {
-                    console.error("Fetch Error:", err);
-                    reject(new Error("Koneksi ke server gagal. Periksa jaringan Anda."));
-                });
-            });
-        }
-        
-        function showLoading(text) { 
-            document.getElementById('api-loading-text').textContent = text || 'Memproses Data...'; 
-            document.getElementById('api-loading-overlay').style.display = 'flex'; 
-        }
-        function hideLoading() { 
-            document.getElementById('api-loading-overlay').style.display = 'none'; 
-        }
-        
-        function parseUang(val) {
-            if (typeof val === 'number') return val;
-            if (!val) return 0;
-            return parseInt(val.toString().replace(/[^0-9]/g, ''), 10) || 0;
-        }
-
-        function formatInputUang(el) {
-            let cursorPosition = el.selectionStart;
-            let oldLength = el.value.length;
-            
-            let val = parseUang(el.value);
-            if (val === 0 && el.value.replace(/[^0-9]/g, '') === '') {
-                el.value = '';
-            } else {
-                el.value = val.toLocaleString('id-ID');
-            }
-            
-            let newLength = el.value.length;
-            cursorPosition = cursorPosition + (newLength - oldLength);
-            el.setSelectionRange(cursorPosition, cursorPosition);
-        }
-
-        function formatUang(val) { 
-            return val < 0 ? `-Rp ${Math.abs(val).toLocaleString('id-ID')}` : `Rp ${val.toLocaleString('id-ID')}`; 
-        }
-
-        // Fungsi Helper untuk Filter Jenjang Berdasarkan Level Admin
-        function hasAccessToJenjang(adminLevel, jenjang) {
-            if (!jenjang) return false;
-            const j = jenjang.toUpperCase();
-            if (adminLevel === 'superadmin' || adminLevel === 'admin') return true;
-            if (adminLevel === 'admin_paud' && (j === 'PAUD' || j === 'TK' || j === 'KB' || j.includes('BERMAIN') || j === 'PKBM')) return true;
-            if (adminLevel === 'admin_sd' && j === 'SD') return true;
-            if (adminLevel === 'admin_smp' && j === 'SMP') return true;
-            return false;
-        }
-    </script>
-
-    <!-- Header Atas -->
+    <!-- HEADER -->
     <header class="w-full bg-white shadow-sm px-4 md:px-6 py-3 flex justify-between items-center z-50 fixed top-0">
         <div class="flex items-center gap-3 relative z-10">
-            <img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" alt="Logo" class="h-8 w-8 md:h-10 md:w-10 object-contain drop-shadow-md rounded-xl">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg" alt="Logo" class="h-8 w-8 md:h-10 md:w-10 object-contain drop-shadow-md">
             <div>
                 <h1 class="text-sm font-bold text-gray-800 leading-tight">SIMBOS</h1>
                 <p class="text-[9px] md:text-xs text-gray-500">Belanja Sekolah</p>
@@ -162,696 +70,260 @@
             <div class="flex items-center gap-1 md:gap-2 text-[10px] md:text-sm font-medium text-gray-600 sm:border-r sm:pr-4 border-gray-200">
                 <i class="fa-regular fa-clock text-primary"></i><span id="clockWITA">Memuat...</span>
             </div>
-            <button id="btnLogout" onclick="logout()" class="hidden bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-2 md:px-3 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-semibold transition-colors">
-                <i class="fa-solid fa-power-off md:mr-1"></i> <span class="hidden md:inline">Keluar</span>
+            <button onclick="logout()" class="bg-red-50 text-red-500 px-3 py-1.5 rounded-md text-xs font-semibold hover:bg-red-500 hover:text-white transition-colors">
+                <i class="fa-solid fa-power-off"></i> <span class="hidden md:inline">Keluar</span>
             </button>
         </div>
     </header>
 
     <!-- TAMPILAN LOGIN -->
-    <main id="loginPage" class="flex-1 flex flex-col md:flex-row items-center mt-12 md:mt-16 p-4 relative overflow-hidden h-full">
+    <main id="loginPage" class="flex-1 flex flex-col md:flex-row items-center mt-16 p-4 relative overflow-hidden h-full">
         <div class="w-full md:w-1/2 flex justify-center md:justify-start md:pl-16 lg:pl-32 z-20 h-full items-center">
-            <div class="glass-login login-slide-in w-full max-w-md rounded-[2rem] p-8 relative transition-all duration-300">
+            <div class="glass-login w-full max-w-md rounded-[2rem] p-8 relative">
                 <div class="text-center mb-6">
                     <div class="inline-block p-2 bg-white/40 backdrop-blur-md rounded-full mb-3 shadow-sm border border-white/60">
-                        <img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" alt="Logo" class="h-14 w-14 object-contain drop-shadow-md rounded-full">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg" class="h-14 w-14 object-contain">
                     </div>
                     <h2 class="text-2xl font-bold text-gray-800 mb-1">Selamat Datang</h2>
                     <p class="text-sm text-gray-700 font-medium">Silakan login untuk mengakses SIMBOS</p>
                 </div>
                 <div class="flex border-b border-gray-400/50 mb-6 cursor-pointer">
-                    <button type="button" onclick="switchTab('dinas')" id="tab-dinas" class="flex-1 pb-3 text-sm tab-active transition-colors duration-200"><i class="fa-solid fa-building-user mr-2"></i>Login Dinas</button>
-                    <button type="button" onclick="switchTab('sekolah')" id="tab-sekolah" class="flex-1 pb-3 text-sm text-gray-600 font-medium hover:text-gray-800 transition-colors duration-200"><i class="fa-solid fa-graduation-cap mr-2"></i>Login Sekolah</button>
+                    <button type="button" onclick="switchTab('dinas')" id="tab-dinas" class="flex-1 pb-3 text-sm tab-active"><i class="fa-solid fa-building-user mr-2"></i>Login Dinas</button>
+                    <button type="button" onclick="switchTab('sekolah')" id="tab-sekolah" class="flex-1 pb-3 text-sm text-gray-600 font-medium"><i class="fa-solid fa-graduation-cap mr-2"></i>Login Sekolah</button>
                 </div>
                 
                 <form id="form-dinas" class="space-y-4" onsubmit="handleLogin(event, 'dinas')">
                     <div>
                         <label class="block text-xs font-bold text-gray-800 mb-1">Username Admin</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="text" id="inp-dinas-user" required class="w-full pl-11 pr-4 py-3 border border-white/50 rounded-2xl focus:ring-2 focus:ring-primary text-sm bg-white/50 backdrop-blur-sm transition-all shadow-inner outline-none text-gray-800 font-medium" placeholder="Masukkan username">
-                        </div>
+                        <input type="text" id="inp-dinas-user" required class="w-full px-4 py-3 border border-white/50 rounded-2xl text-sm outline-none" placeholder="Masukkan username">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-800 mb-1">Password</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="password" id="inp-dinas-pass" required class="w-full pl-11 pr-4 py-3 border border-white/50 rounded-2xl focus:ring-2 focus:ring-primary text-sm bg-white/50 backdrop-blur-sm transition-all shadow-inner outline-none text-gray-800 font-medium" placeholder="••••••••">
-                        </div>
+                        <input type="password" id="inp-dinas-pass" required class="w-full px-4 py-3 border border-white/50 rounded-2xl text-sm outline-none" placeholder="••••••••">
                     </div>
-                    <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-[0_8px_20px_-6px_rgba(79,70,229,0.6)] mt-4 hover:-translate-y-1">Masuk sebagai Dinas</button>
+                    <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white font-bold py-3.5 rounded-2xl text-sm mt-4 transition-all">Masuk sebagai Dinas</button>
                 </form>
                 
                 <form id="form-sekolah" class="space-y-4 hidden" onsubmit="handleLogin(event, 'sekolah')">
                     <div>
                         <label class="block text-xs font-bold text-gray-800 mb-1">NPSN Sekolah</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-id-card absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="number" id="inp-sek-npsn" required class="w-full pl-11 pr-4 py-3 border border-white/50 rounded-2xl focus:ring-2 focus:ring-secondary text-sm bg-white/50 backdrop-blur-sm transition-all shadow-inner outline-none text-gray-800 font-medium" placeholder="Contoh: 10123456">
-                        </div>
+                        <input type="number" id="inp-sek-npsn" required class="w-full px-4 py-3 border border-white/50 rounded-2xl text-sm outline-none" placeholder="Contoh: 10123456">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-800 mb-1">Password</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"></i>
-                            <input type="password" id="inp-sek-pass" required class="w-full pl-11 pr-4 py-3 border border-white/50 rounded-2xl focus:ring-2 focus:ring-secondary text-sm bg-white/50 backdrop-blur-sm transition-all shadow-inner outline-none text-gray-800 font-medium" placeholder="••••••••">
-                        </div>
+                        <input type="password" id="inp-sek-pass" required class="w-full px-4 py-3 border border-white/50 rounded-2xl text-sm outline-none" placeholder="••••••••">
                     </div>
-                    <button type="submit" class="w-full bg-secondary hover:bg-emerald-600 text-white font-bold py-3.5 rounded-2xl text-sm transition-all shadow-[0_8px_20px_-6px_rgba(16,185,129,0.6)] mt-4 hover:-translate-y-1">Masuk sebagai Sekolah</button>
+                    <button type="submit" class="w-full bg-secondary hover:bg-emerald-600 text-white font-bold py-3.5 rounded-2xl text-sm mt-4 transition-all">Masuk sebagai Sekolah</button>
                 </form>
             </div>
         </div>
-        
-        <div class="hidden md:flex w-1/2 h-full absolute right-0 top-0 z-0 pointer-events-none justify-center items-center overflow-hidden">
-            <i class="fa-solid fa-school text-[7rem] text-indigo-500/30 absolute top-[12%] left-[15%] -rotate-12 icon-float"></i>
-            <i class="fa-solid fa-wallet text-[6rem] text-emerald-500/30 absolute top-[18%] right-[20%] rotate-12 icon-float float-delay-2"></i>
-            <i class="fa-solid fa-chart-column text-[6.5rem] text-orange-500/30 absolute top-[40%] left-[45%] -rotate-6 icon-float float-delay-4"></i>
-            <i class="fa-solid fa-book-open text-[6rem] text-teal-500/30 absolute top-[45%] left-[10%] rotate-6 icon-float float-delay-3"></i>
-            <i class="fa-solid fa-print text-[5.5rem] text-purple-500/30 absolute bottom-[35%] right-[15%] -rotate-12 icon-float float-delay-2"></i>
-            <i class="fa-solid fa-laptop text-[8rem] text-sky-500/30 absolute bottom-[10%] left-[20%] rotate-6 icon-float float-delay-1"></i>
-            <i class="fa-solid fa-chart-pie text-[7rem] text-blue-500/30 absolute bottom-[12%] right-[20%] -rotate-12 icon-float float-delay-4"></i>
+        <div class="hidden md:flex w-1/2 h-full absolute right-0 top-0 pointer-events-none justify-center items-center opacity-20">
+            <i class="fa-solid fa-school text-[10rem] text-indigo-500 absolute top-[20%] left-[20%]"></i>
+            <i class="fa-solid fa-chart-column text-[8rem] text-emerald-500 absolute bottom-[20%] right-[20%]"></i>
         </div>
     </main>
 
-    <!-- DASHBOARD AREA -->
-    <main id="dashboardPage" class="hidden flex-1 flex-col mt-14 md:mt-16 bg-gray-50 h-[calc(100vh-3.5rem)] md:h-[calc(100vh-4rem)] overflow-y-auto w-full relative">
+    <!-- DASHBOARD UTAMA -->
+    <main id="dashboardPage" class="hidden flex-1 flex-col mt-16 bg-gray-50 h-[calc(100vh-4rem)] overflow-y-auto w-full relative">
         <nav class="hidden md:block bg-white border-b border-gray-200 px-6 py-2 shadow-sm sticky top-0 z-40">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <ul id="navMenuDesktop" class="mobile-bottom-nav"></ul>
-                    <!-- TAHAP SELECTOR -->
                     <div class="hidden sm:flex items-center gap-2 border-l pl-4 border-gray-200">
                         <i class="fa-solid fa-calendar-days text-primary"></i>
-                        <select id="globalTahap" onchange="changeGlobalTahap(this.value)" class="text-xs font-bold text-primary bg-indigo-50 border border-indigo-100 outline-none rounded p-1.5 cursor-pointer shadow-sm hover:bg-indigo-100 transition-colors">
-                            <option value="all">Semua Tahap (1 Tahun)</option><option value="1">Tahap 1 (Jan - Jun)</option><option value="2">Tahap 2 (Jul - Des)</option>
+                        <select id="globalTahap" onchange="changeGlobalTahap(this.value)" class="text-xs font-bold text-primary bg-indigo-50 outline-none rounded p-1.5 cursor-pointer">
+                            <option value="all">Semua Tahap</option><option value="1">Tahap 1</option><option value="2">Tahap 2</option>
                         </select>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="refreshData()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-md text-sm font-bold transition-colors flex items-center gap-2 shadow-sm border border-indigo-100" title="Segarkan Data dari Server">
-                        <i id="icon-refresh" class="fa-solid fa-arrows-rotate"></i>
-                        <span class="hidden sm:inline">Refresh</span>
+                    <button onclick="refreshData()" class="bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-md text-sm font-bold flex items-center gap-2">
+                        <i id="icon-refresh" class="fa-solid fa-arrows-rotate"></i> Refresh
                     </button>
-                    <span id="userGreeting" class="text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1.5 rounded-md flex items-center shadow-sm border border-gray-200"></span>
+                    <span id="userGreeting" class="text-sm font-bold text-gray-700 bg-gray-100 px-3 py-1.5 rounded-md"></span>
                 </div>
             </div>
         </nav>
 
-        <!-- View: Dashboard -->
+        <!-- VIEW: DASHBOARD -->
         <div id="view-dashboard" class="app-view p-4 md:p-6 max-w-7xl mx-auto w-full space-y-6 block pb-24">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-2">
-                <div><h2 class="text-2xl font-bold text-gray-800" id="dashboardTitle">Dashboard</h2><p class="text-sm text-gray-500">Ringkasan Pagu & Realisasi <span class="font-bold text-primary t-label-tahap">Setahun</span></p></div>
-                <button id="btn-force-distribusi" onclick="showDistribusiModal()" class="hidden w-full md:w-auto mt-3 md:mt-0 bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-red-200 animate-pulse border-2 border-white">
-                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> Pagu Belum Diatur! Klik di Sini
-                </button>
-                <div class="md:hidden flex flex-col gap-2 w-full mt-3">
-                    <div id="userGreetingMobile" class="text-xs font-bold text-gray-700 bg-gray-200 px-2 py-1 rounded inline-flex items-center w-max"></div>
-                    <button onclick="refreshData()" class="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-2 rounded-md text-sm font-bold transition-colors flex justify-center items-center gap-2 shadow-sm border border-indigo-100">
-                        <i id="icon-refresh-mobile" class="fa-solid fa-arrows-rotate"></i> Segarkan Data
-                    </button>
-                    <select id="mobileTahap" onchange="changeGlobalTahap(this.value)" class="w-full text-xs font-bold text-primary bg-indigo-100 border-none outline-none rounded p-2 shadow-sm">
-                        <option value="all">Semua Tahap (Setahun)</option><option value="1">Hanya Tahap 1 (Jan-Jun)</option><option value="2">Hanya Tahap 2 (Jul-Des)</option>
-                    </select>
+            <div class="flex flex-col md:flex-row justify-between mb-2">
+                <div><h2 class="text-2xl font-bold" id="dashboardTitle">Dashboard</h2><p class="text-sm text-gray-500">Pagu & Realisasi <span class="t-label-tahap">Setahun</span></p></div>
+                <button id="btn-force-distribusi" onclick="showDistribusiModal()" class="hidden bg-red-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold animate-pulse">Pagu Belum Diatur!</button>
+                <div class="md:hidden flex flex-col gap-2 mt-3">
+                    <div id="userGreetingMobile" class="text-xs font-bold bg-gray-200 px-2 py-1 rounded w-max"></div>
+                    <select id="mobileTahap" onchange="changeGlobalTahap(this.value)" class="text-xs font-bold bg-indigo-100 p-2 rounded"><option value="all">Semua Tahap</option><option value="1">Tahap 1</option><option value="2">Tahap 2</option></select>
                 </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <!-- 1. Total Pagu -->
-                <div class="card-wrapper h-full">
-                    <div class="p-4 rounded-2xl border-l-4 border-l-primary group card-3d relative bg-white flex flex-col justify-between h-full min-h-[150px]">
-                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-gray-100 text-[9px] font-bold text-gray-500 rounded-full t-label-tahap">SETAHUN</div>
-                        <div>
-                            <div class="flex justify-between items-start mb-1 mt-2">
-                                <div><p class="text-[10px] font-semibold text-gray-500 uppercase">Total Pagu</p><h3 id="dash-pagu-total" class="text-lg font-bold text-gray-800 mt-0.5 truncate">Rp 0</h3></div>
-                                <div class="p-2 bg-indigo-50 text-primary rounded-lg"><i class="fa-solid fa-wallet text-lg"></i></div>
-                            </div>
-                            <p class="text-[9px] text-gray-400 truncate mb-1">Pagu 1 Thn: <span id="dash-pagu-total-utuh" class="font-bold">Rp 0</span></p>
-                        </div>
-                        <div class="flex justify-between text-[10px] mt-auto pt-2 border-t border-gray-100">
-                            <div class="text-green-600 font-medium">Real: <span id="dash-real-total">Rp 0</span></div>
-                            <div class="text-red-500 font-medium">Sisa: <span id="dash-selisih-total">Rp 0</span></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 2. Belanja Pegawai -->
-                <div class="card-wrapper h-full">
-                    <div class="p-4 rounded-2xl border-l-4 border-l-amber-500 group card-3d relative bg-white flex flex-col justify-between h-full min-h-[150px]">
-                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-gray-100 text-[9px] font-bold text-gray-500 rounded-full t-label-tahap">SETAHUN</div>
-                        <div>
-                            <div class="flex justify-between items-start mb-1 mt-2">
-                                <div><p class="text-[10px] font-semibold text-gray-500 uppercase">Belanja Pegawai</p><h3 id="dash-pagu-pegawai" class="text-lg font-bold text-gray-800 mt-0.5 truncate">Rp 0</h3></div>
-                                <div class="p-2 bg-amber-50 text-amber-500 rounded-lg"><i class="fa-solid fa-users text-lg"></i></div>
-                            </div>
-                            <p class="text-[9px] text-gray-400 truncate mb-1">Pagu 1 Thn: <span id="dash-pagu-pegawai-utuh" class="font-bold">Rp 0</span></p>
-                        </div>
-                        <div class="flex justify-between text-[10px] mt-auto pt-2 border-t border-gray-100">
-                            <div class="text-green-600 font-medium">Real: <span id="dash-real-pegawai">Rp 0</span></div>
-                            <div class="text-red-500 font-medium">Sisa: <span id="dash-selisih-pegawai">Rp 0</span></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 3. Belanja Barang & Jasa -->
-                <div class="card-wrapper h-full">
-                    <div class="p-4 rounded-2xl border-l-4 border-l-purple-500 group card-3d relative bg-white flex flex-col justify-between h-full min-h-[150px]">
-                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-gray-100 text-[9px] font-bold text-gray-500 rounded-full t-label-tahap">SETAHUN</div>
-                        <div>
-                            <div class="flex justify-between items-start mb-1 mt-2">
-                                <div><p class="text-[10px] font-semibold text-gray-500 uppercase">Barang & Jasa</p><h3 id="dash-pagu-barjas" class="text-lg font-bold text-gray-800 mt-0.5 truncate">Rp 0</h3></div>
-                                <div class="p-2 bg-purple-50 text-purple-500 rounded-lg"><i class="fa-solid fa-box-open text-lg"></i></div>
-                            </div>
-                            <p class="text-[9px] text-gray-400 truncate mb-1">Pagu 1 Thn: <span id="dash-pagu-barjas-utuh" class="font-bold">Rp 0</span></p>
-                        </div>
-                        <div class="flex justify-between text-[10px] mt-auto pt-2 border-t border-gray-100">
-                            <div class="text-green-600 font-medium">Real: <span id="dash-real-barjas">Rp 0</span></div>
-                            <div class="text-red-500 font-medium">Sisa: <span id="dash-selisih-barjas">Rp 0</span></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 4. Belanja Modal -->
-                <div class="card-wrapper h-full">
-                    <div class="p-4 rounded-2xl border-l-4 border-l-sky-500 group card-3d relative bg-white flex flex-col justify-between h-full min-h-[150px]">
-                        <div class="absolute top-2 right-2 px-2 py-0.5 bg-gray-100 text-[9px] font-bold text-gray-500 rounded-full t-label-tahap">SETAHUN</div>
-                        <div class="flex-1">
-                            <div class="flex justify-between items-start mb-1 mt-2">
-                                <div><p class="text-[10px] font-semibold text-gray-500 uppercase">Belanja Modal</p><h3 id="dash-pagu-modal" class="text-lg font-bold text-gray-800 mt-0.5 truncate">Rp 0</h3></div>
-                                <div class="p-2 bg-sky-50 text-sky-500 rounded-lg"><i class="fa-solid fa-computer text-lg"></i></div>
-                            </div>
-                            <p class="text-[9px] text-gray-400 truncate mb-0.5">Pagu 1 Thn: <span id="dash-pagu-modal-utuh" class="font-bold">Rp 0</span></p>
-                            <div class="text-[8.5px] leading-tight text-gray-400 mt-1.5 space-y-0.5 px-1.5 border-l-2 border-gray-200">
-                                <div class="flex justify-between"><span>Peralatan:</span> <span id="dash-rincian-alat" class="font-medium text-gray-500">Rp 0</span></div>
-                                <div class="flex justify-between"><span>Aset Lain:</span> <span id="dash-rincian-aset" class="font-medium text-gray-500">Rp 0</span></div>
-                            </div>
-                        </div>
-                        <div class="flex justify-between text-[10px] mt-auto pt-2 border-t border-gray-100">
-                            <div class="text-green-600 font-medium">Real: <span id="dash-real-modal">Rp 0</span></div>
-                            <div class="text-red-500 font-medium">Sisa: <span id="dash-selisih-modal">Rp 0</span></div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Kartu Pagu -->
+                <div class="p-4 rounded-2xl border-l-4 border-primary card-3d bg-white"><div class="flex justify-between"><div><p class="text-[10px] font-semibold text-gray-500">TOTAL PAGU</p><h3 id="dash-pagu-total" class="text-lg font-bold mt-0.5">Rp 0</h3></div><i class="fa-solid fa-wallet text-lg text-primary bg-indigo-50 p-2 rounded"></i></div><p class="text-[9px] text-gray-400">Utuh: <span id="dash-pagu-total-utuh">Rp 0</span></p><div class="flex justify-between text-[10px] mt-2 pt-2 border-t"><span class="text-green-600">Real: <span id="dash-real-total">Rp 0</span></span><span class="text-red-500">Sisa: <span id="dash-selisih-total">Rp 0</span></span></div></div>
+                <div class="p-4 rounded-2xl border-l-4 border-amber-500 card-3d bg-white"><div class="flex justify-between"><div><p class="text-[10px] font-semibold text-gray-500">PEGAWAI</p><h3 id="dash-pagu-pegawai" class="text-lg font-bold mt-0.5">Rp 0</h3></div><i class="fa-solid fa-users text-lg text-amber-500 bg-amber-50 p-2 rounded"></i></div><p class="text-[9px] text-gray-400">Utuh: <span id="dash-pagu-pegawai-utuh">Rp 0</span></p><div class="flex justify-between text-[10px] mt-2 pt-2 border-t"><span class="text-green-600">Real: <span id="dash-real-pegawai">Rp 0</span></span><span class="text-red-500">Sisa: <span id="dash-selisih-pegawai">Rp 0</span></span></div></div>
+                <div class="p-4 rounded-2xl border-l-4 border-purple-500 card-3d bg-white"><div class="flex justify-between"><div><p class="text-[10px] font-semibold text-gray-500">BARANG & JASA</p><h3 id="dash-pagu-barjas" class="text-lg font-bold mt-0.5">Rp 0</h3></div><i class="fa-solid fa-box-open text-lg text-purple-500 bg-purple-50 p-2 rounded"></i></div><p class="text-[9px] text-gray-400">Utuh: <span id="dash-pagu-barjas-utuh">Rp 0</span></p><div class="flex justify-between text-[10px] mt-2 pt-2 border-t"><span class="text-green-600">Real: <span id="dash-real-barjas">Rp 0</span></span><span class="text-red-500">Sisa: <span id="dash-selisih-barjas">Rp 0</span></span></div></div>
+                <div class="p-4 rounded-2xl border-l-4 border-sky-500 card-3d bg-white"><div class="flex justify-between"><div><p class="text-[10px] font-semibold text-gray-500">MODAL</p><h3 id="dash-pagu-modal" class="text-lg font-bold mt-0.5">Rp 0</h3></div><i class="fa-solid fa-computer text-lg text-sky-500 bg-sky-50 p-2 rounded"></i></div><div class="text-[8px] text-gray-400"><div class="flex justify-between"><span>Alat:</span><span id="dash-rincian-alat">Rp 0</span></div><div class="flex justify-between"><span>Aset:</span><span id="dash-rincian-aset">Rp 0</span></div></div><div class="flex justify-between text-[10px] mt-1 pt-1.5 border-t"><span class="text-green-600">Real: <span id="dash-real-modal">Rp 0</span></span><span class="text-red-500">Sisa: <span id="dash-selisih-modal">Rp 0</span></span></div></div>
             </div>
             
             <div id="dashboardCharts" class="hidden grid-cols-1 lg:grid-cols-3 gap-6 mt-6 pb-6">
-                <div class="chart-wrapper lg:col-span-2"><div class="p-5 rounded-2xl card-3d bg-white"><h3 id="titleBarChart" class="text-sm font-bold text-gray-700 mb-4">Progress Realisasi</h3><div class="h-72 md:h-80 relative w-full pb-4"><canvas id="barChart"></canvas></div></div></div>
-                <div class="chart-wrapper lg:col-span-1"><div class="p-5 rounded-2xl card-3d bg-white"><h3 id="titlePieChart" class="text-sm font-bold text-gray-700 mb-4">Proporsi Anggaran</h3><div class="h-72 md:h-80 relative w-full flex justify-center pb-4"><canvas id="pieChart"></canvas></div></div></div>
+                <div class="lg:col-span-2 p-5 rounded-2xl card-3d bg-white"><h3 id="titleBarChart" class="text-sm font-bold mb-4">Progress Realisasi</h3><div class="h-72 relative w-full"><canvas id="barChart"></canvas></div></div>
+                <div class="lg:col-span-1 p-5 rounded-2xl card-3d bg-white"><h3 id="titlePieChart" class="text-sm font-bold mb-4">Proporsi Anggaran</h3><div class="h-72 relative w-full flex justify-center"><canvas id="pieChart"></canvas></div></div>
             </div>
         </div>
 
-        <!-- View: Kelola Admin (Hanya Superadmin) -->
-        <div id="view-kelola-admin" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-4 h-full pb-24">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div><h2 class="text-2xl font-bold text-gray-800">Kelola Akun Admin</h2></div>
-                <button onclick="openModalAdmin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md"><i class="fa-solid fa-user-plus mr-1"></i> Tambah Admin</button>
-            </div>
-            <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px]">
-                <div class="overflow-x-auto flex-1">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm"><tr><th class="py-3 px-4 font-semibold">Username</th><th class="py-3 px-4 font-semibold">Nama Lengkap</th><th class="py-3 px-4 font-semibold">Level Akses (Bidang)</th><th class="py-3 px-4 font-semibold text-center">Aksi</th></tr></thead>
-                        <tbody id="table-body-admins"><tr><td colspan="4" class="text-center py-8 text-gray-500">Memuat data...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- VIEW: KELOLA ADMIN -->
+        <div id="view-kelola-admin" class="app-view hidden p-6 max-w-7xl mx-auto w-full flex-col space-y-4 pb-24">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-bold">Kelola Akun Admin</h2><button onclick="openModalAdmin()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-bold">Tambah Admin</button></div>
+            <div class="flex-1 bg-white border rounded-xl overflow-hidden flex flex-col"><div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-gray-50"><tr><th class="py-3 px-4">Username</th><th class="py-3 px-4">Nama Lengkap</th><th class="py-3 px-4">Bidang</th><th class="py-3 px-4 text-center">Aksi</th></tr></thead><tbody id="table-body-admins"></tbody></table></div></div>
         </div>
 
-        <!-- View: Kelola User Sekolah (Dinas) -->
-        <div id="view-kelola-user" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-4 h-full pb-24">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div><h2 class="text-2xl font-bold text-gray-800">Kelola Sekolah (Pagu Keseluruhan)</h2><p class="text-sm text-gray-500">Isi Total Pagu 1 Tahun. Detail alokasi dilakukan oleh sekolah.</p></div>
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    <div class="relative flex-1 md:w-64"><i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="inp-search-user" onkeyup="filterUserTable()" placeholder="Cari Sekolah..." class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-primary focus:border-primary"></div>
-                    <button onclick="openModalUser()" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md whitespace-nowrap"><i class="fa-solid fa-plus mr-1"></i> Tambah Sekolah</button>
-                </div>
-            </div>
-            <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px]">
-                <div class="overflow-x-auto flex-1">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm"><tr><th class="py-3 px-4 font-semibold">NPSN</th><th class="py-3 px-4 font-semibold">Nama Sekolah</th><th class="py-3 px-4 font-semibold">Jenjang</th><th class="py-3 px-4 font-semibold">Kecamatan</th><th class="py-3 px-4 font-semibold text-right">Total Pagu (Setahun)</th><th class="py-3 px-4 font-semibold text-center">Status Alokasi</th><th class="py-3 px-4 font-semibold text-center">Aksi</th></tr></thead>
-                        <tbody id="table-body-users"><tr><td colspan="7" class="text-center py-8 text-gray-500">Memuat data...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- VIEW: KELOLA SEKOLAH -->
+        <div id="view-kelola-user" class="app-view hidden p-6 max-w-7xl mx-auto w-full flex-col space-y-4 pb-24">
+            <div class="flex justify-between items-center"><div><h2 class="text-2xl font-bold">Kelola Sekolah</h2></div><div class="flex gap-3"><input type="text" id="inp-search-user" onkeyup="filterUserTable()" placeholder="Cari..." class="px-4 py-2 border rounded-lg outline-none text-sm"><button onclick="openModalUser()" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold">Tambah Sekolah</button></div></div>
+            <div class="flex-1 bg-white border rounded-xl overflow-hidden flex flex-col"><div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-gray-50"><tr><th class="py-3 px-4">NPSN</th><th class="py-3 px-4">Nama Sekolah</th><th class="py-3 px-4">Jenjang</th><th class="py-3 px-4">Kecamatan</th><th class="py-3 px-4 text-right">Pagu Setahun</th><th class="py-3 px-4 text-center">Status</th><th class="py-3 px-4 text-center">Aksi</th></tr></thead><tbody id="table-body-users"></tbody></table></div></div>
         </div>
 
-        <!-- View: Data Realisasi -->
-        <div id="view-data-aset" class="app-view hidden p-4 md:p-6 max-w-full mx-auto w-full flex-col space-y-4 h-full pb-24">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-2 md:px-6">
-                <div><h2 class="text-2xl font-bold text-gray-800">Daftar Realisasi <span class="t-label-tahap text-lg font-normal text-gray-500 ml-2"></span></h2></div>
-                <button id="btn-tambah-aset-tabel" onclick="openInputData()" class="hidden bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md"><i class="fa-solid fa-plus mr-1"></i> Tambah Data</button>
-            </div>
-            
-            <div class="flex flex-wrap md:flex-nowrap bg-gray-100 p-1.5 rounded-xl w-full mx-2 md:mx-6 md:w-auto shadow-inner gap-1" style="max-width: fit-content;">
-                <button type="button" id="tab-data-pegawai" onclick="switchDataTab('pegawai')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-users mr-1"></i> Belanja Pegawai</button>
-                <button type="button" id="tab-data-barjas" onclick="switchDataTab('barjas')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-box-open mr-1"></i> Barang & Jasa</button>
-                <button type="button" id="tab-data-modal" onclick="switchDataTab('modal')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg bg-white text-primary shadow-sm transition-all"><i class="fa-solid fa-desktop mr-1"></i> Belanja Modal</button>
-            </div>
-
-            <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px] mx-2 md:mx-6">
-                <div class="overflow-x-auto flex-1">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b" id="thead-aset"></thead>
-                        <tbody id="table-body-aset" class="divide-y divide-gray-100"><tr><td colspan="20" class="text-center py-8 text-gray-500">Memuat data...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+        <!-- VIEW: DATA REALISASI -->
+        <div id="view-data-aset" class="app-view hidden p-6 max-w-full mx-auto w-full flex-col space-y-4 pb-24">
+            <div class="flex justify-between items-center"><h2 class="text-2xl font-bold">Daftar Realisasi <span class="t-label-tahap"></span></h2><button id="btn-tambah-aset-tabel" onclick="openInputData()" class="hidden bg-secondary text-white px-4 py-2 rounded-lg text-sm font-bold">Tambah Data</button></div>
+            <div class="flex bg-gray-100 p-1.5 rounded-xl w-max gap-1"><button id="tab-data-pegawai" onclick="switchDataTab('pegawai')" class="px-4 py-2 text-sm font-bold rounded-lg text-gray-500">Pegawai</button><button id="tab-data-barjas" onclick="switchDataTab('barjas')" class="px-4 py-2 text-sm font-bold rounded-lg text-gray-500">Barang & Jasa</button><button id="tab-data-modal" onclick="switchDataTab('modal')" class="px-4 py-2 text-sm font-bold rounded-lg text-gray-500">Modal</button></div>
+            <div class="flex-1 bg-white border rounded-xl overflow-hidden flex flex-col"><div class="overflow-x-auto"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-gray-50 border-b" id="thead-aset"></thead><tbody id="table-body-aset" class="divide-y divide-gray-100"></tbody></table></div></div>
         </div>
-        
-        <!-- View: Progres Sekolah -->
-        <div id="view-progres" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24"> 
-            <div class="mb-2"><h2 class="text-2xl font-bold text-gray-800">Progres Sekolah <span class="t-label-tahap font-normal ml-2"></span></h2></div> 
-            <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100"> 
-                <div class="relative w-full md:w-1/2 mb-4 z-[60]"> 
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i> 
-                    <input type="text" id="inp-search-progres" onkeyup="filterProgresSekolah()" placeholder="Ketik NPSN atau Nama Sekolah..." autocomplete="off" class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary text-sm outline-none"> 
-                    <ul id="list-sekolah-progres" class="absolute z-50 w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-2xl max-h-60 overflow-y-auto hidden"></ul> 
-                </div> 
+
+        <!-- VIEW: PROGRES -->
+        <div id="view-progres" class="app-view hidden p-6 max-w-7xl mx-auto w-full flex-col space-y-4 pb-24">
+            <h2 class="text-2xl font-bold">Progres Sekolah</h2>
+            <div class="bg-white p-6 rounded-2xl shadow-sm border">
+                <div class="relative w-full md:w-1/2 mb-4"><input type="text" id="inp-search-progres" onkeyup="filterProgresSekolah()" placeholder="Ketik NPSN/Nama Sekolah..." class="w-full px-4 py-2 border rounded-lg outline-none text-sm"><ul id="list-sekolah-progres" class="absolute w-full bg-white border rounded-lg mt-1 hidden shadow-lg max-h-60 overflow-y-auto"></ul></div>
                 <input type="hidden" id="prog_npsn_selected">
-
-                <div id="progres-school-details" class="hidden mt-6 border-t pt-6"> 
-                    <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 gap-3">
-                        <h3 class="text-xl font-bold text-gray-800 flex items-center" id="progres-school-title">
-                            <img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" class="h-6 w-6 mr-2 object-contain drop-shadow-sm inline"> Nama Sekolah
-                        </h3>
-                        <div id="prog-wa-container" class="text-sm font-semibold bg-gray-100 text-gray-500 px-4 py-1.5 rounded-full flex items-center shadow-sm w-max transition-colors">
-                            <i class="fa-brands fa-whatsapp mr-2 text-gray-400 text-lg" id="prog-wa-icon"></i> <span id="prog-nowa">Belum Diisi</span>
-                        </div>
+                <div id="progres-school-details" class="hidden mt-4 border-t pt-4">
+                    <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold" id="progres-school-title"></h3><div id="prog-wa-container" class="bg-gray-100 px-3 py-1 rounded-full text-sm"><i id="prog-wa-icon" class="fa-brands fa-whatsapp"></i> <span id="prog-nowa"></span></div></div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-primary"><div><p class="text-[10px] font-bold uppercase">Total Pagu</p><p class="text-lg font-bold text-primary" id="prog-pagu-total">Rp 0</p></div><div class="flex justify-between text-[10px] mt-2 pt-2 border-t"><span class="text-green-600">Real: <span id="prog-real-total"></span></span><span class="text-red-500">Sisa: <span id="prog-sisa-total"></span></span></div></div>
+                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-amber-500"><div><p class="text-[10px] font-bold uppercase">Pegawai</p><p class="text-lg font-bold text-amber-500" id="prog-pagu-pegawai">Rp 0</p></div><div class="mt-2"><div id="container-prog-doc-pegawai" class="hidden gap-1"><button id="btn-prog-doc-pegawai" class="flex-1 bg-amber-100 text-amber-700 py-1 text-[9px] font-bold rounded">Lihat</button><button id="btn-prog-del-pegawai" class="flex-1 bg-red-100 text-red-700 py-1 text-[9px] font-bold rounded">Hapus</button></div><span id="lbl-prog-doc-pegawai" class="text-[9px] text-gray-400"></span></div><div class="flex justify-between text-[10px] mt-2 pt-2 border-t"><span class="text-green-600">Real: <span id="prog-real-pegawai"></span></span><span class="text-red-500">Sisa: <span id="prog-sisa-pegawai"></span></span></div></div>
+                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-purple-500"><div><p class="text-[10px] font-bold uppercase">Barjas</p><p class="text-lg font-bold text-purple-500" id="prog-pagu-barjas">Rp 0</p></div><div class="mt-2"><div id="container-prog-doc-barjas" class="hidden gap-1"><button id="btn-prog-doc-barjas" class="flex-1 bg-purple-100 text-purple-700 py-1 text-[9px] font-bold rounded">Lihat</button><button id="btn-prog-del-barjas" class="flex-1 bg-red-100 text-red-700 py-1 text-[9px] font-bold rounded">Hapus</button></div><span id="lbl-prog-doc-barjas" class="text-[9px] text-gray-400"></span></div><div class="flex justify-between text-[10px] mt-2 pt-2 border-t"><span class="text-green-600">Real: <span id="prog-real-barjas"></span></span><span class="text-red-500">Sisa: <span id="prog-sisa-barjas"></span></span></div></div>
+                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-sky-500"><div><p class="text-[10px] font-bold uppercase">Modal</p><p class="text-lg font-bold text-sky-500" id="prog-pagu-modal">Rp 0</p><div class="text-[8px] text-gray-500 flex justify-between"><span>Alat: <span id="prog-rincian-alat"></span></span><span>Aset: <span id="prog-rincian-aset"></span></span></div></div><div class="mt-1 space-y-1"><div class="flex justify-between items-center"><span class="text-[8px]">Alat:</span><div id="container-prog-doc-alat" class="hidden gap-1"><button id="btn-prog-doc-alat" class="bg-sky-100 px-1 py-0.5 text-[8px] font-bold rounded">Lihat</button><button id="btn-prog-del-alat" class="bg-red-100 px-1 py-0.5 text-[8px] font-bold rounded"><i class="fa-solid fa-trash"></i></button></div><span id="lbl-prog-doc-alat" class="text-[8px]"></span></div><div class="flex justify-between items-center"><span class="text-[8px]">Aset:</span><div id="container-prog-doc-aset" class="hidden gap-1"><button id="btn-prog-doc-aset" class="bg-emerald-100 px-1 py-0.5 text-[8px] font-bold rounded">Lihat</button><button id="btn-prog-del-aset" class="bg-red-100 px-1 py-0.5 text-[8px] font-bold rounded"><i class="fa-solid fa-trash"></i></button></div><span id="lbl-prog-doc-aset" class="text-[8px]"></span></div></div><div class="flex justify-between text-[10px] mt-1 pt-1 border-t"><span class="text-green-600">Real: <span id="prog-real-modal"></span></span><span class="text-red-500">Sisa: <span id="prog-sisa-modal"></span></span></div></div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6"> 
-                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-l-primary flex flex-col justify-between card-3d h-full min-h-[150px]">
-                            <div><p class="text-[10px] text-gray-500 font-semibold uppercase">Total Keseluruhan <span class="t-label-tahap font-bold"></span></p><p class="text-lg font-bold text-primary truncate mt-0.5" id="prog-pagu-total">Rp 0</p></div>
-                            <div class="flex justify-between text-[10px] mt-auto pt-2 border-t border-gray-200"><span class="text-green-600 font-medium">Real: <span id="prog-real-total">Rp 0</span></span><span class="text-red-500 font-medium">Sisa: <span id="prog-sisa-total">Rp 0</span></span></div>
-                        </div> 
-                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-l-amber-500 flex flex-col justify-between card-3d float-delay-2 h-full min-h-[150px]">
-                            <div><p class="text-[10px] text-gray-500 font-semibold uppercase">Belanja Pegawai <span class="t-label-tahap font-bold"></span></p><p class="text-lg font-bold text-amber-500 truncate mt-0.5" id="prog-pagu-pegawai">Rp 0</p></div>
-                            <div>
-                                <div class="mt-2 mb-2"><div id="container-prog-doc-pegawai" class="hidden gap-2"><button id="btn-prog-doc-pegawai" class="flex-1 text-[9px] bg-amber-100 text-amber-700 py-1 rounded font-bold hover:bg-amber-200">Lihat Link</button><button id="btn-prog-del-pegawai" class="flex-1 text-[9px] bg-red-100 text-red-700 py-1 rounded font-bold hover:bg-red-200">Hapus</button></div><span id="lbl-prog-doc-pegawai" class="block text-[9px] text-gray-400">Memuat...</span></div>
-                                <div class="flex justify-between text-[10px] border-t border-gray-200 pt-2"><span class="text-green-600 font-medium">Real: <span id="prog-real-pegawai">Rp 0</span></span><span class="text-red-500 font-medium">Sisa: <span id="prog-sisa-pegawai">Rp 0</span></span></div>
-                            </div>
-                        </div> 
-                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-l-purple-500 flex flex-col justify-between card-3d float-delay-3 h-full min-h-[150px]">
-                            <div><p class="text-[10px] text-gray-500 font-semibold uppercase">Barang & Jasa <span class="t-label-tahap font-bold"></span></p><p class="text-lg font-bold text-purple-500 truncate mt-0.5" id="prog-pagu-barjas">Rp 0</p></div>
-                            <div>
-                                <div class="mt-2 mb-2"><div id="container-prog-doc-barjas" class="hidden gap-2"><button id="btn-prog-doc-barjas" class="flex-1 text-[9px] bg-purple-100 text-purple-700 py-1 rounded font-bold hover:bg-purple-200">Lihat Link</button><button id="btn-prog-del-barjas" class="flex-1 text-[9px] bg-red-100 text-red-700 py-1 rounded font-bold hover:bg-red-200">Hapus</button></div><span id="lbl-prog-doc-barjas" class="block text-[9px] text-gray-400">Memuat...</span></div>
-                                <div class="flex justify-between text-[10px] border-t border-gray-200 pt-2"><span class="text-green-600 font-medium">Real: <span id="prog-real-barjas">Rp 0</span></span><span class="text-red-500 font-medium">Sisa: <span id="prog-sisa-barjas">Rp 0</span></span></div>
-                            </div>
-                        </div> 
-                        <div class="p-4 bg-gray-50 rounded-xl border-l-4 border-l-sky-500 flex flex-col justify-between card-3d float-delay-4 h-full min-h-[150px]">
-                            <div>
-                                <p class="text-[10px] text-gray-500 font-semibold uppercase">Belanja Modal <span class="t-label-tahap font-bold"></span></p>
-                                <p class="text-lg font-bold text-sky-500 truncate mt-0.5" id="prog-pagu-modal">Rp 0</p>
-                                <div class="text-[8px] leading-tight text-gray-400 mt-0.5 space-y-0 px-1 border-l-2 border-gray-200">
-                                    <div class="flex justify-between"><span>Alat:</span> <span id="prog-rincian-alat" class="font-medium text-gray-500">Rp 0</span></div>
-                                    <div class="flex justify-between"><span>Aset:</span> <span id="prog-rincian-aset" class="font-medium text-gray-500">Rp 0</span></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="mt-1 mb-1 space-y-1">
-                                    <div class="flex justify-between items-center"><span class="text-[8.5px] font-bold text-gray-500">Alat:</span><div id="container-prog-doc-alat" class="hidden gap-1"><button id="btn-prog-doc-alat" class="text-[8px] bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded font-bold hover:bg-sky-200">Lihat</button><button id="btn-prog-del-alat" class="text-[8px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-bold hover:bg-red-200"><i class="fa-solid fa-trash"></i></button></div><span id="lbl-prog-doc-alat" class="text-[8px] text-gray-400">Memuat...</span></div>
-                                    <div class="flex justify-between items-center"><span class="text-[8.5px] font-bold text-gray-500">Aset:</span><div id="container-prog-doc-aset" class="hidden gap-1"><button id="btn-prog-doc-aset" class="text-[8px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold hover:bg-emerald-200">Lihat</button><button id="btn-prog-del-aset" class="text-[8px] bg-red-100 text-red-700 px-1.5 py-0.5 rounded font-bold hover:bg-red-200"><i class="fa-solid fa-trash"></i></button></div><span id="lbl-prog-doc-aset" class="text-[8px] text-gray-400">Memuat...</span></div>
-                                </div>
-                                <div class="flex justify-between text-[10px] border-t border-gray-200 pt-1.5"><span class="text-green-600 font-medium">Real: <span id="prog-real-modal">Rp 0</span></span><span class="text-red-500 font-medium">Sisa: <span id="prog-sisa-modal">Rp 0</span></span></div>
-                            </div>
-                        </div> 
-                    </div> 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6"> 
-                        <div class="border p-4 rounded-xl shadow-sm"><h4 class="text-xs font-bold mb-2">Pagu vs Realisasi</h4><div class="h-80 relative w-full"><canvas id="progBarChart"></canvas></div></div> 
-                        <div class="border p-4 rounded-xl shadow-sm"><h4 class="text-xs font-bold mb-2">Proporsi</h4><div class="h-80 relative w-full flex justify-center"><canvas id="progPieChart"></canvas></div></div> 
-                    </div> 
-                </div> 
-            </div> 
-        </div>
-
-        <!-- View: Input Data -->
-        <div id="view-input-data" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24"> 
-            <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border flex-1"> 
-                <div class="mb-6 pb-4 border-b border-gray-100 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-                    <div><h2 class="text-2xl font-bold text-gray-800" id="title-form-aset">Input Data Realisasi</h2><p class="text-sm text-gray-500">Pilih Kategori Belanja di bawah ini terlebih dahulu.</p></div>
-                </div> 
-                
-                <div class="flex flex-wrap md:flex-nowrap bg-gray-100 p-1.5 rounded-xl w-full mb-6 shadow-inner gap-1">
-                    <button type="button" id="tab-inp-pegawai" onclick="switchInputTab('pegawai')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-users mr-1"></i> Belanja Pegawai</button>
-                    <button type="button" id="tab-inp-barjas" onclick="switchInputTab('barjas')" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-box-open mr-1"></i> Barang & Jasa</button>
-                    <button type="button" id="tab-inp-modal" onclick="switchInputTab('modal')" class="flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-primary shadow-sm transition-all"><i class="fa-solid fa-desktop mr-1"></i> Belanja Modal</button>
-                </div>
-
-                <form id="form-input-aset" class="grid grid-cols-1 md:grid-cols-3 gap-6" onsubmit="saveAsetData(event)"> 
-                    <div class="space-y-4"> 
-                        <h4 class="text-sm font-bold border-b pb-1 text-gray-700">1. Dasar Transaksi</h4> 
-                        <div><label id="lbl-penyedia" class="block text-xs font-semibold mb-1">Penyedia / Toko</label><input type="text" id="inp-penyedia" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none"></div> 
-                        <div id="group-dasar-modal" class="space-y-4">
-                            <div><label class="block text-xs font-semibold mb-1">No SP (Surat Pesanan)</label><input type="text" id="inp-no-sp" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none"></div> 
-                            <div><label class="block text-xs font-semibold mb-1">Tgl SP</label><input type="date" id="inp-tgl-sp" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none"></div> 
-                        </div>
-                    </div> 
-                    <div class="space-y-4"> 
-                        <h4 class="text-sm font-bold border-b pb-1 text-gray-700">2. Detail Uraian</h4> 
-                        <div id="group-rekening"> 
-                            <label class="block text-xs font-semibold mb-1">Kategori Belanja Modal</label> 
-                            <select id="inp-rekening" onchange="updateKodefikasi()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary cursor-pointer outline-none"> 
-                                <option value="">-- Pilih Rekening --</option> 
-                                <option value="Belanja Modal Peralatan & Mesin BOS">Belanja Modal Peralatan & Mesin BOS</option> 
-                                <option value="Belanja Modal Aset Tetap Lainnya BOS">Belanja Modal Aset Tetap Lainnya BOS</option> 
-                                <option value="Belanja Modal Peralatan & Mesin BOSP-BOS Kinerja">Belanja Modal Peralatan & Mesin BOSP-BOS Kinerja</option>
-                                <option value="Belanja Modal Aset Tetap Lainnya BOSP-BOS Kinerja">Belanja Modal Aset Tetap Lainnya BOSP-BOS Kinerja</option>
-                            </select> 
-                        </div> 
-                        <div><label class="block text-xs font-semibold mb-1">Kodefikasi (Auto)</label><input type="text" id="inp-kodefikasi" readonly class="w-full px-3 py-2 border border-gray-200 bg-gray-50 rounded-lg text-sm text-gray-500 font-semibold cursor-not-allowed"></div> 
-                        <div><label id="lbl-uraian" class="block text-xs font-semibold mb-1">Nama Barang / Uraian</label><textarea id="inp-uraian" required rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none"></textarea></div> 
-                        <div id="container-merek"><label class="block text-xs font-semibold mb-1">Merek dan Tipe</label><input type="text" id="inp-merek" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none" placeholder="Kosongkan jika tidak ada"></div>
-                        <div class="grid grid-cols-2 gap-3"> 
-                            <div><label id="lbl-qty" class="block text-xs font-semibold mb-1">Volume/Qty</label><input type="number" id="inp-qty" required oninput="calculateTotalHarga()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none"></div> 
-                            <div><label class="block text-xs font-semibold mb-1">Satuan</label><select id="inp-satuan" required class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary cursor-pointer outline-none"><option value="Unit">Unit</option><option value="OB">OB</option><option value="Bulan">Bulan</option><option value="Kegiatan">Kegiatan</option><option value="Paket">Paket</option><option value="Rim">Rim</option><option value="Buah">Buah</option><option value="Pcs">Pcs</option></select></div> 
-                        </div> 
-                    </div> 
-                    <div class="space-y-4"> 
-                        <h4 class="text-sm font-bold border-b pb-1 text-gray-700">3. Harga & Dokumen</h4> 
-                        <div>
-                            <label class="block text-xs font-semibold mb-1">Harga Satuan (Rp)</label>
-                            <input type="text" inputmode="numeric" id="inp-harga" required oninput="formatInputUang(this); calculateTotalHarga()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none">
-                        </div> 
-                        <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 shadow-inner"><p class="text-xs font-bold text-emerald-800 uppercase mb-1">Jumlah Total</p><p class="text-xl font-bold text-secondary" id="txt-total-harga">Rp 0</p></div> 
-                        <div id="container-no-bast">
-                            <label id="lbl-no-bast" class="block text-xs font-semibold mb-1">No Kuitansi / Nota</label>
-                            <input type="text" id="inp-no-bast" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none">
-                        </div> 
-                        <div>
-                            <label id="lbl-tgl-bast" class="block text-xs font-semibold mb-1">Tanggal Kuitansi <span class="font-normal text-gray-400">(Penentu Tahap)</span></label>
-                            <input type="date" id="inp-tgl-bast" required onchange="updateInfoSisaPagu()" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none">
-                        </div>
-                        <div id="group-spv-modal" class="space-y-4 pt-2">
-                            <div><label class="block text-xs font-semibold mb-1">No SPV</label><input type="text" id="inp-no-spv" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none"></div> 
-                            <div><label class="block text-xs font-semibold mb-1">Tgl SPV</label><input type="date" id="inp-tgl-spv" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none"></div> 
-                        </div>
-                    </div> 
-                    
-                    <div class="md:col-span-3 border-t border-gray-100 pt-5 flex flex-col md:flex-row justify-between items-center gap-4"> 
-                        <div id="info-sisa-pagu" class="text-xs md:text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200 w-full md:w-auto text-center md:text-left transition-colors">
-                            Sisa Anggaran: <span class="font-bold text-gray-400">-</span>
-                        </div>
-                        <div class="flex w-full md:w-auto justify-end gap-3">
-                            <button type="button" id="btn-batal-aset" onclick="switchView('view-data-aset')" class="hidden px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-100 transition-colors">Batal Edit</button> 
-                            <button type="submit" id="btn-submit-aset" class="w-full md:w-auto bg-secondary hover:bg-emerald-600 text-white px-8 py-2.5 rounded-lg text-sm font-bold shadow-lg shadow-emerald-200 transition-all"><i class="fa-solid fa-save mr-2"></i> Simpan Data</button> 
-                        </div>
-                    </div> 
-                </form> 
-            </div> 
-        </div>
-
-        <!-- View: Tempel Tautan / Upload -->
-        <div id="view-upload" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24"> 
-            <div class="mb-2">
-                <h2 class="text-2xl font-bold text-gray-800">Simpan Tautan Dokumen Pendukung</h2>
-                <p class="text-sm text-gray-500">Tautkan dokumen Kuitansi dan BAST Anda dari penyimpanan awan (Google Drive dll) agar tidak membebani kuota penyimpanan.</p>
-            </div> 
-            <div class="flex bg-gray-100 p-1 rounded-lg w-full max-w-sm mb-2 shadow-inner">
-                <button id="tab-up-1" onclick="switchUploadTahap('1')" class="flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all">Tahap 1 (Jan-Jun)</button>
-                <button id="tab-up-2" onclick="switchUploadTahap('2')" class="flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all">Tahap 2 (Jul-Des)</button>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"> 
-                <div class="bg-white p-4 rounded-2xl shadow-sm border flex flex-col items-center text-center card-3d float-delay-1"><div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-full flex justify-center items-center text-lg mb-2"><i class="fa-solid fa-users"></i></div><h3 class="font-bold mb-1 text-sm">Belanja Pegawai</h3><p class="text-[10px] text-gray-500 mb-4" id="status-pegawai"><i class="fa-solid fa-circle-exclamation text-amber-500"></i> Belum ada link</p><div id="container-upload-pegawai" class="w-full border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50 mb-4 relative flex flex-col items-center justify-center"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><p class="text-[10px] font-medium text-gray-500 mb-2">Tempel Link G-Drive</p><input type="url" id="link-pegawai" class="w-full text-center px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-primary focus:border-primary outline-none" placeholder="https://..."></div><button id="btn-upload-pegawai" onclick="uploadDokumenUrl('pegawai')" class="w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md hover:bg-amber-600 transition-colors">Simpan Link</button><button id="btn-view-pegawai" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md">Buka Link</button></div> 
-                <div class="bg-white p-4 rounded-2xl shadow-sm border flex flex-col items-center text-center card-3d float-delay-2"><div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-full flex justify-center items-center text-lg mb-2"><i class="fa-solid fa-box-open"></i></div><h3 class="font-bold mb-1 text-sm">Barang & Jasa</h3><p class="text-[10px] text-gray-500 mb-4" id="status-barjas"><i class="fa-solid fa-circle-exclamation text-amber-500"></i> Belum ada link</p><div id="container-upload-barjas" class="w-full border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50 mb-4 relative flex flex-col items-center justify-center"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><p class="text-[10px] font-medium text-gray-500 mb-2">Tempel Link G-Drive</p><input type="url" id="link-barjas" class="w-full text-center px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-primary focus:border-primary outline-none" placeholder="https://..."></div><button id="btn-upload-barjas" onclick="uploadDokumenUrl('barjas')" class="w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md hover:bg-purple-600 transition-colors">Simpan Link</button><button id="btn-view-barjas" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md">Buka Link</button></div> 
-                <div class="bg-white p-4 rounded-2xl shadow-sm border flex flex-col items-center text-center card-3d float-delay-3"><div class="w-12 h-12 bg-sky-50 text-sky-500 rounded-full flex justify-center items-center text-lg mb-2"><i class="fa-solid fa-computer"></i></div><h3 class="font-bold mb-1 text-sm">Modal Peralatan</h3><p class="text-[10px] text-gray-500 mb-4" id="status-peralatan"><i class="fa-solid fa-circle-exclamation text-amber-500"></i> Belum ada link</p><div id="container-upload-peralatan" class="w-full border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50 mb-4 relative flex flex-col items-center justify-center"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><p class="text-[10px] font-medium text-gray-500 mb-2">Tempel Link G-Drive</p><input type="url" id="link-peralatan" class="w-full text-center px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-primary focus:border-primary outline-none" placeholder="https://..."></div><button id="btn-upload-peralatan" onclick="uploadDokumenUrl('peralatan')" class="w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md hover:bg-sky-600 transition-colors">Simpan Link</button><button id="btn-view-peralatan" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md">Buka Link</button></div> 
-                <div class="bg-white p-4 rounded-2xl shadow-sm border flex flex-col items-center text-center card-3d float-delay-4"><div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full flex justify-center items-center text-lg mb-2"><i class="fa-solid fa-book"></i></div><h3 class="font-bold mb-1 text-sm">Modal Aset Lain</h3><p class="text-[10px] text-gray-500 mb-4" id="status-aset"><i class="fa-solid fa-circle-exclamation text-amber-500"></i> Belum ada link</p><div id="container-upload-aset" class="w-full border-2 border-dashed border-gray-200 rounded-xl p-4 bg-gray-50 mb-4 relative flex flex-col items-center justify-center"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><p class="text-[10px] font-medium text-gray-500 mb-2">Tempel Link G-Drive</p><input type="url" id="link-aset" class="w-full text-center px-2 py-1.5 border border-gray-300 rounded text-xs focus:ring-primary focus:border-primary outline-none" placeholder="https://..."></div><button id="btn-upload-aset" onclick="uploadDokumenUrl('aset')" class="w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md hover:bg-emerald-600 transition-colors">Simpan Link</button><button id="btn-view-aset" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-semibold mb-1 shadow-md">Buka Link</button></div> 
-            </div> 
-
-            <!-- KOTAK KHUSUS LPJ & REKOMENDASI -->
-            <div class="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 w-full lg:w-3/4 mx-auto">
-                <h3 class="font-bold text-lg mb-4 border-b pb-2 text-gray-800"><i class="fa-solid fa-file-signature text-primary mr-2"></i> Laporan Pertanggungjawaban (LPJ)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <p class="text-sm font-semibold mb-2 text-gray-700">Tautan Dokumen LPJ</p>
-                        <div id="container-upload-lpj" class="flex flex-col gap-2">
-                            <input type="url" id="link-lpj" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none" placeholder="Tempel Link LPJ G-Drive di sini...">
-                            <button id="btn-upload-lpj" onclick="uploadDokumenUrl('lpj')" class="w-full bg-primary hover:bg-indigo-700 text-white py-2 rounded-lg text-sm font-bold transition-all shadow-md">Kirim LPJ untuk Verifikasi</button>
-                        </div>
-                        <button id="btn-view-lpj" class="hidden w-full bg-white border-2 border-indigo-100 text-indigo-600 py-2 rounded-lg text-sm font-bold shadow-sm mt-2 hover:bg-indigo-50"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Buka Link LPJ Tersimpan</button>
-                        
-                        <div class="mt-4 flex items-center gap-2">
-                            <span class="text-xs font-bold text-gray-500">Status Verifikasi:</span>
-                            <span id="status-lpj-badge" class="px-2.5 py-1 rounded bg-gray-100 text-gray-600 text-xs font-bold shadow-inner">Belum Kirim</span>
-                        </div>
-                    </div>
-                    <div class="md:border-l md:pl-6 border-gray-100">
-                        <p class="text-sm font-semibold mb-2 text-gray-700">Surat Rekomendasi Pencairan</p>
-                        <p class="text-xs text-gray-500 mb-4 leading-relaxed">Surat rekomendasi dari Dinas akan muncul di bawah ini secara otomatis apabila LPJ Anda telah melalui proses verifikasi dan disetujui oleh Manager BOS.</p>
-                        
-                        <a id="btn-dl-rekom" href="#" target="_blank" class="hidden w-full bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2.5 rounded-lg text-sm font-bold transition-all shadow-md"><i class="fa-solid fa-download mr-1"></i> Download Rekomendasi</a>
-                        <p id="lbl-no-rekom" class="text-xs italic text-red-400 font-medium"><i class="fa-solid fa-clock mr-1"></i> Belum tersedia</p>
-                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="border p-4 rounded-xl"><canvas id="progBarChart" class="h-64 w-full"></canvas></div><div class="border p-4 rounded-xl flex justify-center"><canvas id="progPieChart" class="h-64"></canvas></div></div>
                 </div>
             </div>
         </div>
 
-        <!-- View: VERIFIKASI LPJ (Khusus Dinas) -->
-        <div id="view-verifikasi" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-4 h-full pb-24">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
-                <div><h2 class="text-2xl font-bold text-gray-800">Verifikasi LPJ & Surat Rekomendasi</h2><p class="text-sm text-gray-500">Cek laporan, berikan persetujuan berjenjang, dan lampirkan link Rekomendasi.</p></div>
-                <div class="relative w-full md:w-64"><i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i><input type="text" id="inp-search-verif" onkeyup="filterVerifikasiTable()" placeholder="Cari Sekolah..." class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-primary focus:border-primary"></div>
+        <!-- VIEW: INPUT DATA -->
+        <div id="view-input-data" class="app-view hidden p-6 max-w-7xl mx-auto w-full flex-col space-y-4 pb-24">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border"><h2 class="text-2xl font-bold mb-4 border-b pb-2" id="title-form-aset">Input Data Realisasi</h2><div class="flex bg-gray-100 p-1.5 rounded-xl mb-6 gap-1"><button id="tab-inp-pegawai" onclick="switchInputTab('pegawai')" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500">Pegawai</button><button id="tab-inp-barjas" onclick="switchInputTab('barjas')" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500">Barang & Jasa</button><button id="tab-inp-modal" onclick="switchInputTab('modal')" class="flex-1 py-2 text-sm font-bold rounded-lg text-gray-500">Modal</button></div><form id="form-input-aset" class="grid grid-cols-1 md:grid-cols-3 gap-6" onsubmit="saveAsetData(event)"><div class="space-y-4"><h4 class="font-bold border-b pb-1">1. Dasar Transaksi</h4><div><label id="lbl-penyedia" class="text-xs font-bold">Penyedia</label><input type="text" id="inp-penyedia" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div id="group-dasar-modal" class="space-y-4"><div><label class="text-xs font-bold">No SP</label><input type="text" id="inp-no-sp" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label class="text-xs font-bold">Tgl SP</label><input type="date" id="inp-tgl-sp" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div></div></div><div class="space-y-4"><h4 class="font-bold border-b pb-1">2. Uraian</h4><div id="group-rekening"><label class="text-xs font-bold">Rekening</label><select id="inp-rekening" onchange="updateKodefikasi()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"><option value="">-- Pilih --</option><option value="Belanja Modal Peralatan & Mesin BOS">Peralatan</option><option value="Belanja Modal Aset Tetap Lainnya BOS">Aset Lain</option></select></div><div><label class="text-xs font-bold">Kodefikasi</label><input type="text" id="inp-kodefikasi" readonly class="w-full px-3 py-2 border bg-gray-50 rounded-lg text-sm font-bold"></div><div><label id="lbl-uraian" class="text-xs font-bold">Uraian</label><textarea id="inp-uraian" required rows="2" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></textarea></div><div id="container-merek"><label class="text-xs font-bold">Merek</label><input type="text" id="inp-merek" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div class="grid grid-cols-2 gap-3"><div><label id="lbl-qty" class="text-xs font-bold">Volume</label><input type="number" id="inp-qty" required oninput="calculateTotalHarga()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label class="text-xs font-bold">Satuan</label><select id="inp-satuan" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"><option value="Unit">Unit</option><option value="Bulan">Bulan</option><option value="Paket">Paket</option><option value="Buah">Buah</option><option value="OB">OB</option></select></div></div></div><div class="space-y-4"><h4 class="font-bold border-b pb-1">3. Harga & Dokumen</h4><div><label class="text-xs font-bold">Harga Satuan (Rp)</label><input type="text" inputmode="numeric" id="inp-harga" required oninput="formatInputUang(this); calculateTotalHarga()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100"><p class="text-xs font-bold text-emerald-800">Jumlah Total</p><p class="text-xl font-bold text-secondary" id="txt-total-harga">Rp 0</p></div><div id="container-no-bast"><label id="lbl-no-bast" class="text-xs font-bold">No Kuitansi/BAST</label><input type="text" id="inp-no-bast" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label id="lbl-tgl-bast" class="text-xs font-bold">Tgl Kuitansi (Penentu Tahap)</label><input type="date" id="inp-tgl-bast" required onchange="updateInfoSisaPagu()" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div id="group-spv-modal" class="space-y-4 pt-2"><div><label class="text-xs font-bold">No SPV</label><input type="text" id="inp-no-spv" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label class="text-xs font-bold">Tgl SPV</label><input type="date" id="inp-tgl-spv" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div></div></div><div class="md:col-span-3 border-t pt-4 flex justify-between items-center"><div id="info-sisa-pagu" class="text-sm bg-gray-50 px-4 py-2 rounded-lg border">Sisa Anggaran: -</div><div><button type="button" id="btn-batal-aset" onclick="switchView('view-data-aset')" class="hidden px-6 py-2 rounded-lg font-bold bg-gray-200 mr-2">Batal</button><button type="submit" id="btn-submit-aset" class="bg-secondary text-white px-8 py-2 rounded-lg font-bold">Simpan</button></div></div></form></div>
+        </div>
+
+        <!-- VIEW: TAUTAN DOKUMEN & LPJ -->
+        <div id="view-upload" class="app-view hidden p-6 max-w-7xl mx-auto w-full flex-col space-y-4 pb-24">
+            <h2 class="text-2xl font-bold">Tautan Dokumen Pendukung</h2><p class="text-sm text-gray-500">Tautkan Kuitansi/BAST/LPJ Anda dari G-Drive.</p>
+            <div class="flex bg-gray-100 p-1 rounded-lg max-w-sm mb-2"><button id="tab-up-1" onclick="switchUploadTahap('1')" class="flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary">Tahap 1</button><button id="tab-up-2" onclick="switchUploadTahap('2')" class="flex-1 py-2 text-sm font-bold rounded-md text-gray-500">Tahap 2</button></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Pegawai -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border text-center"><div class="w-12 h-12 bg-amber-50 text-amber-500 rounded-full mx-auto flex justify-center items-center mb-2"><i class="fa-solid fa-users"></i></div><h3 class="font-bold text-sm">Pegawai</h3><p class="text-[10px] mb-4" id="status-pegawai">Belum ada link</p><div id="container-upload-pegawai" class="border-2 border-dashed rounded-xl p-4 bg-gray-50 mb-4"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><input type="url" id="link-pegawai" class="w-full text-center px-2 py-1.5 border rounded text-xs outline-none" placeholder="Link G-Drive..."></div><button id="btn-upload-pegawai" onclick="uploadDokumenUrl('pegawai')" class="w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-bold mb-1">Simpan Link</button><button id="btn-view-pegawai" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-bold mb-1">Buka Link</button></div>
+                <!-- Barjas -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border text-center"><div class="w-12 h-12 bg-purple-50 text-purple-500 rounded-full mx-auto flex justify-center items-center mb-2"><i class="fa-solid fa-box-open"></i></div><h3 class="font-bold text-sm">Barjas</h3><p class="text-[10px] mb-4" id="status-barjas">Belum ada link</p><div id="container-upload-barjas" class="border-2 border-dashed rounded-xl p-4 bg-gray-50 mb-4"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><input type="url" id="link-barjas" class="w-full text-center px-2 py-1.5 border rounded text-xs outline-none" placeholder="Link G-Drive..."></div><button id="btn-upload-barjas" onclick="uploadDokumenUrl('barjas')" class="w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-bold mb-1">Simpan Link</button><button id="btn-view-barjas" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-bold mb-1">Buka Link</button></div>
+                <!-- Alat -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border text-center"><div class="w-12 h-12 bg-sky-50 text-sky-500 rounded-full mx-auto flex justify-center items-center mb-2"><i class="fa-solid fa-computer"></i></div><h3 class="font-bold text-sm">Peralatan</h3><p class="text-[10px] mb-4" id="status-peralatan">Belum ada link</p><div id="container-upload-peralatan" class="border-2 border-dashed rounded-xl p-4 bg-gray-50 mb-4"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><input type="url" id="link-peralatan" class="w-full text-center px-2 py-1.5 border rounded text-xs outline-none" placeholder="Link G-Drive..."></div><button id="btn-upload-peralatan" onclick="uploadDokumenUrl('peralatan')" class="w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-bold mb-1">Simpan Link</button><button id="btn-view-peralatan" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-bold mb-1">Buka Link</button></div>
+                <!-- Aset -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border text-center"><div class="w-12 h-12 bg-emerald-50 text-emerald-500 rounded-full mx-auto flex justify-center items-center mb-2"><i class="fa-solid fa-book"></i></div><h3 class="font-bold text-sm">Aset Lain</h3><p class="text-[10px] mb-4" id="status-aset">Belum ada link</p><div id="container-upload-aset" class="border-2 border-dashed rounded-xl p-4 bg-gray-50 mb-4"><i class="fa-solid fa-link text-2xl text-gray-400 mb-2"></i><input type="url" id="link-aset" class="w-full text-center px-2 py-1.5 border rounded text-xs outline-none" placeholder="Link G-Drive..."></div><button id="btn-upload-aset" onclick="uploadDokumenUrl('aset')" class="w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-bold mb-1">Simpan Link</button><button id="btn-view-aset" class="hidden w-full bg-indigo-600 text-white py-2 rounded-lg text-xs font-bold mb-1">Buka Link</button></div>
             </div>
             
-            <div class="flex bg-gray-100 p-1 rounded-lg w-full max-w-sm shadow-inner mb-2">
-                <button id="tab-verif-1" onclick="switchVerifikasiTahap('1')" class="flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all">Tahap 1</button>
-                <button id="tab-verif-2" onclick="switchVerifikasiTahap('2')" class="flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all">Tahap 2</button>
-            </div>
-
-            <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px]">
-                <div class="overflow-x-auto flex-1">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b">
-                            <tr>
-                                <th class="py-3 px-4 font-semibold">NPSN</th><th class="py-3 px-4 font-semibold">Nama Sekolah</th>
-                                <th class="py-3 px-4 font-semibold text-center">Link LPJ</th><th class="py-3 px-4 font-semibold text-center">Status Laporan</th>
-                                <th class="py-3 px-4 font-semibold text-center bg-indigo-50 border-l border-r border-indigo-100">Aksi Persetujuan</th>
-                                <th class="py-3 px-4 font-semibold text-center">Link Surat Rekomendasi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="table-body-verifikasi" class="divide-y divide-gray-100">
-                            <tr><td colspan="6" class="text-center py-8 text-gray-500">Memuat data verifikasi...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <!-- LPJ & REKOMENDASI -->
+            <div class="mt-6 bg-white p-6 rounded-2xl shadow-sm border w-full lg:w-3/4 mx-auto"><h3 class="font-bold text-lg mb-4 border-b pb-2"><i class="fa-solid fa-file-signature text-primary mr-2"></i> Laporan Pertanggungjawaban (LPJ)</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><p class="text-sm font-semibold mb-2">Tautan Dokumen LPJ</p><div id="container-upload-lpj" class="flex flex-col gap-2"><input type="url" id="link-lpj" class="w-full px-3 py-2 border rounded-lg text-sm outline-none" placeholder="Tempel Link LPJ G-Drive..."><button id="btn-upload-lpj" onclick="uploadDokumenUrl('lpj')" class="w-full bg-primary text-white py-2 rounded-lg text-sm font-bold">Kirim LPJ untuk Verifikasi</button></div><button id="btn-view-lpj" class="hidden w-full bg-white border-2 border-indigo-100 text-indigo-600 py-2 rounded-lg text-sm font-bold mt-2">Buka Link LPJ Tersimpan</button><div class="mt-4 flex items-center gap-2"><span class="text-xs font-bold">Status:</span><span id="status-lpj-badge" class="px-2.5 py-1 rounded bg-gray-100 text-xs font-bold">Belum Kirim</span></div></div><div class="md:border-l md:pl-6"><p class="text-sm font-semibold mb-2">Surat Rekomendasi Pencairan</p><p class="text-xs text-gray-500 mb-4">Akan muncul otomatis setelah disetujui Manager BOS.</p><a id="btn-dl-rekom" href="#" target="_blank" class="hidden w-full bg-emerald-500 text-white text-center py-2.5 rounded-lg text-sm font-bold">Download Rekomendasi</a><p id="lbl-no-rekom" class="text-xs text-red-400 font-medium">Belum tersedia</p></div></div></div>
         </div>
 
-        <!-- View: PENGATURAN (Ubah Password) -->
-        <div id="view-pengaturan" class="app-view hidden p-4 md:p-6 max-w-lg mx-auto w-full flex-col space-y-6 pb-24">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 w-full mt-6">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center"><i class="fa-solid fa-key text-primary mr-2"></i>Ubah Password</h2>
-                <p class="text-sm text-gray-500 text-center mb-6">Ganti kata sandi Anda secara berkala untuk menjaga keamanan akun.</p>
-                
-                <form id="form-ubah-pass" class="space-y-4" onsubmit="submitUbahPassword(event)">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Password Lama</label>
-                        <input type="password" id="inp-old-pass" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Password Baru</label>
-                        <input type="password" id="inp-new-pass" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-700 mb-1">Konfirmasi Password Baru</label>
-                        <input type="password" id="inp-conf-pass" required class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary focus:border-primary outline-none">
-                    </div>
-                    <button type="submit" class="w-full bg-primary hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-bold shadow-md shadow-indigo-200 transition-all mt-4">Simpan Password Baru</button>
-                </form>
-            </div>
-        </div>
+        <!-- VIEW: VERIFIKASI LPJ (DINAS) -->
+        <div id="view-verifikasi" class="app-view hidden p-6 max-w-7xl mx-auto w-full flex-col space-y-4 pb-24"><div class="flex justify-between items-center mb-2"><div><h2 class="text-2xl font-bold">Verifikasi LPJ</h2></div><input type="text" id="inp-search-verif" onkeyup="filterVerifikasiTable()" placeholder="Cari Sekolah..." class="px-4 py-2 border rounded-lg outline-none text-sm w-64"></div><div class="flex bg-gray-100 p-1 rounded-lg w-max mb-2"><button id="tab-verif-1" onclick="switchVerifikasiTahap('1')" class="px-4 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm">Tahap 1</button><button id="tab-verif-2" onclick="switchVerifikasiTahap('2')" class="px-4 py-2 text-sm font-bold rounded-md text-gray-500">Tahap 2</button></div><div class="flex-1 bg-white border rounded-xl overflow-hidden flex flex-col"><div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="bg-gray-50"><tr><th class="py-3 px-4">NPSN</th><th class="py-3 px-4">Nama Sekolah</th><th class="py-3 px-4 text-center">LPJ</th><th class="py-3 px-4 text-center">Status</th><th class="py-3 px-4 text-center">Aksi Persetujuan</th><th class="py-3 px-4 text-center">Rekomendasi</th></tr></thead><tbody id="table-body-verifikasi"></tbody></table></div></div></div>
 
-        <!-- View: Unduh -->
-        <div id="view-unduh" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24"> 
-            <div class="mb-2"><h2 class="text-2xl font-bold text-gray-800">Unduh Laporan & Data <span class="t-label-tahap text-lg font-normal text-gray-500 ml-2"></span></h2></div> 
-            
-            <div id="panel-unduh-dinas" class="hidden grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between card-3d float-delay-1"><div><div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-inner"><i class="fa-solid fa-database"></i></div><h3 class="font-bold text-gray-800 text-lg mb-2">Data Keseluruhan</h3><p class="text-xs text-gray-500 mb-4">Unduh seluruh rekapan data aset dari semua sekolah dan kecamatan.</p></div><button onclick="downloadExcel('all')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-md shadow-indigo-200"><i class="fa-solid fa-download mr-1"></i> Unduh Excel</button></div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between card-3d float-delay-2"><div><div class="w-14 h-14 bg-sky-50 text-sky-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-inner"><i class="fa-solid fa-map-location-dot"></i></div><h3 class="font-bold text-gray-800 text-lg mb-2">Per Kecamatan</h3><p class="text-xs text-gray-500 mb-3">Pilih kecamatan untuk mengunduh data spesifik.</p><select id="select-unduh-kecamatan" class="w-full px-3 py-2 mb-4 border border-gray-300 rounded-lg text-sm focus:ring-sky-500 focus:border-sky-500 outline-none"><option value="">-- Pilih Kecamatan --</option><option value="Banawa">Banawa</option><option value="Banawa Tengah">Banawa Tengah</option><option value="Banawa Selatan">Banawa Selatan</option><option value="Rio Pakava">Rio Pakava</option><option value="Pinembani">Pinembani</option><option value="Tanantovea">Tanantovea</option><option value="Labuan">Labuan</option><option value="Sindue">Sindue</option><option value="Sindue Tombusabora">Sindue Tombusabora</option><option value="Sindue Tobata">Sindue Tobata</option><option value="Sirenja">Sirenja</option><option value="Balaesang">Balaesang</option><option value="Balaesang Tanjung">Balaesang Tanjung</option><option value="Dampelas">Dampelas</option><option value="Sojol">Sojol</option><option value="Sojol Utara">Sojol Utara</option><option value="Lainnya">Lainnya</option></select></div><button onclick="downloadExcel('kecamatan')" class="w-full bg-sky-500 hover:bg-sky-600 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-md shadow-sky-200"><i class="fa-solid fa-download mr-1"></i> Unduh Excel</button></div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between card-3d float-delay-3"><div><div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-inner"><i class="fa-solid fa-school"></i></div><h3 class="font-bold text-gray-800 text-lg mb-2">Per Sekolah</h3><p class="text-xs text-gray-500 mb-3">Cari sekolah yang ingin diunduh.</p><div class="relative w-full mb-4 z-[60]"><i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i><input type="text" id="inp-unduh-sekolah" placeholder="NPSN / Nama..." class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500 outline-none" onkeyup="filterUnduhSekolah()" autocomplete="off"><ul id="list-unduh-sekolah" class="absolute z-50 w-full bg-white border border-gray-200 rounded-lg mt-1 shadow-2xl max-h-40 overflow-y-auto hidden text-xs"></ul></div><input type="hidden" id="selected-unduh-npsn"></div><button onclick="downloadExcel('sekolah')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-lg text-sm font-semibold transition-colors shadow-md shadow-emerald-200"><i class="fa-solid fa-download mr-1"></i> Unduh Excel</button></div>
-            </div>
-            <div id="panel-unduh-sekolah" class="hidden">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 card-3d float-delay-1 max-w-sm"><div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner"><i class="fa-solid fa-file-excel"></i></div><h3 class="font-bold text-gray-800 text-xl mb-2">Data Realisasi Aset</h3><p class="text-sm text-gray-500 mb-6">Unduh data realisasi belanja sekolah Anda dalam format Excel (.xlsx).</p><button onclick="downloadExcel('all')" class="w-full bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg shadow-green-200 transition-all"><i class="fa-solid fa-download mr-2"></i> Unduh Data Excel</button></div>
-            </div>
-        </div>
+        <!-- VIEW: PENGATURAN -->
+        <div id="view-pengaturan" class="app-view hidden p-6 max-w-lg mx-auto w-full flex-col space-y-4 pb-24"><div class="bg-white p-6 rounded-2xl shadow-sm border w-full mt-6"><h2 class="text-2xl font-bold text-center mb-6">Ubah Password</h2><form id="form-ubah-pass" class="space-y-4" onsubmit="submitUbahPassword(event)"><div><label class="block text-xs font-bold mb-1">Password Lama</label><input type="password" id="inp-old-pass" required class="w-full px-4 py-2 border rounded-lg text-sm outline-none"></div><div><label class="block text-xs font-bold mb-1">Password Baru</label><input type="password" id="inp-new-pass" required class="w-full px-4 py-2 border rounded-lg text-sm outline-none"></div><div><label class="block text-xs font-bold mb-1">Konfirmasi</label><input type="password" id="inp-conf-pass" required class="w-full px-4 py-2 border rounded-lg text-sm outline-none"></div><button type="submit" class="w-full bg-primary text-white py-3 rounded-xl text-sm font-bold mt-4">Simpan Sandi Baru</button></form></div></div>
 
-        <nav class="md:hidden mobile-bottom-nav">
-            <ul id="navMenuMobile" class="flex justify-around items-center w-full px-1"></ul>
-        </nav>
+        <!-- VIEW: UNDUH DATA -->
+        <div id="view-unduh" class="app-view hidden p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24"><h2 class="text-2xl font-bold">Unduh Data</h2><div id="panel-unduh-dinas" class="hidden grid-cols-1 md:grid-cols-3 gap-6"><div class="bg-white p-6 rounded-2xl shadow-sm border"><h3 class="font-bold text-lg mb-2">Semua Data</h3><button onclick="downloadExcel('all')" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-bold mt-4">Unduh Excel</button></div><div class="bg-white p-6 rounded-2xl shadow-sm border"><h3 class="font-bold text-lg mb-2">Per Kecamatan</h3><select id="select-unduh-kecamatan" class="w-full px-3 py-2 border rounded-lg text-sm mb-4 outline-none"><option value="">-- Pilih Kecamatan --</option><option value="Banawa">Banawa</option><option value="Sindue">Sindue</option><option value="Sirenja">Sirenja</option><option value="Lainnya">Lainnya (Pilih Bebas)</option></select><button onclick="downloadExcel('kecamatan')" class="w-full bg-sky-500 text-white py-2.5 rounded-lg font-bold">Unduh Excel</button></div><div class="bg-white p-6 rounded-2xl shadow-sm border"><h3 class="font-bold text-lg mb-2">Per Sekolah</h3><input type="text" id="inp-unduh-sekolah" placeholder="NPSN / Nama..." class="w-full px-3 py-2 border rounded-lg text-sm mb-4 outline-none" onkeyup="filterUnduhSekolah()"><ul id="list-unduh-sekolah" class="absolute z-50 w-full bg-white border rounded-lg hidden text-xs max-h-40 overflow-y-auto"></ul><input type="hidden" id="selected-unduh-npsn"><button onclick="downloadExcel('sekolah')" class="w-full bg-emerald-500 text-white py-2.5 rounded-lg font-bold">Unduh Excel</button></div></div><div id="panel-unduh-sekolah" class="hidden"><div class="bg-white p-6 rounded-2xl shadow-sm border max-w-sm"><h3 class="font-bold text-xl mb-4">Data Realisasi Aset</h3><button onclick="downloadExcel('all')" class="w-full bg-green-500 text-white py-3 rounded-xl font-bold">Unduh Data Excel</button></div></div></div>
+
+        <!-- MODALS -->
+        <div id="modal-admin" class="fixed inset-0 z-[50] bg-gray-900/50 backdrop-blur-sm hidden justify-center items-center p-4"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col"><div class="px-6 py-4 border-b bg-gray-50 flex justify-between"><h3 class="text-lg font-bold" id="modalAdminTitle">Tambah Admin</h3><button onclick="closeModalAdmin()"><i class="fa-solid fa-xmark"></i></button></div><div class="p-6"><form id="form-admin" class="space-y-4" onsubmit="saveAdmin(event)"><div><label class="block text-xs font-semibold mb-1">Username</label><input type="text" id="inp-adm-user" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label class="block text-xs font-semibold mb-1">Nama Lengkap</label><input type="text" id="inp-adm-nama" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label class="block text-xs font-semibold mb-1">Level Akses (Bidang)</label><select id="inp-adm-level" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"><option value="superadmin">Super Admin (Semua)</option><option value="admin_paud">Admin PAUD (PAUD/TK/KB)</option><option value="admin_sd">Admin SD</option><option value="admin_smp">Admin SMP</option></select></div><div><label class="block text-xs font-semibold mb-1">Password</label><input type="password" id="inp-adm-pass" class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div class="pt-4 border-t flex justify-end gap-3"><button type="button" onclick="closeModalAdmin()" class="px-4 py-2 rounded-lg text-sm font-semibold">Batal</button><button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-semibold">Simpan</button></div></form></div></div></div>
+        <div id="modal-user" class="fixed inset-0 z-[50] bg-gray-900/50 backdrop-blur-sm hidden justify-center items-center p-4"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]"><div class="px-6 py-4 border-b bg-gray-50 flex justify-between"><h3 class="text-lg font-bold" id="modalUserTitle">User Sekolah</h3><button onclick="closeModalUser()"><i class="fa-solid fa-xmark"></i></button></div><div class="p-6 overflow-y-auto"><form id="form-user" class="grid grid-cols-1 md:grid-cols-2 gap-5" onsubmit="saveUser(event)"><div><label class="block text-xs font-semibold mb-1">NPSN</label><input type="number" id="inp-npsn" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label class="block text-xs font-semibold mb-1">Nama Sekolah</label><input type="text" id="inp-nama" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"></div><div><label class="block text-xs font-semibold mb-1">Jenjang</label><select id="inp-jenjang" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"><option value="">-- Pilih --</option><option value="PAUD">PAUD</option><option value="TK">TK</option><option value="KB">KB</option><option value="PKBM">PKBM</option><option value="SD">SD</option><option value="SMP">SMP</option></select></div><div><label class="block text-xs font-semibold mb-1">Kecamatan</label><select id="inp-kecamatan" required class="w-full px-3 py-2 border rounded-lg text-sm outline-none"><option value="Banawa">Banawa</option><option value="Sindue">Sindue</option><option value="Sirenja">Sirenja</option><option value="Lainnya">Lainnya</option></select></div><div class="md:col-span-2"><label class="block text-xs font-semibold mb-1 text-primary">Total Pagu (Rp)</label><input type="text" inputmode="numeric" id="inp-total-pagu-admin" required oninput="formatInputUang(this)" class="w-full px-4 py-3 border border-indigo-200 bg-indigo-50 rounded-lg font-bold text-lg text-primary outline-none"></div><div class="md:col-span-2 hidden" id="container-reset-lock"><label class="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-lg border cursor-pointer"><input type="checkbox" id="inp-reset-lock" class="w-4 h-4"><span><b>Reset Alokasi Pagu</b></span></label></div><div class="md:col-span-2"><label class="block text-xs font-semibold mb-1">Password</label><input type="password" id="inp-password" class="w-full px-3 py-2 border rounded-lg text-sm outline-none" placeholder="Kosongkan jika tidak ingin mengubah"></div></form></div><div class="px-6 py-4 border-t bg-gray-50 flex justify-end gap-3"><button onclick="closeModalUser()" class="px-4 py-2 rounded-lg text-sm font-semibold">Batal</button><button form="form-user" type="submit" class="bg-primary text-white px-6 py-2 rounded-lg text-sm font-bold">Simpan</button></div></div></div>
+        <div id="modal-distribusi-pagu" class="fixed inset-0 z-[50] bg-gray-900/95 backdrop-blur-md hidden justify-center items-center p-4"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[95vh]"><div class="px-6 py-5 bg-indigo-600 text-white"><h3 class="text-xl font-bold"><i class="fa-solid fa-lock mr-2"></i> Pagu Anggaran</h3></div><div class="p-6 overflow-y-auto"><div class="bg-gray-100 p-4 rounded-xl mb-6 text-center border"><label class="block text-xs font-bold text-gray-500 uppercase mb-2">Total Pagu Tersedia Rp</label><input type="text" id="inp-dist-total" readonly class="w-full max-w-sm mx-auto text-center text-3xl font-extrabold text-primary bg-gray-100 border rounded-xl py-2 cursor-not-allowed outline-none" value="0"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6"><div class="space-y-3 p-4 bg-amber-50 rounded-xl border border-amber-100"><label class="block text-xs font-bold text-amber-800">Pegawai (Rp)</label><input type="text" inputmode="numeric" id="dist-pegawai" class="w-full px-3 py-2 rounded font-bold outline-none" value="0" oninput="formatInputUang(this); calcDistribusi()"></div><div class="space-y-3 p-4 bg-purple-50 rounded-xl border border-purple-100"><label class="block text-xs font-bold text-purple-800">Barjas (Rp)</label><input type="text" inputmode="numeric" id="dist-barjas" class="w-full px-3 py-2 rounded font-bold outline-none" value="0" oninput="formatInputUang(this); calcDistribusi()"></div><div class="space-y-3 p-4 bg-sky-50 rounded-xl border border-sky-100"><label class="block text-xs font-bold text-sky-800">Peralatan (Rp)</label><input type="text" inputmode="numeric" id="dist-alat" class="w-full px-3 py-2 rounded font-bold outline-none" value="0" oninput="formatInputUang(this); calcDistribusi()"></div><div class="space-y-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100"><label class="block text-xs font-bold text-emerald-800">Aset Lain (Rp)</label><input type="text" inputmode="numeric" id="dist-aset" class="w-full px-3 py-2 rounded font-bold outline-none" value="0" oninput="formatInputUang(this); calcDistribusi()"></div></div><div class="flex justify-between bg-gray-50 p-4 rounded-xl border mb-6"><span class="text-sm font-bold">Sisa Belum Dialokasikan:</span><span class="text-xl font-bold text-red-500" id="lbl-dist-sisa">Rp 0</span></div><div class="border-t pt-4"><label class="block text-xs font-bold mb-2">No WhatsApp</label><input type="text" id="dist-nowa" class="w-full px-4 py-3 border rounded-lg text-sm outline-none"></div></div><div class="px-6 py-4 bg-gray-50 border-t flex flex-col gap-2"><button id="btn-dist-simpan" onclick="submitDistribusi()" disabled class="w-full bg-gray-400 text-white py-3 rounded-xl text-sm font-bold cursor-not-allowed">Simpan & Kunci</button><button onclick="logout()" class="w-full bg-white text-red-500 py-2.5 rounded-xl text-sm font-bold border border-red-200 mt-1">Kembali ke Login</button></div></div></div>
+
+        <nav class="md:hidden mobile-bottom-nav"><ul id="navMenuMobile" class="flex justify-around items-center w-full px-1"></ul></nav>
     </main>
 
-    <!-- FUNGSI UTAMA JAVASCRIPT -->
+    <!-- ======================================================= -->
+    <!-- MULAI SCRIPT UTAMA - JANGAN DIUBAH (Kecuali API_URL)    -->
+    <!-- ======================================================= -->
     <script>
-        let currentUser = null; let currentRole = null; let currentAsetData = []; let currentUsersData = []; let currentAdminsData = []; let allDokumenUrls = null; let currentVerifData = [];
-        let barChartInstance = null; let pieChartInstance = null; let progBarChartInst = null; let progPieChartInst = null;
-        let editModeUser = false; let editModeAsetId = null; let editModeAdmin = false;
-        let activeTahap = 'all'; let uploadTahap = '1'; let verifTahap = '1'; let currentInputTab = 'modal'; let currentDataTab = 'modal'; 
+        // MASUKKAN LINK SCRIPT ANDA DI BAWAH INI
+        const API_URL = "https://script.google.com/macros/s/AKfycbyzt4b0b4fxkErt895k9pcycDp6stOTWTv9uZ5NkGs6pdXg9R0RUD5tZUbVjDinUK4O/exec"; 
         
-        async function handleLogin(e, role) {
-            e.preventDefault();
-            const username = role === 'dinas' ? document.getElementById('inp-dinas-user').value : document.getElementById('inp-sek-npsn').value;
-            const password = role === 'dinas' ? document.getElementById('inp-dinas-pass').value : document.getElementById('inp-sek-pass').value;
-            showLoading('Mengecek Identitas...');
-            try {
-                const res = await apiCall('verifyLogin', { username: username, password: password, role: role });
-                hideLoading();
-                if (res.success) {
-                    currentUser = res.data; currentRole = role;
-                    localStorage.setItem('simbos_user', JSON.stringify(currentUser)); localStorage.setItem('simbos_role', currentRole);
-                    Swal.fire({ icon: 'success', title: 'Berhasil', text: `Selamat datang, ${currentUser.nama || currentUser.nama_sekolah}`, timer: 1500, showConfirmButton: false }).then(() => {
-                        document.getElementById('loginPage').classList.add('hidden'); document.getElementById('loginPage').classList.remove('flex');
-                        document.getElementById('dashboardPage').classList.remove('hidden'); document.getElementById('dashboardPage').classList.add('flex');
-                        setupDashboard(role);
-                    });
-                } else { Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: res.message }); }
-            } catch (error) { hideLoading(); Swal.fire({ icon: 'error', title: 'Error', text: error.message }); }
-        }
-
-        function renderTableUsers(data) { 
-            const tbody = document.getElementById('table-body-users'); 
-            
-            window.realisasiT1 = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 };
-            currentAsetData.forEach(item => {
-                if(getTahapFromDate(item.tgl_bast) === '1') {
-                    let hrg = parseInt(item.total_harga) || 0; let kod = item.kodefikasi || '';
-                    if(kod === 'BELANJA PEGAWAI') window.realisasiT1.pegawai += hrg;
-                    else if(kod === 'BELANJA BARANG DAN JASA') window.realisasiT1.barjas += hrg;
-                    else if(kod === 'PERALATAN DAN MESIN') window.realisasiT1.alat += hrg;
-                    else if(kod === 'ASET TETAP LAIN') window.realisasiT1.aset += hrg;
-                }
+        let currentUser=null;let currentRole=null;let currentAsetData=[];let currentUsersData=[];let currentAdminsData=[];let allDokumenUrls=null;let currentVerifData=[];let barChartInstance=null;let pieChartInstance=null;let progBarChartInst=null;let progPieChartInst=null;let editModeUser=false;let editModeAsetId=null;let editModeAdmin=false;let activeTahap='all';let uploadTahap='1';let verifTahap='1';let currentInputTab='modal';let currentDataTab='modal';let globalPagu={total:0,pegawai:0,barjas:0,alat:0,aset:0};let globalRealisasi={total:0,pegawai:0,barjas:0,alat:0,aset:0};
+        
+        async function apiCall(action, payload = {}) {
+            return new Promise((resolve, reject) => {
+                if (!API_URL || API_URL === "PASTE URL DISINI") { reject(new Error("URL AppScript belum dimasukkan di dalam file HTML.")); return; }
+                fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, payload: payload }) })
+                .then(res => res.json()).then(data => resolve(data)).catch(err => { console.error(err); reject(new Error("Koneksi ke server gagal.")); });
             });
-            window.realisasiT1.total = window.realisasiT1.pegawai + window.realisasiT1.barjas + window.realisasiT1.alat + window.realisasiT1.aset;
-
-            if(!data || data.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-gray-500">Tidak ada sekolah yang ditemukan untuk bidang ini.</td></tr>'; 
-                if(currentRole === 'dinas') { 
-                    globalPagu = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 }; 
-                    globalRealisasi = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 };
-                    updateDashboardCardsUI(); updateCharts(0, 0, 0, 0, []); 
-                } 
-                return; 
-            } 
-            
-            let html = ''; 
-            if(currentRole === 'dinas') { globalPagu = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 }; }
-            
-            data.forEach(item => { 
-                if(currentRole === 'dinas') { 
-                    globalPagu.total += parseInt(item.totalPagu)||0; globalPagu.pegawai += parseInt(item.paguPegawai)||0; 
-                    globalPagu.barjas += parseInt(item.paguBarjas)||0; globalPagu.alat += parseInt(item.paguAlat)||0; globalPagu.aset += parseInt(item.paguAset)||0; 
-                } 
-                
-                let badgeLock = item.isLocked ? '<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-lock mr-1"></i>Terkunci</span>' : '<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold"><i class="fa-solid fa-unlock mr-1"></i>Belum Sebar</span>';
-                
-                let bJ = item.jenjang;
-                let bgJenjang = 'bg-gray-100 text-gray-700';
-                if(bJ === 'SD') bgJenjang = 'bg-red-100 text-red-700';
-                else if(bJ === 'SMP') bgJenjang = 'bg-blue-100 text-blue-700';
-                else if(bJ === 'PAUD' || bJ === 'TK' || bJ === 'KB' || bJ === 'PKBM') bgJenjang = 'bg-pink-100 text-pink-700';
-
-                html += `<tr class="hover:bg-gray-50 transition-colors border-b"><td class="py-3 px-4">${item.npsn}</td><td class="py-3 px-4 font-medium text-gray-800">${item.nama}</td><td class="py-3 px-4"><span class="${bgJenjang} px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">${item.jenjang}</span></td><td class="py-3 px-4">${item.kecamatan}</td><td class="py-3 px-4 text-right font-medium text-indigo-600">Rp ${parseInt(item.totalPagu).toLocaleString('id-ID')}</td><td class="py-3 px-4 text-center">${badgeLock}</td><td class="py-3 px-4 text-center"><button onclick="editUser('${item.npsn}')" class="text-blue-500 hover:bg-blue-50 p-1.5 rounded" title="Edit Pagu Keseluruhan / Reset Kunci"><i class="fa-solid fa-pen-to-square"></i></button></td></tr>`; 
-            }); 
-            tbody.innerHTML = html; 
-            
-            if(currentRole === 'dinas') { 
-                let rPeg = 0, rBar = 0, rAla = 0, rAse = 0;
-                let dataDash = currentAsetData;
-                if(activeTahap !== 'all') { dataDash = currentAsetData.filter(a => getTahapFromDate(a.tgl_bast) === activeTahap); }
-                dataDash.forEach(a => {
-                    let hrg = parseInt(a.total_harga)||0; let kod = a.kodefikasi||'';
-                    if(kod.includes('PEGAWAI')) rPeg += hrg; else if(kod.includes('BARANG DAN JASA')) rBar += hrg; else if(kod.includes('PERALATAN')) rAla += hrg; else if(kod.includes('ASET TETAP')) rAse += hrg;
-                });
-                globalRealisasi.pegawai = rPeg; globalRealisasi.barjas = rBar; globalRealisasi.alat = rAla; globalRealisasi.aset = rAse; globalRealisasi.total = rPeg + rBar + rAla + rAse;
-                
-                updateDashboardCardsUI(); updateCharts(rPeg, rBar, rAla, rAse, dataDash); 
-            } 
         }
-
-        async function loadDataUsers() { 
-            try { 
-                const res = await apiCall('getDataUsers'); 
-                if(res.success) { 
-                    let filteredUsers = res.data;
-                    if(currentRole === 'dinas') {
-                        filteredUsers = filteredUsers.filter(u => hasAccessToJenjang(currentUser.level, u.jenjang));
-                    }
-                    currentUsersData = filteredUsers;
-                    renderTableUsers(currentUsersData); 
-                } 
-            } catch(err) { console.error(err); } 
-        }
-
-        async function loadDataAset() { 
-            try { 
-                const res = await apiCall('getDataAset', {role: currentRole, npsn: currentUser.npsn}); 
-                if(res.success) { 
-                    let filteredAset = res.data;
-                    if (currentRole === 'dinas') {
-                        filteredAset = filteredAset.filter(a => hasAccessToJenjang(currentUser.level, a.jenjang));
-                    }
-                    currentAsetData = filteredAset; 
-                    renderTableAset(currentAsetData); 
-                } 
-            } catch(err) { console.error(err); } 
-        }
-
-        async function loadDataVerifikasi() {
-            try { 
-                const res = await apiCall('getDataVerifikasi'); 
-                if(res.success) { 
-                    let vData = res.data;
-                    if (currentRole === 'dinas' && currentUser.level !== 'superadmin' && currentUser.level !== 'admin') {
-                        vData = vData.filter(v => currentUsersData.some(u => u.npsn.toString() === v.npsn.toString()));
-                    }
-                    currentVerifData = vData; 
-                    renderTableVerifikasi(currentVerifData); 
-                } 
-            } catch(err) { console.error(err); }
-        }
-
-        async function refreshData() { 
-            const iconRefresh = document.getElementById('icon-refresh'); const iconRefreshMobile = document.getElementById('icon-refresh-mobile'); 
-            if(iconRefresh) iconRefresh.classList.add('fa-spin'); if(iconRefreshMobile) iconRefreshMobile.classList.add('fa-spin'); 
-            showLoading('Menyegarkan Data...'); 
-            try { 
-                if (currentRole === 'dinas') { 
-                    await Promise.all([loadDataUsers(), loadDataAset()]); 
-                    if (currentUser && currentUser.level === 'superadmin') { await loadDataAdmins(); } 
-                    await loadDataVerifikasi(); 
-                } else { 
-                    await Promise.all([loadDataAset(), loadDokumenUrls()]); 
-                } 
-                const npsnProg = document.getElementById('prog_npsn_selected') ? document.getElementById('prog_npsn_selected').value : null; 
-                if(npsnProg && document.getElementById('view-progres').classList.contains('block')) { selectSchoolProgres(npsnProg); } 
-                
-                hideLoading(); 
-                const Toast = Swal.mixin({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, timerProgressBar: true }); 
-                Toast.fire({ icon: 'success', title: 'Data berhasil diperbarui!' }); 
-            } catch (err) { 
-                hideLoading(); Swal.fire('Error', 'Gagal menyegarkan data: ' + err.message, 'error'); 
-            } finally { 
-                if(iconRefresh) setTimeout(() => iconRefresh.classList.remove('fa-spin'), 500); 
-                if(iconRefreshMobile) setTimeout(() => iconRefreshMobile.classList.remove('fa-spin'), 500); 
-            } 
-        }
-
-        function renderTableAdmins(data) { 
-            currentAdminsData = data || []; const tbody = document.getElementById('table-body-admins'); if(!data || data.length === 0) return; let html = ''; 
-            data.forEach(item => { 
-                let badge = '';
-                if(item.level === 'superadmin') badge = '<span class="bg-indigo-100 text-indigo-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Super Admin</span>';
-                else if(item.level === 'admin_paud') badge = '<span class="bg-pink-100 text-pink-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Admin PAUD</span>';
-                else if(item.level === 'admin_sd') badge = '<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Admin SD</span>';
-                else if(item.level === 'admin_smp') badge = '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Admin SMP</span>';
-                else badge = '<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Admin Biasa</span>';
-                
-                let btnHapus = item.level === 'superadmin' ? '' : `<button onclick="deleteAdmin('${item.username}')" class="text-red-500 hover:bg-red-50 p-1.5 rounded transition-colors" title="Hapus Akun"><i class="fa-solid fa-trash"></i></button>`; 
-                html += `<tr class="hover:bg-gray-50 transition-colors border-b"><td class="py-3 px-4 font-semibold text-gray-700">${item.username}</td><td class="py-3 px-4 font-medium text-gray-800">${item.nama}</td><td class="py-3 px-4">${badge}</td><td class="py-3 px-4 text-center"><button onclick="editAdmin('${item.username}')" class="text-blue-500 hover:bg-blue-50 p-1.5 rounded transition-colors mr-1" title="Edit Akun"><i class="fa-solid fa-pen-to-square"></i></button>${btnHapus}</td></tr>`; 
-            }); 
-            tbody.innerHTML = html; 
-        }
-
-        function updateDashboardCardsUI() { let pTot = globalPagu.total; let pPeg = globalPagu.pegawai; let pBar = globalPagu.barjas; let pAla = globalPagu.alat; let pAse = globalPagu.aset; if (activeTahap === '2') { let t1 = window.realisasiT1 || { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 }; pTot = pTot - t1.total; pPeg = pPeg - t1.pegawai; pBar = pBar - t1.barjas; pAla = pAla - t1.alat; pAse = pAse - t1.aset; } let pMod = pAla + pAse; let pModUtuh = globalPagu.alat + globalPagu.aset; let rMod = globalRealisasi.alat + globalRealisasi.aset; safeSetText('dash-pagu-total', formatUang(pTot)); safeSetText('dash-pagu-pegawai', formatUang(pPeg)); safeSetText('dash-pagu-barjas', formatUang(pBar)); safeSetText('dash-pagu-modal', formatUang(pMod)); safeSetText('dash-pagu-total-utuh', formatUang(globalPagu.total)); safeSetText('dash-pagu-pegawai-utuh', formatUang(globalPagu.pegawai)); safeSetText('dash-pagu-barjas-utuh', formatUang(globalPagu.barjas)); safeSetText('dash-pagu-modal-utuh', formatUang(pModUtuh)); safeSetText('dash-rincian-alat', formatUang(pAla)); safeSetText('dash-rincian-aset', formatUang(pAse)); safeSetText('dash-real-total', formatUang(globalRealisasi.total)); safeSetText('dash-real-pegawai', formatUang(globalRealisasi.pegawai)); safeSetText('dash-real-barjas', formatUang(globalRealisasi.barjas)); safeSetText('dash-real-modal', formatUang(rMod)); safeSetText('dash-selisih-total', formatUang(pTot - globalRealisasi.total)); safeSetText('dash-selisih-pegawai', formatUang(pPeg - globalRealisasi.pegawai)); safeSetText('dash-selisih-barjas', formatUang(pBar - globalRealisasi.barjas)); safeSetText('dash-selisih-modal', formatUang(pMod - rMod)); }
-        function renderTableAset(data) { const tbody = document.getElementById('table-body-aset'); const thead = document.getElementById('thead-aset'); let actHead = currentRole === 'sekolah' ? `<th class="py-3 px-3 font-semibold text-center sticky right-0 bg-gray-50 shadow-[-4px_0_10px_rgba(0,0,0,0.05)]">Aksi</th>` : ''; let colNoSP = currentDataTab === 'pegawai' ? '' : `<th class="py-3 px-3 font-semibold">No. SP</th><th class="py-3 px-3 font-semibold">Tgl SP</th>`; let colMerek = currentDataTab === 'pegawai' ? '' : `<th class="py-3 px-3 font-semibold">Merek/Tipe</th>`; let colSPV = currentDataTab === 'modal' ? `<th class="py-3 px-3 font-semibold">No. SPV</th><th class="py-3 px-3 font-semibold">Tgl SPV</th>` : ''; let headerPenyedia = currentDataTab === 'pegawai' ? 'Penerima' : 'Penyedia'; let headerUraian = currentDataTab === 'pegawai' ? 'Uraian Kegiatan / Pembayaran' : 'Nama Barang/Uraian'; thead.innerHTML = `<tr><th class="py-3 px-3 font-semibold">NPSN</th><th class="py-3 px-3 font-semibold">Nama Sekolah</th><th class="py-3 px-3 font-semibold">Jenjang</th><th class="py-3 px-3 font-semibold">Kecamatan</th><th class="py-3 px-3 font-semibold">Tahap</th><th class="py-3 px-3 font-semibold">No Kuitansi/BAST</th><th class="py-3 px-3 font-semibold">Tgl Kuitansi/BAST</th>${colNoSP}<th class="py-3 px-3 font-semibold">${headerPenyedia}</th><th class="py-3 px-3 font-semibold">Rekening</th><th class="py-3 px-3 font-semibold">Kodefikasi</th><th class="py-3 px-3 font-semibold">${headerUraian}</th>${colMerek}<th class="py-3 px-3 font-semibold text-center">Satuan</th><th class="py-3 px-3 font-semibold text-center">Qty</th><th class="py-3 px-3 font-semibold text-right">Harga Satuan</th><th class="py-3 px-3 font-semibold text-right">Total Harga</th>${colSPV}${actHead}</tr>`; let dataForDashboard = data; if (activeTahap !== 'all') { dataForDashboard = data.filter(item => getTahapFromDate(item.tgl_bast) === activeTahap); } let dataForTable = dataForDashboard.filter(item => { let kod = item.kodefikasi || ''; if (currentDataTab === 'pegawai') return kod.includes('PEGAWAI'); if (currentDataTab === 'barjas') return kod.includes('BARANG DAN JASA'); if (currentDataTab === 'modal') return kod.includes('PERALATAN') || kod.includes('ASET TETAP'); return true; }); let colSpanCount = currentRole === 'sekolah' ? 20 : 19; if (currentDataTab === 'pegawai') colSpanCount -= 5; if (currentDataTab === 'barjas') colSpanCount -= 2; if(dataForTable.length === 0) { tbody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center py-6 text-gray-500">Belum ada data realisasi untuk kategori ini.</td></tr>`; return; } let html = ''; dataForTable.forEach(item => { let harga = parseInt(item.total_harga) || 0; let hargaSatuan = parseInt(item.harga_satuan) || 0; let itemTahap = getTahapFromDate(item.tgl_bast); let kod = item.kodefikasi || ''; let badgeColor = kod.includes('PEGAWAI') ? 'bg-amber-50 text-amber-600 border-amber-200' : (kod.includes('BARANG DAN JASA') ? 'bg-purple-50 text-purple-600 border-purple-200' : (kod.includes('PERALATAN') ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200')); let actTd = currentRole === 'sekolah' ? `<td class="py-2 px-3 text-center sticky right-0 bg-white shadow-[-4px_0_10px_rgba(0,0,0,0.05)]"><button onclick="editAset('${item.id}')" class="text-blue-500 hover:bg-blue-50 p-1.5 rounded"><i class="fa-solid fa-pen-to-square"></i></button></td>` : ''; let tdNoSP = currentDataTab === 'pegawai' ? '' : `<td class="py-2 px-3">${item.no_sp || '-'}</td><td class="py-2 px-3 whitespace-nowrap">${formatTglDisplay(item.tgl_sp)}</td>`; let tdMerek = currentDataTab === 'pegawai' ? '' : `<td class="py-2 px-3">${item.merek || '-'}</td>`; let tdSPV = currentDataTab === 'modal' ? `<td class="py-2 px-3">${item.no_spv || '-'}</td><td class="py-2 px-3 whitespace-nowrap">${formatTglDisplay(item.tgl_spv)}</td>` : ''; html += `<tr class="hover:bg-gray-50 transition-colors border-b text-xs"><td class="py-2 px-3">${item.npsn || '-'}</td><td class="py-2 px-3 font-medium">${item.nama_sekolah || '-'}</td><td class="py-2 px-3">${item.jenjang || '-'}</td><td class="py-2 px-3">${item.kecamatan || '-'}</td><td class="py-2 px-3 font-bold text-center"><span class="px-2 py-0.5 bg-indigo-50 text-primary rounded">Tahap ${itemTahap}</span></td><td class="py-2 px-3 font-medium text-gray-800">${item.no_bast || '-'}</td><td class="py-2 px-3 whitespace-nowrap font-medium text-gray-800">${formatTglDisplay(item.tgl_bast)}</td>${tdNoSP}<td class="py-2 px-3">${item.penyedia || '-'}</td><td class="py-2 px-3 max-w-[150px] truncate" title="${item.rekening}">${item.rekening || '-'}</td><td class="py-2 px-3"><span class="px-2 py-1 rounded-full border font-bold ${badgeColor}">${item.kodefikasi || '-'}</span></td><td class="py-2 px-3 max-w-[200px] truncate" title="${item.uraian}">${item.uraian || '-'}</td>${tdMerek}<td class="py-2 px-3 text-center">${item.satuan || '-'}</td><td class="py-2 px-3 text-center">${item.qty || '-'}</td><td class="py-2 px-3 text-right whitespace-nowrap">Rp ${hargaSatuan.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right font-medium text-gray-800 whitespace-nowrap">Rp ${harga.toLocaleString('id-ID')}</td>${tdSPV}${actTd}</tr>`; }); tbody.innerHTML = html; }
-        function renderCharts(role) { if(barChartInstance) barChartInstance.destroy(); if(pieChartInstance) pieChartInstance.destroy(); const isDinas = role === 'dinas'; if (isDinas) { safeSetText('titleBarChart', 'Progress Realisasi per Kecamatan (Jumlah Sekolah)'); safeSetText('titlePieChart', 'Proporsi Anggaran Terserap'); barChartInstance = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'Sudah Input', data: [], backgroundColor: '#4F46E5' }, { label: 'Belum Input', data: [], backgroundColor: '#E5E7EB' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { x: { stacked: true }, y: { stacked: true, ticks: { stepSize: 1, precision: 0 } } } } }); pieChartInstance = new Chart(document.getElementById('pieChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pegawai', 'Barjas', 'Peralatan & Mesin', 'Aset Tetap Lain'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#F59E0B', '#A855F7', '#0EA5E9', '#10B981'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'bottom' } } } }); } else { safeSetText('titleBarChart', 'Pagu vs Realisasi'); safeSetText('titlePieChart', 'Proporsi Realisasi (Berdasarkan Kategori)'); barChartInstance = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: ['Pegawai', 'Barjas', 'Peralatan', 'Aset Lain'], datasets: [{ label: 'Pagu Anggaran', data: [globalPagu.pegawai, globalPagu.barjas, globalPagu.alat, globalPagu.aset], backgroundColor: '#E5E7EB', borderRadius: 4 }, { label: 'Realisasi Terserap', data: [0, 0, 0, 0], backgroundColor: '#4F46E5', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } }); pieChartInstance = new Chart(document.getElementById('pieChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pegawai', 'Barjas', 'Peralatan', 'Aset Lain'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#F59E0B', '#A855F7', '#0EA5E9', '#10B981'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'right' } } } }); } }
-        function updateCharts(rPeg=0, rBar=0, rAla=0, rAse=0, dataArr) { if (currentRole === 'dinas') { if(pieChartInstance) { pieChartInstance.data.datasets[0].data = [globalRealisasi.pegawai, globalRealisasi.barjas, globalRealisasi.alat, globalRealisasi.aset]; pieChartInstance.update(); } if(barChartInstance) { const kecStats = {}; if(currentUsersData && currentUsersData.length > 0) { currentUsersData.forEach(u => { const kec = u.kecamatan || 'Lainnya'; if(!kecStats[kec]) kecStats[kec] = { total: 0, filled: 0 }; kecStats[kec].total += 1; }); } const filledNPSNs = new Set(); if(dataArr && dataArr.length > 0) { dataArr.forEach(item => { if(item.npsn) filledNPSNs.add(item.npsn.toString()); }); } filledNPSNs.forEach(npsn => { const user = currentUsersData.find(u => u.npsn && u.npsn.toString() === npsn); if(user) { const kec = user.kecamatan || 'Lainnya'; if(kecStats[kec]) kecStats[kec].filled += 1; } }); const labels = Object.keys(kecStats).sort(); barChartInstance.data.labels = labels; barChartInstance.data.datasets[0].data = labels.map(k => kecStats[k].filled); barChartInstance.data.datasets[1].data = labels.map(k => Math.max(0, kecStats[k].total - kecStats[k].filled)); barChartInstance.update(); } } else { let pPeg = globalPagu.pegawai; let pBar = globalPagu.barjas; let pAla = globalPagu.alat; let pAse = globalPagu.aset; if (activeTahap === '2') { let t1 = window.realisasiT1 || { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 }; pPeg = globalPagu.pegawai - t1.pegawai; pBar = globalPagu.barjas - t1.barjas; pAla = globalPagu.alat - t1.alat; pAse = globalPagu.aset - t1.aset; } if(barChartInstance) { barChartInstance.data.datasets[0].data = [pPeg, pBar, pAla, pAse]; barChartInstance.data.datasets[1].data = [rPeg, rBar, rAla, rAse]; barChartInstance.update(); } if(pieChartInstance) { pieChartInstance.data.datasets[0].data = [rPeg, rBar, rAla, rAse]; pieChartInstance.update(); } } }
-        function downloadExcel(filterType = 'all') { let filteredData = currentAsetData; if (activeTahap !== 'all') { filteredData = filteredData.filter(item => getTahapFromDate(item.tgl_bast) === activeTahap); } if(!filteredData || filteredData.length === 0) { Swal.fire('Data Kosong', 'Tidak ada data aset untuk diekspor pada tahap/filter ini.', 'warning'); return; } let fileNameSuffix = (activeTahap === 'all') ? "Keseluruhan" : `Tahap_${activeTahap}`; if (filterType === 'kecamatan') { const kec = document.getElementById('select-unduh-kecamatan').value; if (!kec) { Swal.fire('Perhatian', 'Pilih kecamatan terlebih dahulu.', 'warning'); return; } filteredData = filteredData.filter(item => item.kecamatan === kec); fileNameSuffix += `_Kec_${kec}`; } else if (filterType === 'sekolah') { const npsn = document.getElementById('selected-unduh-npsn').value; if (!npsn) { Swal.fire('Perhatian', 'Pilih sekolah terlebih dahulu dari hasil pencarian.', 'warning'); return; } filteredData = filteredData.filter(item => item.npsn && item.npsn.toString() === npsn.toString()); const user = currentUsersData.find(u => u.npsn && u.npsn.toString() === npsn.toString()); fileNameSuffix += `_${user && user.nama ? user.nama.replace(/\s+/g, '_') : npsn}`; } else { if (currentRole === 'sekolah') { fileNameSuffix += `_${currentUser.nama_sekolah ? currentUser.nama_sekolah.replace(/\s+/g, '_') : 'Sekolah'}`; } else { fileNameSuffix += "_Dinas_Pendidikan"; } } if (filteredData.length === 0) { Swal.fire('Data Kosong', 'Tidak ada data aset untuk filter yang dipilih.', 'warning'); return; } Swal.fire({ title: 'Menyiapkan Ekspor...', text: 'Membuat file Excel...', timer: 1500, didOpen: () => Swal.showLoading() }).then(() => { const exportData = filteredData.map((item, i) => ({ "No": i+1, "NPSN": item.npsn, "Nama Sekolah": item.nama_sekolah, "Jenjang": item.jenjang, "Kecamatan": item.kecamatan, "Tahap": getTahapFromDate(item.tgl_bast), "No. SP": item.no_sp, "Tgl SP": formatTglDisplay(item.tgl_sp), "No Kuitansi/BAST": item.no_bast, "Tgl Kuitansi/BAST": formatTglDisplay(item.tgl_bast), "Penyedia": item.penyedia, "Rekening Belanja": item.rekening, "Kodefikasi": item.kodefikasi, "Nama Barang/Uraian": item.uraian, "Merek/Tipe": item.merek, "Satuan": item.satuan, "Volume/Qty": item.qty, "Harga Satuan": item.harga_satuan, "Total Harga": item.total_harga, "No SPV": item.no_spv, "Tgl SPV": formatTglDisplay(item.tgl_spv) })); const ws = XLSX.utils.json_to_sheet(exportData); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Rekap Realisasi"); XLSX.writeFile(wb, `Rekap_Realisasi_${fileNameSuffix}.xlsx`); }); }
+        
+        function showLoading(txt) { document.getElementById('api-loading-text').textContent=txt; document.getElementById('api-loading-overlay').style.display='flex'; }
+        function hideLoading() { document.getElementById('api-loading-overlay').style.display='none'; }
+        function parseUang(v){if(typeof v==='number')return v;if(!v)return 0;return parseInt(v.toString().replace(/[^0-9]/g,''),10)||0;}
+        function formatInputUang(e){let cp=e.selectionStart;let ol=e.value.length;let v=parseUang(e.value);if(v===0&&e.value.replace(/[^0-9]/g,'')===''){e.value='';}else{e.value=v.toLocaleString('id-ID');}let nl=e.value.length;cp=cp+(nl-ol);e.setSelectionRange(cp,cp);}
+        function formatUang(v){return v<0?`-Rp ${Math.abs(v).toLocaleString('id-ID')}`:`Rp ${v.toLocaleString('id-ID')}`;}
+        function hasAccessToJenjang(al,j){if(!j)return false;const jj=j.toUpperCase();if(al==='superadmin'||al==='admin')return true;if(al==='admin_paud'&&(jj==='PAUD'||jj==='TK'||jj==='KB'||jj.includes('BERMAIN')||jj==='PKBM'))return true;if(al==='admin_sd'&&jj==='SD')return true;if(al==='admin_smp'&&jj==='SMP')return true;return false;}
+        function updateClock(){const c=document.getElementById('clockWITA');if(c){const n=new Date();const u=n.getTime()+(n.getTimezoneOffset()*60000);const w=new Date(u+(3600000*8));c.textContent=`${String(w.getHours()).padStart(2,'0')}:${String(w.getMinutes()).padStart(2,'0')}:${String(w.getSeconds()).padStart(2,'0')} WITA`;}}setInterval(updateClock,1000);updateClock();
+        function getTahapFromDate(d){if(!d||d==='-')return'1';const p=d.split('-');if(p.length===3)return parseInt(p[1],10)<=6?'1':'2';return'1';}
+        function changeGlobalTahap(v){activeTahap=v;if(document.getElementById('globalTahap'))document.getElementById('globalTahap').value=v;if(document.getElementById('mobileTahap'))document.getElementById('mobileTahap').value=v;let l=(v==='all')?'SETAHUN':`TAHAP ${v}`;document.querySelectorAll('.t-label-tahap').forEach(e=>{if(e.tagName==='SPAN'&&e.classList.contains('text-lg'))e.textContent=(v==='all')?'':`(Tahap ${v})`;else{e.textContent=l;}});if(currentAsetData.length>=0)renderTableAset(currentAsetData);const n=document.getElementById('prog_npsn_selected')?document.getElementById('prog_npsn_selected').value:null;if(n)selectSchoolProgres(n);}
+        function switchTab(t){document.getElementById('form-dinas').classList.toggle('hidden',t!=='dinas');document.getElementById('form-sekolah').classList.toggle('hidden',t!=='sekolah');document.getElementById('tab-dinas').className=t==='dinas'?'flex-1 pb-3 text-sm tab-active transition-colors':'flex-1 pb-3 text-sm text-gray-500 font-medium hover:text-gray-700 transition-colors border-b border-transparent';document.getElementById('tab-sekolah').className=t==='sekolah'?'flex-1 pb-3 text-sm border-b-3 border-secondary text-secondary font-bold transition-colors':'flex-1 pb-3 text-sm text-gray-500 font-medium hover:text-gray-700 transition-colors border-b border-transparent';}
+        function switchView(v,el){document.querySelectorAll('.app-view').forEach(x=>{x.classList.add('hidden');x.classList.remove('block','flex');});const t=document.getElementById(v);if(t){t.classList.remove('hidden');if(['view-kelola-user','view-kelola-admin','view-input-data','view-data-aset','view-progres','view-verifikasi'].includes(v))t.classList.add('flex');else t.classList.add('block');}if(el){document.querySelectorAll('.nav-link').forEach(a=>{a.classList.remove('mobile-active');a.classList.add('mobile-inactive');});const tx=el.querySelector('.mobile-nav-text');if(tx){document.querySelectorAll('.nav-link').forEach(a=>{const n=a.querySelector('.mobile-nav-text');if(n&&n.textContent===tx.textContent){a.classList.add('mobile-active');a.classList.remove('mobile-inactive');}});}}if(v==='view-dashboard'){document.querySelectorAll('.card-wrapper').forEach((c,i)=>{c.classList.remove('slide-right-enter');void c.offsetWidth;c.style.animationDelay=`${i*0.1}s`;c.classList.add('slide-right-enter');});document.querySelectorAll('.chart-wrapper').forEach((c,i)=>{c.classList.remove('slide-up-enter');void c.offsetWidth;c.style.animationDelay=`${0.3+(i*0.1)}s`;c.classList.add('slide-up-enter');});}}
+        document.addEventListener("DOMContentLoaded",()=>{const u=localStorage.getItem('simbos_user');const r=localStorage.getItem('simbos_role');if(u&&r){currentUser=JSON.parse(u);currentRole=r;document.getElementById('loginPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('flex');document.getElementById('dashboardPage').classList.remove('hidden');document.getElementById('dashboardPage').classList.add('flex');setupDashboard(currentRole);}});
+        async function handleLogin(e,r){e.preventDefault();const u=r==='dinas'?document.getElementById('inp-dinas-user').value:document.getElementById('inp-sek-npsn').value;const p=r==='dinas'?document.getElementById('inp-dinas-pass').value:document.getElementById('inp-sek-pass').value;showLoading('Mengecek Identitas...');try{const res=await apiCall('verifyLogin',{username:u,password:p,role:r});hideLoading();if(res.success){currentUser=res.data;currentRole=r;localStorage.setItem('simbos_user',JSON.stringify(currentUser));localStorage.setItem('simbos_role',currentRole);Swal.fire({icon:'success',title:'Berhasil',text:`Selamat datang, ${currentUser.nama||currentUser.nama_sekolah}`,timer:1500,showConfirmButton:false}).then(()=>{document.getElementById('loginPage').classList.add('hidden');document.getElementById('loginPage').classList.remove('flex');document.getElementById('dashboardPage').classList.remove('hidden');document.getElementById('dashboardPage').classList.add('flex');setupDashboard(r);});}else{Swal.fire({icon:'error',title:'Akses Ditolak',text:res.message});}}catch(err){hideLoading();Swal.fire({icon:'error',title:'Error',text:err.message});}}
+        function setupDashboard(role){const nD=document.getElementById('navMenuDesktop');const nM=document.getElementById('navMenuMobile');const bL=document.getElementById('btnLogout');if(bL)bL.classList.remove('hidden');const cN=(t,i,v,a=false,isI=false)=>{const oc=isI?"openInputData();":`switchView('${v}', this);`;const ac=a?'mobile-active':'mobile-inactive';return`<li><a href="#" onclick="${oc}" class="nav-link mobile-nav-item transition-all duration-200 ${ac}"><i class="fa-solid ${i} mobile-nav-icon"></i><span class="mobile-nav-text font-semibold">${t}</span></a></li>`;};globalPagu={total:0,pegawai:0,barjas:0,alat:0,aset:0};globalRealisasi={total:0,pegawai:0,barjas:0,alat:0,aset:0};if(role==='dinas'){const isS=currentUser.level==='superadmin';const rT=isS?'(Super Admin)':'(Admin Bidang)';const sp=`<i class="fa-solid fa-user-shield text-primary mr-1"></i> ${currentUser.nama} ${rT}`;document.getElementById('userGreeting').innerHTML=sp;document.getElementById('userGreetingMobile').innerHTML=sp;document.getElementById('dashboardTitle').textContent="Dashboard Dinas";let m=cN('Beranda','fa-chart-pie','view-dashboard',true);if(isS){m+=cN('Admin','fa-user-tie','view-kelola-admin');loadDataAdmins();}m+=cN('Sekolah','fa-users','view-kelola-user')+cN('Progres','fa-chart-line','view-progres')+cN('Verifikasi','fa-file-signature','view-verifikasi')+cN('Data','fa-folder-open','view-data-aset')+cN('Unduh','fa-download','view-unduh')+cN('Pengaturan','fa-gear','view-pengaturan');nD.innerHTML=m;nM.innerHTML=m;document.getElementById('panel-unduh-dinas').classList.remove('hidden');document.getElementById('panel-unduh-dinas').classList.add('grid');document.getElementById('panel-unduh-sekolah').classList.add('hidden');document.getElementById('btn-force-distribusi').classList.add('hidden');document.getElementById('dash-pagu-total').textContent="Memuat...";loadDataUsers();loadDataVerifikasi();}else{let isL=currentUser.isLocked;if(isL==="false"||isL==="FALSE"||isL==="")isL=false;if(!isL){document.getElementById('btn-force-distribusi').classList.remove('hidden');setTimeout(()=>showDistribusiModal(),500);}else{document.getElementById('btn-force-distribusi').classList.add('hidden');}const sp=`<img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" class="h-4 w-4 mr-2 inline"> ${currentUser.nama_sekolah}`;document.getElementById('userGreeting').innerHTML=sp;document.getElementById('userGreetingMobile').innerHTML=sp;document.getElementById('dashboardTitle').textContent=`Dasbor (${currentUser.nama_sekolah})`;let m=cN('Beranda','fa-chart-pie','view-dashboard',true)+cN('Input','fa-keyboard','view-input-data',false,true)+cN('Tautan','fa-link','view-upload')+cN('Data','fa-folder-open','view-data-aset')+cN('Unduh','fa-download','view-unduh')+cN('Pengaturan','fa-gear','view-pengaturan');nD.innerHTML=m;nM.innerHTML=m;document.getElementById('panel-unduh-dinas').classList.add('hidden');document.getElementById('panel-unduh-dinas').classList.remove('grid');document.getElementById('panel-unduh-sekolah').classList.remove('hidden');globalPagu.total=parseInt(currentUser.total_pagu)||0;globalPagu.pegawai=parseInt(currentUser.paguPegawai)||0;globalPagu.barjas=parseInt(currentUser.paguBarjas)||0;globalPagu.alat=parseInt(currentUser.paguAlat)||0;globalPagu.aset=parseInt(currentUser.paguAset)||0;updateDashboardCardsUI();loadDokumenUrls();document.getElementById('btn-tambah-aset-tabel').classList.remove('hidden');}document.getElementById('dashboardCharts').classList.remove('hidden');document.getElementById('dashboardCharts').classList.add('grid');renderCharts(role);loadDataAset();switchView('view-dashboard',nD.querySelector('a'));}
+        function showDistribusiModal(){const m=document.getElementById('modal-distribusi-pagu');m.classList.remove('hidden');m.classList.add('flex');let t=parseInt(currentUser.total_pagu)||0;document.getElementById('inp-dist-total').value=t.toLocaleString('id-ID');document.getElementById('dist-pegawai').value=(parseInt(currentUser.paguPegawai)||0).toLocaleString('id-ID');document.getElementById('dist-barjas').value=(parseInt(currentUser.paguBarjas)||0).toLocaleString('id-ID');document.getElementById('dist-alat').value=(parseInt(currentUser.paguAlat)||0).toLocaleString('id-ID');document.getElementById('dist-aset').value=(parseInt(currentUser.paguAset)||0).toLocaleString('id-ID');let nw=currentUser.nowa?String(currentUser.nowa).trim():'';if(nw==='0'||nw==='-')nw='';document.getElementById('dist-nowa').value=nw;calcDistribusi();}
+        function calcDistribusi(){let t=parseUang(document.getElementById('inp-dist-total').value)||0;let p=parseUang(document.getElementById('dist-pegawai').value)||0;let b=parseUang(document.getElementById('dist-barjas').value)||0;let al=parseUang(document.getElementById('dist-alat').value)||0;let as=parseUang(document.getElementById('dist-aset').value)||0;let s=t-(p+b+al+as);let ls=document.getElementById('lbl-dist-sisa');ls.textContent=formatUang(s);const btn=document.getElementById('btn-dist-simpan');if(s===0&&t>0){ls.classList.replace('text-red-500','text-green-500');btn.disabled=false;btn.className="w-full bg-primary hover:bg-indigo-700 text-white py-3 rounded-xl text-sm font-bold transition-all cursor-pointer";}else{ls.classList.replace('text-green-500','text-red-500');btn.disabled=true;btn.className="w-full bg-gray-400 text-white py-3 rounded-xl text-sm font-bold transition-all cursor-not-allowed";}}
+        async function submitDistribusi(){const t=parseUang(document.getElementById('inp-dist-total').value)||0;const p=parseUang(document.getElementById('dist-pegawai').value)||0;const b=parseUang(document.getElementById('dist-barjas').value)||0;const al=parseUang(document.getElementById('dist-alat').value)||0;const as=parseUang(document.getElementById('dist-aset').value)||0;const wa=document.getElementById('dist-nowa').value;if(!wa||wa.trim()===''){Swal.fire('Perhatian','Harap isi No WhatsApp Anda.','warning');return;}Swal.fire({title:'Kunci Pagu?',text:'Apakah alokasi ini sudah sesuai dengan ARKAS?',icon:'warning',showCancelButton:true,confirmButtonColor:'#4F46E5',confirmButtonText:'Ya, Kunci Sekarang!'}).then(async(res)=>{if(res.isConfirmed){showLoading('Mengunci Data...');try{const pay={npsn:currentUser.npsn,totalPagu:t,paguPegawai:p,paguBarjas:b,paguAlat:al,paguAset:as,nowa:wa};const rx=await apiCall('lockPaguSekolah',pay);hideLoading();if(rx.success){Swal.fire('Terkunci!','Pagu Anggaran diamankan.','success');document.getElementById('modal-distribusi-pagu').classList.add('hidden');document.getElementById('modal-distribusi-pagu').classList.remove('flex');document.getElementById('btn-force-distribusi').classList.add('hidden');currentUser.total_pagu=t;currentUser.paguPegawai=p;currentUser.paguBarjas=b;currentUser.paguAlat=al;currentUser.paguAset=as;currentUser.nowa=wa;currentUser.isLocked=true;localStorage.setItem('simbos_user',JSON.stringify(currentUser));globalPagu.total=t;globalPagu.pegawai=p;globalPagu.barjas=b;globalPagu.alat=al;globalPagu.aset=as;updateDashboardCardsUI();renderCharts('sekolah');}else{Swal.fire('Gagal',rx.message,'error');}}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}});}
+        async function loadDataAdmins(){try{const res=await apiCall('getDataAdmins');if(res.success)renderTableAdmins(res.data);}catch(err){console.error(err);}}
+        async function saveAdmin(e){e.preventDefault();const d={username:document.getElementById('inp-adm-user').value,nama:document.getElementById('inp-adm-nama').value,level:document.getElementById('inp-adm-level').value,password:document.getElementById('inp-adm-pass').value};showLoading('Menyimpan...');try{const res=await apiCall(editModeAdmin?'updateAdmin':'simpanAdmin',d);hideLoading();if(res.success){Swal.fire('Sukses',res.message,'success');loadDataAdmins();closeModalAdmin();}else Swal.fire('Gagal',res.message,'error');}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}
+        function deleteAdmin(u){Swal.fire({title:'Hapus Admin?',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Ya, Hapus!'}).then(async(res)=>{if(res.isConfirmed){showLoading('Menghapus...');try{const rx=await apiCall('deleteAdmin',{username:u});hideLoading();if(rx.success){Swal.fire('Terhapus!',rx.message,'success');loadDataAdmins();}else Swal.fire('Gagal',rx.message,'error');}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}});}
+        async function loadDataUsers(){try{const res=await apiCall('getDataUsers');if(res.success){let fu=res.data;if(currentRole==='dinas'){fu=fu.filter(u=>hasAccessToJenjang(currentUser.level,u.jenjang));}currentUsersData=fu;renderTableUsers(currentUsersData);}}catch(err){console.error(err);}}
+        async function saveUser(e){e.preventDefault();const n=document.getElementById('inp-npsn').value;if(!editModeUser){if(currentUsersData.some(u=>u.npsn.toString()===n.toString())){Swal.fire({icon:'warning',title:'Ditolak!',text:'NPSN sudah terdaftar.'});return;}}const t=parseUang(document.getElementById('inp-total-pagu-admin').value)||0;const rL=document.getElementById('inp-reset-lock')?document.getElementById('inp-reset-lock').checked:false;const d={npsn:n,nama:document.getElementById('inp-nama').value,jenjang:document.getElementById('inp-jenjang').value,kecamatan:document.getElementById('inp-kecamatan').value,totalPagu:t,password:document.getElementById('inp-password').value,resetLock:rL};showLoading('Menyimpan Sekolah...');try{const res=await apiCall(editModeUser?'updateUserSekolah':'simpanUserSekolah',d);hideLoading();if(res.success){Swal.fire('Sukses',res.message,'success');loadDataUsers();closeModalUser();}else Swal.fire('Gagal',res.message,'error');}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}
+        async function loadDataAset(){try{const res=await apiCall('getDataAset',{role:currentRole,npsn:currentUser.npsn});if(res.success){let fa=res.data;if(currentRole==='dinas'){fa=fa.filter(a=>hasAccessToJenjang(currentUser.level,a.jenjang));}currentAsetData=fa;renderTableAset(currentAsetData);}}catch(err){console.error(err);}}
+        async function saveAsetData(e){e.preventDefault();const qty=parseFloat(document.getElementById('inp-qty').value)||0;const hrg=parseUang(document.getElementById('inp-harga').value);const totBaru=qty*hrg;const kod=document.getElementById('inp-kodefikasi').value;const tB=document.getElementById('inp-tgl-bast').value;const thp=getTahapFromDate(tB);let pK=0;if(kod.includes('PERALATAN'))pK=globalPagu.alat;else if(kod.includes('ASET TETAP'))pK=globalPagu.aset;else if(kod.includes('PEGAWAI'))pK=globalPagu.pegawai;else if(kod.includes('BARANG DAN JASA'))pK=globalPagu.barjas;let rT1=0,rTI=0;currentAsetData.forEach(a=>{let k=a.kodefikasi||'';let isM=false;if(kod.includes('PERALATAN')&&k.includes('PERALATAN'))isM=true;else if(kod.includes('ASET TETAP')&&k.includes('ASET TETAP'))isM=true;else if(kod.includes('PEGAWAI')&&k.includes('PEGAWAI'))isM=true;else if(kod.includes('BARANG DAN JASA')&&k.includes('BARANG DAN JASA'))isM=true;if(isM){if(getTahapFromDate(a.tgl_bast)==='1')rT1+=(parseInt(a.total_harga)||0);if(getTahapFromDate(a.tgl_bast)===thp)rTI+=(parseInt(a.total_harga)||0);}});let pTI=pK;if(thp==='2')pTI=pK-rT1;let hL=0;if(editModeAsetId){const oI=currentAsetData.find(x=>x.id.toString()===editModeAsetId.toString());if(oI&&getTahapFromDate(oI.tgl_bast)===thp&&(oI.kodefikasi||'').includes(kod.substring(0,5)))hL=parseInt(oI.total_harga)||0;}const sT=pTI-rTI+hL;if(totBaru>sT){Swal.fire({icon:'error',title:`Pagu Tahap ${thp} Tidak Mencukupi!`,html:`Sisa Anggaran: <b>${formatUang(sT)}</b><br>Total Input Baru: <b class="text-red-500">${formatUang(totBaru)}</b>`});return;}let nSp=document.getElementById('inp-no-sp')?document.getElementById('inp-no-sp').value:'-';if(nSp==='')nSp='-';let tSp=document.getElementById('inp-tgl-sp')?document.getElementById('inp-tgl-sp').value:'-';if(tSp==='')tSp='-';let nSpv=document.getElementById('inp-no-spv')?document.getElementById('inp-no-spv').value:'-';if(nSpv==='')nSpv='-';let tSpv=document.getElementById('inp-tgl-spv')?document.getElementById('inp-tgl-spv').value:'-';if(tSpv==='')tSpv='-';let nBst=document.getElementById('inp-no-bast')?document.getElementById('inp-no-bast').value:'-';if(nBst==='')nBst='-';const dA={id:editModeAsetId,npsn:currentUser.npsn,nama_sekolah:currentUser.nama_sekolah,jenjang:currentUser.jenjang,kecamatan:currentUser.kecamatan||"Lainnya",no_sp:nSp,tgl_sp:tSp,penyedia:document.getElementById('inp-penyedia').value,rekening:document.getElementById('inp-rekening').value,kodefikasi:kod,uraian:document.getElementById('inp-uraian').value,merek:document.getElementById('inp-merek')?document.getElementById('inp-merek').value:'',satuan:document.getElementById('inp-satuan').value,qty:document.getElementById('inp-qty').value,harga_satuan:hrg,total_harga:totBaru,no_bast:nBst,tgl_bast:tB,no_spv:nSpv,tgl_spv:tSpv};showLoading('Menyimpan...');try{const rx=await apiCall(editModeAsetId?'updateDataAset':'simpanDataAset',dA);hideLoading();if(rx.success){Swal.fire('Sukses',`Tersimpan ke Tahap ${thp}`,'success');document.getElementById('form-input-aset').reset();document.getElementById('txt-total-harga').textContent='Rp 0';document.getElementById('info-sisa-pagu').innerHTML='Sisa Anggaran: <span class="font-bold text-gray-400">-</span>';let tL=null;document.querySelectorAll('.nav-link').forEach(l=>{if(l.textContent.includes('Data'))tL=l;});switchView('view-data-aset',tL);loadDataAset();}else{Swal.fire('Gagal',rx.message,'error');}}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}
+        function switchDataTab(tab){currentDataTab=tab;['pegawai','barjas','modal'].forEach(t=>{document.getElementById('tab-data-'+t).className=(tab===t)?'flex-1 px-4 py-2 text-sm font-bold rounded-lg bg-white text-primary shadow-sm':'flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500';});renderTableAset(currentAsetData);}
+        function switchInputTab(tab){currentInputTab=tab;['pegawai','barjas','modal'].forEach(t=>{document.getElementById('tab-inp-'+t).className=(tab===t)?'flex-1 py-2.5 text-sm font-bold rounded-lg bg-white text-primary shadow-sm':'flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500';});const rek=document.getElementById('inp-rekening');if(tab==='pegawai'){document.getElementById('group-dasar-modal').classList.add('hidden');document.getElementById('group-spv-modal').classList.add('hidden');document.getElementById('container-merek').classList.add('hidden');document.getElementById('container-no-bast').classList.add('hidden');rek.innerHTML='<option value="Belanja Pegawai BOS">Belanja Pegawai BOS</option>';document.getElementById('lbl-penyedia').innerHTML="Penerima Honor";document.getElementById('lbl-uraian').innerHTML="Uraian Kegiatan";document.getElementById('lbl-qty').innerHTML="Volume";document.getElementById('lbl-tgl-bast').innerHTML="Tanggal Bayar";if(document.getElementById('inp-no-bast'))document.getElementById('inp-no-bast').required=false;}else if(tab==='barjas'){document.getElementById('group-dasar-modal').classList.add('hidden');document.getElementById('group-spv-modal').classList.add('hidden');document.getElementById('container-merek').classList.remove('hidden');document.getElementById('container-no-bast').classList.remove('hidden');rek.innerHTML='<option value="Belanja Barang dan Jasa BOS">Belanja Barang dan Jasa BOS</option>';document.getElementById('lbl-penyedia').innerHTML="Toko/Penyedia";document.getElementById('lbl-uraian').innerHTML="Uraian Barang";document.getElementById('lbl-qty').innerHTML="Qty";document.getElementById('lbl-tgl-bast').innerHTML="Tgl Kuitansi";if(document.getElementById('lbl-no-bast'))document.getElementById('lbl-no-bast').innerHTML="No Nota";if(document.getElementById('inp-no-bast'))document.getElementById('inp-no-bast').required=true;}else{document.getElementById('group-dasar-modal').classList.remove('hidden');document.getElementById('group-spv-modal').classList.remove('hidden');document.getElementById('container-merek').classList.remove('hidden');document.getElementById('container-no-bast').classList.remove('hidden');rek.innerHTML='<option value="">-- Pilih --</option><option value="Belanja Modal Peralatan & Mesin BOS">Peralatan & Mesin</option><option value="Belanja Modal Aset Tetap Lainnya BOS">Aset Tetap Lain</option>';document.getElementById('lbl-penyedia').innerHTML="Toko/Penyedia";document.getElementById('lbl-uraian').innerHTML="Nama Barang";document.getElementById('lbl-qty').innerHTML="Volume";document.getElementById('lbl-tgl-bast').innerHTML="Tgl BAST";if(document.getElementById('lbl-no-bast'))document.getElementById('lbl-no-bast').innerHTML="No BAST";if(document.getElementById('inp-no-bast'))document.getElementById('inp-no-bast').required=false;if(!editModeAsetId)rek.value="";}updateKodefikasi();}
+        function switchUploadTahap(t){uploadTahap=t;document.getElementById('tab-up-1').className=(t==='1')?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500';document.getElementById('tab-up-2').className=(t==='2')?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500';if(allDokumenUrls){setupDokumenUI('peralatan',t==='1'?allDokumenUrls.peralatan_t1:allDokumenUrls.peralatan_t2);setupDokumenUI('aset',t==='1'?allDokumenUrls.aset_lain_t1:allDokumenUrls.aset_lain_t2);setupDokumenUI('pegawai',t==='1'?allDokumenUrls.pegawai_t1:allDokumenUrls.pegawai_t2);setupDokumenUI('barjas',t==='1'?allDokumenUrls.barjas_t1:allDokumenUrls.barjas_t2);let lu=(t==='1')?allDokumenUrls.lpj_t1:allDokumenUrls.lpj_t2;let sl=(t==='1')?allDokumenUrls.status_t1:allDokumenUrls.status_t2;let ru=(t==='1')?allDokumenUrls.rekom_t1:allDokumenUrls.rekom_t2;const il=document.getElementById('link-lpj');const bl=document.getElementById('btn-view-lpj');const bs=document.getElementById('status-lpj-badge');const br=document.getElementById('btn-dl-rekom');const lr=document.getElementById('lbl-no-rekom');const cl=document.getElementById('container-upload-lpj');if(lu&&lu!==''){cl.classList.add('hidden');bl.classList.remove('hidden');bl.onclick=()=>window.open(lu,'_blank');}else{cl.classList.remove('hidden');if(il)il.value='';bl.classList.add('hidden');}bs.textContent=sl;bs.className="px-2.5 py-1 rounded text-xs font-bold "+(sl.includes('Manager')?'bg-green-100 text-green-700':(sl.includes('Dinas')?'bg-blue-100 text-blue-700':(sl.includes('Ditolak')?'bg-red-100 text-red-700':'bg-gray-100 text-gray-600')));if(sl.includes('Manager')&&ru&&ru!==''){br.classList.remove('hidden');br.href=ru;lr.classList.add('hidden');}else{br.classList.add('hidden');lr.classList.remove('hidden');if(sl.includes('Manager'))lr.innerHTML="Sedang diproses Dinas";else lr.innerHTML="Menunggu Manager";}}}
+        async function loadDokumenUrls(){try{const res=await apiCall('getDokumenUrls',{npsn:currentUser.npsn});if(res.success){allDokumenUrls=res.data;switchUploadTahap(uploadTahap);}}catch(err){console.error(err);}}
+        async function uploadDokumenUrl(type){const ui=document.getElementById('link-'+type);const u=ui?ui.value.trim():'';if(!u||!(u.startsWith('http')||u.startsWith('https'))){Swal.fire('Peringatan','Masukkan URL (http/https)!','warning');return;}showLoading(`Menyimpan Tautan...`);try{const res=await apiCall('simpanLinkDokumen',{url:u,tipeDokumen:type,npsn:currentUser.npsn,namaSekolah:currentUser.nama_sekolah,tahap:uploadTahap});hideLoading();if(res.success){Swal.fire('Sukses',`Tersimpan!`,'success');loadDokumenUrls();}else Swal.fire('Gagal',res.message,'error');}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}
+        function deleteDokumen(n,tp){Swal.fire({title:'Hapus?',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Ya!'}).then(async(res)=>{if(res.isConfirmed){let t=(activeTahap==='all')?uploadTahap:activeTahap;showLoading('Menghapus...');try{const rx=await apiCall('deleteDokumenDrive',{npsn:n,tipeDokumen:tp,tahap:t});hideLoading();if(rx.success){Swal.fire('Terhapus!',rx.message,'success');selectSchoolProgres(n);if(document.getElementById('view-upload').classList.contains('flex')){loadDokumenUrls();}}else Swal.fire('Gagal',rx.message,'error');}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}});}
+        function setupDokumenUI(t,u){const c=document.getElementById('container-upload-'+t);const bu=document.getElementById('btn-upload-'+t);const bv=document.getElementById('btn-view-'+t);const iu=document.getElementById('link-'+t);if(!c)return;if(u&&u.trim()!==''){c.classList.add('hidden');bu.classList.add('hidden');bv.classList.remove('hidden');bv.onclick=()=>window.open(u,'_blank');document.getElementById('status-'+t).innerHTML='<span class="text-green-500">Tersimpan</span>';}else{c.classList.remove('hidden');if(iu)iu.value='';bu.classList.remove('hidden');bv.classList.add('hidden');document.getElementById('status-'+t).innerHTML='Belum ada link';}}
+        function openModalUser(){editModeUser=false;document.getElementById('modalUserTitle').textContent='Tambah User';document.getElementById('inp-npsn').readOnly=false;document.getElementById('inp-npsn').classList.remove('bg-gray-100');document.getElementById('inp-password').required=true;document.getElementById('form-user').reset();document.getElementById('container-reset-lock').classList.add('hidden');document.getElementById('modal-user').classList.remove('hidden');document.getElementById('modal-user').classList.add('flex');}
+        function editUser(n){const u=currentUsersData.find(x=>x.npsn.toString()===n.toString());if(!u)return;editModeUser=true;document.getElementById('modalUserTitle').textContent='Edit Sekolah';document.getElementById('inp-npsn').value=u.npsn;document.getElementById('inp-npsn').readOnly=true;document.getElementById('inp-npsn').classList.add('bg-gray-100');document.getElementById('inp-nama').value=u.nama;document.getElementById('inp-jenjang').value=u.jenjang;document.getElementById('inp-kecamatan').value=u.kecamatan;document.getElementById('inp-total-pagu-admin').value=(parseInt(u.totalPagu)||0).toLocaleString('id-ID');document.getElementById('inp-password').required=false;document.getElementById('inp-password').value='';if(u.isLocked){document.getElementById('container-reset-lock').classList.remove('hidden');document.getElementById('inp-reset-lock').checked=false;}else{document.getElementById('container-reset-lock').classList.add('hidden');}document.getElementById('modal-user').classList.remove('hidden');document.getElementById('modal-user').classList.add('flex');}
+        function closeModalUser(){document.getElementById('modal-user').classList.add('hidden');document.getElementById('modal-user').classList.remove('flex');}
+        function openModalAdmin(){editModeAdmin=false;document.getElementById('modalAdminTitle').textContent='Tambah Admin';document.getElementById('form-admin').reset();document.getElementById('inp-adm-user').readOnly=false;document.getElementById('inp-adm-user').classList.remove('bg-gray-100');document.getElementById('inp-adm-pass').required=true;document.getElementById('modal-admin').classList.remove('hidden');document.getElementById('modal-admin').classList.add('flex');}
+        function closeModalAdmin(){document.getElementById('modal-admin').classList.add('hidden');document.getElementById('modal-admin').classList.remove('flex');}
+        function editAdmin(u){const a=currentAdminsData.find(x=>x.username===u);if(!a)return;editModeAdmin=true;document.getElementById('modalAdminTitle').textContent='Edit Admin';document.getElementById('inp-adm-user').value=a.username;document.getElementById('inp-adm-user').readOnly=true;document.getElementById('inp-adm-user').classList.add('bg-gray-100');document.getElementById('inp-adm-nama').value=a.nama;document.getElementById('inp-adm-level').value=a.level;document.getElementById('inp-adm-pass').required=false;document.getElementById('inp-adm-pass').value='';document.getElementById('modal-admin').classList.remove('hidden');document.getElementById('modal-admin').classList.add('flex');}
+        function openInputData(){editModeAsetId=null;document.getElementById('title-form-aset').textContent='Input Data Realisasi';document.getElementById('btn-submit-aset').textContent='Simpan Data';document.getElementById('btn-batal-aset').classList.add('hidden');document.getElementById('form-input-aset').reset();document.getElementById('txt-total-harga').textContent='Rp 0';document.getElementById('info-sisa-pagu').innerHTML='Sisa Anggaran: -';switchInputTab('modal');let iL=null;document.querySelectorAll('.nav-link').forEach(l=>{if(l.textContent.includes('Input'))iL=l;});switchView('view-input-data',iL);}
+        function editAset(id){const item=currentAsetData.find(x=>x.id.toString()===id.toString());if(!item)return;editModeAsetId=item.id;document.getElementById('title-form-aset').textContent='Edit Data';document.getElementById('btn-submit-aset').textContent='Perbarui Data';document.getElementById('btn-batal-aset').classList.remove('hidden');let kod=item.kodefikasi||'';if(kod.includes('PEGAWAI'))switchInputTab('pegawai');else if(kod.includes('BARANG DAN JASA'))switchInputTab('barjas');else switchInputTab('modal');document.getElementById('inp-penyedia').value=item.penyedia;if(document.getElementById('inp-no-sp'))document.getElementById('inp-no-sp').value=item.no_sp!=='-'?item.no_sp:'';if(document.getElementById('inp-tgl-sp'))document.getElementById('inp-tgl-sp').value=item.tgl_sp!=='-'?item.tgl_sp:'';if(document.getElementById('inp-no-spv'))document.getElementById('inp-no-spv').value=item.no_spv!=='-'?item.no_spv:'';if(document.getElementById('inp-tgl-spv'))document.getElementById('inp-tgl-spv').value=item.tgl_spv!=='-'?item.tgl_spv:'';let rs=document.getElementById('inp-rekening');rs.value=item.rekening;if(!rs.value){if(kod==='PERALATAN DAN MESIN')rs.value='Belanja Modal Peralatan & Mesin BOS';else if(kod==='ASET TETAP LAIN')rs.value='Belanja Modal Aset Tetap Lainnya BOS';else if(kod==='BELANJA PEGAWAI')rs.value='Belanja Pegawai BOS';else if(kod==='BELANJA BARANG DAN JASA')rs.value='Belanja Barang dan Jasa BOS';}updateKodefikasi();document.getElementById('inp-uraian').value=item.uraian;if(document.getElementById('inp-merek'))document.getElementById('inp-merek').value=item.merek||'';document.getElementById('inp-qty').value=item.qty?item.qty.toString().split(' ')[0]:'';document.getElementById('inp-satuan').value=item.satuan;document.getElementById('inp-harga').value=(parseInt(item.harga_satuan)||0).toLocaleString('id-ID');if(document.getElementById('inp-no-bast'))document.getElementById('inp-no-bast').value=item.no_bast!=='-'?item.no_bast:'';document.getElementById('inp-tgl-bast').value=item.tgl_bast!=='-'?item.tgl_bast:'';calculateTotalHarga();let iL=null;document.querySelectorAll('.nav-link').forEach(l=>{if(l.textContent.includes('Input'))iL=l;});switchView('view-input-data',iL);updateInfoSisaPagu();}
+        function updateKodefikasi(){const r=document.getElementById('inp-rekening').value;const k=document.getElementById('inp-kodefikasi');if(r.includes('Pegawai'))k.value='BELANJA PEGAWAI';else if(r.includes('Barang dan Jasa'))k.value='BELANJA BARANG DAN JASA';else if(r.includes('Peralatan'))k.value='PERALATAN DAN MESIN';else if(r.includes('Aset'))k.value='ASET TETAP LAIN';else k.value='';updateInfoSisaPagu();}
+        function updateInfoSisaPagu(){if(currentRole!=='sekolah')return;const tb=document.getElementById('inp-tgl-bast').value;const thp=getTahapFromDate(tb);const k=document.getElementById('inp-kodefikasi').value;if(!k||k.trim()===''){document.getElementById('info-sisa-pagu').innerHTML='Sisa Anggaran: -';return;}let pK=0;if(k.includes('PERALATAN'))pK=globalPagu.alat;else if(k.includes('ASET TETAP'))pK=globalPagu.aset;else if(k.includes('PEGAWAI'))pK=globalPagu.pegawai;else if(k.includes('BARANG DAN JASA'))pK=globalPagu.barjas;let rT1=0;let rTI=0;currentAsetData.forEach(a=>{let ak=a.kodefikasi||'';let isM=false;if(k.includes('PERALATAN')&&ak.includes('PERALATAN'))isM=true;else if(k.includes('ASET TETAP')&&ak.includes('ASET TETAP'))isM=true;else if(k.includes('PEGAWAI')&&ak.includes('PEGAWAI'))isM=true;else if(k.includes('BARANG DAN JASA')&&ak.includes('BARANG DAN JASA'))isM=true;if(isM){if(getTahapFromDate(a.tgl_bast)==='1')rT1+=(parseInt(a.total_harga)||0);if(getTahapFromDate(a.tgl_bast)===thp)rTI+=(parseInt(a.total_harga)||0);}});let pTI=pK;if(thp==='2')pTI=pK-rT1;let hL=0;if(editModeAsetId){const oI=currentAsetData.find(x=>x.id.toString()===editModeAsetId.toString());if(oI&&getTahapFromDate(oI.tgl_bast)===thp&&(oI.kodefikasi||'').includes(k.substring(0,5)))hL=parseInt(oI.total_harga)||0;}const sT=pTI-rTI+hL;const sF=sT>=0?`<span class="text-green-600 font-bold">${formatUang(sT)}</span>`:`<span class="text-red-500 font-bold">${formatUang(sT)} (Minus!)</span>`;document.getElementById('info-sisa-pagu').innerHTML=`Sisa Anggaran (Tahap ${thp}): ${sF}`;}
+        function calculateTotalHarga(){const q=parseFloat(document.getElementById('inp-qty').value)||0;const h=parseUang(document.getElementById('inp-harga').value)||0;document.getElementById('txt-total-harga').textContent=formatUang(q*h);updateInfoSisaPagu();}
+        function logout(){localStorage.removeItem('simbos_user');localStorage.removeItem('simbos_role');location.reload();}
+        function formatTglDisplay(t){if(!t||t==='-')return'-';const p=t.split('-');return p.length===3?`${p[2]}-${p[1]}-${p[0]}`:t;}
+        function filterUserTable(){let i=document.getElementById('inp-search-user').value.toLowerCase();document.querySelectorAll('#table-body-users tr').forEach(r=>{if(r.cells.length>1)r.style.display=r.cells[1].textContent.toLowerCase().includes(i)?'':'none';});}
+        async function refreshData(){const ir=document.getElementById('icon-refresh');const im=document.getElementById('icon-refresh-mobile');if(ir)ir.classList.add('fa-spin');if(im)im.classList.add('fa-spin');showLoading('Menyegarkan...');try{if(currentRole==='dinas'){await Promise.all([loadDataUsers(),loadDataAset()]);if(currentUser&&currentUser.level==='superadmin')await loadDataAdmins();await loadDataVerifikasi();}else{await Promise.all([loadDataAset(),loadDokumenUrls()]);}const np=document.getElementById('prog_npsn_selected')?document.getElementById('prog_npsn_selected').value:null;if(np&&document.getElementById('view-progres').classList.contains('flex')){selectSchoolProgres(np);}hideLoading();Swal.mixin({toast:true,position:'top-end',showConfirmButton:false,timer:2000}).fire({icon:'success',title:'Diperbarui!'});}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}finally{if(ir)setTimeout(()=>ir.classList.remove('fa-spin'),500);if(im)setTimeout(()=>im.classList.remove('fa-spin'),500);}}
+        async function selectSchoolProgres(n){document.getElementById('list-sekolah-progres').classList.add('hidden');const u=currentUsersData.find(x=>x.npsn.toString()===n.toString());if(!u)return;document.getElementById('prog_npsn_selected').value=n;document.getElementById('inp-search-progres').value=`${u.npsn} - ${u.nama}`;document.getElementById('progres-school-details').classList.remove('hidden');document.getElementById('progres-school-title').innerHTML=`${u.nama} (${u.jenjang})`;let nw=u.nowa?String(u.nowa).trim():'';let wc=document.getElementById('prog-wa-container');if(nw&&nw!==''&&nw!=='0'&&nw!=='-'){let wv=nw.replace(/\D/g,'');if(wv.startsWith('0'))wv='62'+wv.slice(1);else if(wv.startsWith('8'))wv='62'+wv;wc.className="text-sm bg-green-100 text-green-800 px-4 py-1.5 rounded-full flex items-center cursor-pointer";document.getElementById('prog-wa-icon').className="fa-brands fa-whatsapp mr-2";wc.onclick=()=>window.open(`https://wa.me/${wv}`,'_blank');document.getElementById('prog-nowa').innerHTML=`${nw}`;}else{wc.className="text-sm bg-gray-100 text-gray-500 px-4 py-1.5 rounded-full flex items-center";document.getElementById('prog-wa-icon').className="fa-brands fa-whatsapp mr-2";wc.onclick=null;document.getElementById('prog-nowa').textContent='Belum Diisi';}const fa=currentAsetData.filter(a=>{if(!a.npsn||a.npsn.toString()!==n.toString())return false;if(activeTahap!=='all'&&getTahapFromDate(a.tgl_bast)!==activeTahap)return false;return true;});let rP1=0,rB1=0,rAl1=0,rAs1=0;currentAsetData.forEach(a=>{if(a.npsn&&a.npsn.toString()===n.toString()&&getTahapFromDate(a.tgl_bast)==='1'){let h=parseInt(a.total_harga)||0;let k=a.kodefikasi||'';if(k.includes('PEGAWAI'))rP1+=h;else if(k.includes('BARANG DAN JASA'))rB1+=h;else if(k.includes('PERALATAN'))rAl1+=h;else if(k.includes('ASET TETAP'))rAs1+=h;}});let rT1=rP1+rB1+rAl1+rAs1;let rP=0,rB=0,rAl=0,rAs=0;fa.forEach(i=>{let h=parseInt(i.total_harga)||0;let k=i.kodefikasi||'';if(k.includes('PEGAWAI'))rP+=h;else if(k.includes('BARANG DAN JASA'))rB+=h;else if(k.includes('PERALATAN'))rAl+=h;else if(k.includes('ASET TETAP'))rAs+=h;});let rT=rP+rB+rAl+rAs;let pT=parseInt(u.totalPagu)||0,pP=parseInt(u.paguPegawai)||0,pB=parseInt(u.paguBarjas)||0,pAl=parseInt(u.paguAlat)||0,pAs=parseInt(u.paguAset)||0;if(activeTahap==='2'){pT-=rT1;pP-=rP1;pB-=rB1;pAl-=rAl1;pAs-=rAs1;}let pM=pAl+pAs;let rM=rAl+rAs;document.getElementById('prog-pagu-total').textContent=formatUang(pT);document.getElementById('prog-pagu-pegawai').textContent=formatUang(pP);document.getElementById('prog-pagu-barjas').textContent=formatUang(pB);document.getElementById('prog-pagu-modal').textContent=formatUang(pM);document.getElementById('prog-rincian-alat').textContent=formatUang(pAl);document.getElementById('prog-rincian-aset').textContent=formatUang(pAs);document.getElementById('prog-real-total').textContent=formatUang(rT);document.getElementById('prog-real-pegawai').textContent=formatUang(rP);document.getElementById('prog-real-barjas').textContent=formatUang(rB);document.getElementById('prog-real-modal').textContent=formatUang(rM);document.getElementById('prog-sisa-total').textContent=formatUang(pT-rT);document.getElementById('prog-sisa-pegawai').textContent=formatUang(pP-rP);document.getElementById('prog-sisa-barjas').textContent=formatUang(pB-rB);document.getElementById('prog-sisa-modal').textContent=formatUang(pM-rM);if(progBarChartInst)progBarChartInst.destroy();if(progPieChartInst)progPieChartInst.destroy();progBarChartInst=new Chart(document.getElementById('progBarChart').getContext('2d'),{type:'bar',data:{labels:['Pegawai','Barjas','Peralatan','Aset Lain'],datasets:[{label:'Pagu Anggaran',data:[pP,pB,pAl,pAs],backgroundColor:'#E5E7EB'},{label:'Realisasi',data:[rP,rB,rAl,rAs],backgroundColor:'#4F46E5'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});progPieChartInst=new Chart(document.getElementById('progPieChart').getContext('2d'),{type:'doughnut',data:{labels:['Pegawai','Barjas','Peralatan','Aset Lain'],datasets:[{data:[rP,rB,rAl,rAs],backgroundColor:['#F59E0B','#A855F7','#0EA5E9','#10B981'],borderWidth:1}]},options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{position:'right'}}}});const cats=['pegawai','barjas','alat','aset'];cats.forEach(c=>{document.getElementById('container-prog-doc-'+c).classList.add('hidden');document.getElementById('lbl-prog-doc-'+c).classList.remove('hidden');document.getElementById('lbl-prog-doc-'+c).textContent='Memuat...';});try{const rs=await apiCall('getDokumenUrls',{npsn:n});if(rs.success){cats.forEach(c=>{let dN=c==='alat'?'peralatan':(c==='aset'?'aset_lain':c);let url=(activeTahap==='all'||activeTahap==='1')?rs.data[dN+'_t1']:rs.data[dN+'_t2'];if(activeTahap==='all'&&!url)url=rs.data[dN+'_t2'];const cT=document.getElementById('container-prog-doc-'+c);const bV=document.getElementById('btn-prog-doc-'+c);const bD=document.getElementById('btn-prog-del-'+c);const lB=document.getElementById('lbl-prog-doc-'+c);if(url&&url.trim()!==''){cT.classList.remove('hidden');cT.classList.add('flex');bV.onclick=()=>window.open(url,'_blank');bD.onclick=()=>deleteDokumen(n,dN==='aset_lain'?'aset':dN);lB.classList.add('hidden');}else{cT.classList.add('hidden');lB.textContent='Belum ada';}});}}catch(e){console.error(e);}}
+        function filterProgresSekolah(){const i=document.getElementById('inp-search-progres').value.toLowerCase();const l=document.getElementById('list-sekolah-progres');l.innerHTML='';if(i.length<2){l.classList.add('hidden');return;}const f=currentUsersData.filter(u=>(u.nama||'').toLowerCase().includes(i)||(u.npsn||'').toString().includes(i));if(f.length>0){f.forEach(u=>{const li=document.createElement('li');li.className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b text-sm";li.innerHTML=`<b>${u.npsn}</b> - ${u.nama}`;li.onclick=()=>{selectSchoolProgres(u.npsn);};l.appendChild(li);});l.classList.remove('hidden');}else{l.innerHTML='<li class="px-4 py-2 text-sm text-gray-500">Tidak ditemukan</li>';l.classList.remove('hidden');}}
+        function filterUnduhSekolah(){const i=document.getElementById('inp-unduh-sekolah').value.toLowerCase();const l=document.getElementById('list-unduh-sekolah');l.innerHTML='';if(i.length<2){l.classList.add('hidden');document.getElementById('selected-unduh-npsn').value='';return;}const f=currentUsersData.filter(u=>(u.nama||'').toLowerCase().includes(i)||(u.npsn||'').toString().includes(i));if(f.length>0){f.forEach(u=>{const li=document.createElement('li');li.className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b text-sm";li.innerHTML=`<b>${u.npsn}</b> - ${u.nama}`;li.onclick=()=>{document.getElementById('inp-unduh-sekolah').value=`${u.npsn} - ${u.nama}`;document.getElementById('selected-unduh-npsn').value=u.npsn;l.classList.add('hidden');};l.appendChild(li);});l.classList.remove('hidden');}else{l.innerHTML='<li class="px-3 py-2 text-gray-500">Tidak ditemukan</li>';l.classList.remove('hidden');}}
+        function downloadExcel(fT='all'){let fD=currentAsetData;if(activeTahap!=='all')fD=fD.filter(i=>getTahapFromDate(i.tgl_bast)===activeTahap);if(!fD||fD.length===0){Swal.fire('Data Kosong','Tidak ada data.','warning');return;}let s=(activeTahap==='all')?"Keseluruhan":`Tahap_${activeTahap}`;if(fT==='kecamatan'){const k=document.getElementById('select-unduh-kecamatan').value;if(!k){Swal.fire('Perhatian','Pilih kecamatan!','warning');return;}fD=fD.filter(i=>i.kecamatan===k);s+=`_Kec_${k}`;}else if(fT==='sekolah'){const n=document.getElementById('selected-unduh-npsn').value;if(!n){Swal.fire('Perhatian','Pilih sekolah!','warning');return;}fD=fD.filter(i=>i.npsn&&i.npsn.toString()===n.toString());const u=currentUsersData.find(x=>x.npsn&&x.npsn.toString()===n.toString());s+=`_${u&&u.nama?u.nama.replace(/\s+/g,'_'):n}`;}else{s+=currentRole==='sekolah'?`_${currentUser.nama_sekolah?currentUser.nama_sekolah.replace(/\s+/g,'_'):'Sekolah'}`:"_Dinas";}if(fD.length===0){Swal.fire('Data Kosong','Tidak ada data.','warning');return;}Swal.fire({title:'Ekspor...',text:'Membuat Excel...',timer:1500,didOpen:()=>Swal.showLoading()}).then(()=>{const eD=fD.map((i,idx)=>({"No":idx+1,"NPSN":i.npsn,"Nama Sekolah":i.nama_sekolah,"Jenjang":i.jenjang,"Kecamatan":i.kecamatan,"Tahap":getTahapFromDate(i.tgl_bast),"No Kuitansi/BAST":i.no_bast,"Tgl Kuitansi/BAST":formatTglDisplay(i.tgl_bast),"No. SP":i.no_sp,"Tgl SP":formatTglDisplay(i.tgl_sp),"Penyedia":i.penyedia,"Rekening":i.rekening,"Kodefikasi":i.kodefikasi,"Uraian":i.uraian,"Merek":i.merek,"Satuan":i.satuan,"Qty":i.qty,"Harga Satuan":i.harga_satuan,"Total Harga":i.total_harga,"No SPV":i.no_spv,"Tgl SPV":formatTglDisplay(i.tgl_spv)}));const ws=XLSX.utils.json_to_sheet(eD);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Realisasi");XLSX.writeFile(wb,`Rekap_${s}.xlsx`);});}
+        async function submitUbahPassword(e){e.preventDefault();const oP=document.getElementById('inp-old-pass').value;const nP=document.getElementById('inp-new-pass').value;const cP=document.getElementById('inp-conf-pass').value;if(nP!==cP){Swal.fire('Gagal','Konfirmasi tidak cocok!','error');return;}if(nP.length<5){Swal.fire('Gagal','Minimal 5 karakter!','warning');return;}showLoading('Menyimpan sandi...');let idn=currentRole==='dinas'?currentUser.username:currentUser.npsn;try{const res=await apiCall('ubahPassword',{username:idn,oldPass:oP,newPass:nP,role:currentRole});hideLoading();if(res.success){Swal.fire('Sukses','Password diubah.','success');document.getElementById('form-ubah-pass').reset();}else Swal.fire('Gagal',res.message,'error');}catch(err){hideLoading();Swal.fire('Error',err.message,'error');}}
+        async function loadDataVerifikasi(){try{const res=await apiCall('getDataVerifikasi');if(res.success){let v=res.data;if(currentRole==='dinas'&&currentUser.level!=='superadmin'&&currentUser.level!=='admin'){v=v.filter(x=>currentUsersData.some(u=>u.npsn.toString()===x.npsn.toString()));}currentVerifData=v;renderTableVerifikasi(currentVerifData);}}catch(e){console.error(e);}}
+        function switchVerifikasiTahap(t){verifTahap=t;document.getElementById('tab-verif-1').className=t==='1'?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500';document.getElementById('tab-verif-2').className=t==='2'?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500';renderTableVerifikasi(currentVerifData);}
+        function renderTableVerifikasi(d){const tb=document.getElementById('table-body-verifikasi');if(!d||d.length===0){tb.innerHTML='<tr><td colspan="6" class="text-center py-6">Tidak ada data.</td></tr>';return;}let ht='';d.forEach(i=>{let ll=verifTahap==='1'?i.lpj.lpj_t1:i.lpj.lpj_t2;let s=verifTahap==='1'?i.lpj.status_t1:i.lpj.status_t2;let rl=verifTahap==='1'?i.lpj.rekom_t1:i.lpj.rekom_t2;let bc=s.includes('Manager')?'bg-green-100 text-green-700':(s.includes('Dinas')?'bg-blue-100 text-blue-700':(s.includes('Ditolak')?'bg-red-100 text-red-700':'bg-gray-100 text-gray-600'));let bl=ll&&ll!==''?`<button onclick="window.open('${ll}','_blank')" class="text-xs bg-indigo-50 text-primary px-3 py-1 rounded">Buka LPJ</button>`:`<span class="text-[10px] text-gray-400">Belum Upload</span>`;let bv='';if(s==='Menunggu Verifikasi'||s.includes('Ditolak'))bv=`<button onclick="ubahStatusLPJ('${i.npsn}','Disetujui Dinas')" class="bg-blue-500 text-white px-2 py-1 rounded text-[10px] font-bold mr-1">Setujui Dinas</button><button onclick="ubahStatusLPJ('${i.npsn}','Ditolak/Revisi')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-bold">Tolak</button>`;else if(s==='Disetujui Dinas')bv=`<button onclick="ubahStatusLPJ('${i.npsn}','Disetujui Manager BOS')" class="bg-green-500 text-white px-2 py-1 rounded text-[10px] font-bold mr-1">Setujui Manager</button><button onclick="ubahStatusLPJ('${i.npsn}','Ditolak/Revisi')" class="bg-red-500 text-white px-2 py-1 rounded text-[10px] font-bold">Tolak</button>`;else if(s==='Disetujui Manager BOS')bv=`<span class="text-[10px] text-green-600 font-bold">Selesai</span><button onclick="ubahStatusLPJ('${i.npsn}','Disetujui Dinas')" class="ml-2 text-gray-400"><i class="fa-solid fa-rotate-left"></i></button>`;let ir='';if(s==='Disetujui Manager BOS'){if(rl&&rl!=='')ir=`<div class="flex justify-center gap-1"><a href="${rl}" target="_blank" class="text-xs text-emerald-600 font-bold">Buka Rekom</a><button onclick="hapusRekomendasi('${i.npsn}')" class="text-red-400"><i class="fa-solid fa-trash"></i></button></div>`;else ir=`<div class="flex justify-center gap-1"><input type="url" id="inp-rekom-${i.npsn}" class="border rounded px-1 w-20 text-[10px]"><button onclick="simpanRekom('${i.npsn}')" class="bg-emerald-500 text-white px-1 rounded text-[10px] font-bold"><i class="fa-solid fa-save"></i></button></div>`;}else ir='-';ht+=`<tr class="border-b"><td class="py-2 px-3">${i.npsn}</td><td class="py-2 px-3">${i.nama}</td><td class="py-2 px-3 text-center">${bl}</td><td class="py-2 px-3 text-center"><span class="px-2 py-1 rounded text-[10px] font-bold ${bc}">${s}</span></td><td class="py-2 px-3 text-center bg-indigo-50/50">${bv}</td><td class="py-2 px-3 text-center">${ir}</td></tr>`;});tb.innerHTML=ht;}
+        function filterVerifikasiTable(){let i=document.getElementById('inp-search-verif').value.toLowerCase();document.querySelectorAll('#table-body-verifikasi tr').forEach(r=>{if(r.cells.length>1)r.style.display=r.cells[1].textContent.toLowerCase().includes(i)?'':'none';});}
+        async function ubahStatusLPJ(n,s){showLoading('Update...');try{const r=await apiCall('updateStatusLPJ',{npsn:n,tahap:verifTahap,status:s});hideLoading();if(r.success)loadDataVerifikasi();else Swal.fire('Error',r.message,'error');}catch(e){hideLoading();Swal.fire('Error',e.message,'error');}}
+        async function simpanRekom(n){let u=document.getElementById(`inp-rekom-${n}`).value;if(!u)return;showLoading('Menyimpan...');try{const r=await apiCall('simpanLinkRekomendasi',{npsn:n,tahap:verifTahap,url:u});hideLoading();if(r.success)loadDataVerifikasi();else Swal.fire('Error',r.message,'error');}catch(e){hideLoading();Swal.fire('Error',e.message,'error');}}
+        function hapusRekomendasi(n){document.getElementById(`inp-rekom-${n}`).value='';simpanRekom(n);}
     </script>
 </body>
 </html>
