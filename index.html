@@ -144,9 +144,9 @@
 
     <!-- Header -->
     <header class="w-full bg-white shadow-sm px-4 md:px-6 py-3 flex justify-between items-center z-50 fixed top-0">
-        <div class="flex items-center gap-3 relative z-10">
+        <div class="flex items-center gap-3 relative z-10 shrink-0">
             <img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" alt="Logo" class="h-8 w-8 md:h-10 md:w-10 object-contain drop-shadow-md rounded-xl">
-            <div>
+            <div class="hidden sm:block">
                 <h1 class="text-sm font-bold text-gray-800 leading-tight">SIMBOS</h1>
                 <p class="text-[9px] md:text-xs text-gray-500">Belanja Sekolah</p>
             </div>
@@ -155,10 +155,22 @@
             <h2 class="text-sm font-extrabold text-gray-800 tracking-wider">DINAS PENDIDIKAN PEMUDA DAN OLAHRAGA</h2>
             <p class="text-xs text-primary font-bold tracking-widest">KABUPATEN DONGGALA</p>
         </div>
-        <div class="flex items-center gap-2 md:gap-4 relative z-10 shrink-0 whitespace-nowrap">
-            <div class="hidden sm:flex items-center gap-1 md:gap-2 text-[10px] md:text-sm font-medium text-gray-600 sm:border-r sm:pr-4 border-gray-200">
+        <div class="flex items-center gap-2 md:gap-3 relative z-10 shrink-0 whitespace-nowrap">
+            
+            <!-- Tahap Selector (Dipindah ke Header agar selalu nampak di HP) -->
+            <div id="headerTahapContainer" class="hidden items-center gap-1 bg-indigo-50 border border-indigo-100 rounded px-2 py-1 md:py-1.5 shadow-sm">
+                <i class="fa-solid fa-calendar-days text-primary text-[10px] md:text-sm"></i>
+                <select id="globalTahap" onchange="changeGlobalTahap(this.value)" class="text-[10px] md:text-xs font-bold text-primary bg-transparent outline-none cursor-pointer">
+                    <option value="all">Semua Tahap</option>
+                    <option value="1">Tahap 1</option>
+                    <option value="2">Tahap 2</option>
+                </select>
+            </div>
+
+            <div class="hidden sm:flex items-center gap-1 md:gap-2 text-[10px] md:text-sm font-medium text-gray-600 sm:border-r sm:pr-3 border-gray-200 ml-1">
                 <i class="fa-regular fa-clock text-primary"></i><span id="clockWITA">Memuat...</span>
             </div>
+            
             <!-- Tombol Pengaturan -->
             <button id="btnSettings" onclick="openPengaturan()" class="hidden text-gray-500 hover:text-indigo-600 p-1 md:p-2 transition-colors" title="Pengaturan Akun">
                 <i class="fa-solid fa-gear text-lg md:text-xl"></i>
@@ -213,12 +225,6 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <ul id="navMenuDesktop" class="mobile-bottom-nav"></ul>
-                    <div class="hidden sm:flex items-center gap-2 border-l pl-4 border-gray-200">
-                        <i class="fa-solid fa-calendar-days text-primary"></i>
-                        <select id="globalTahap" onchange="changeGlobalTahap(this.value)" class="text-xs font-bold text-primary bg-indigo-50 border border-indigo-100 outline-none rounded p-1.5 cursor-pointer shadow-sm hover:bg-indigo-100 transition-colors">
-                            <option value="all">Semua Tahap (1 Tahun)</option><option value="1">Tahap 1 (Jan - Jun)</option><option value="2">Tahap 2 (Jul - Des)</option>
-                        </select>
-                    </div>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="refreshData()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 px-3 py-1.5 rounded-md text-sm font-bold transition-colors flex items-center gap-2 shadow-sm border border-indigo-100" title="Segarkan Data">
@@ -608,10 +614,12 @@
                         <div><label class="block text-xs font-semibold mb-1">Level Akses (RBAC)</label>
                             <select id="inp-adm-level" required class="w-full px-3 py-2 border rounded-lg text-sm">
                                 <option value="superadmin">Super Admin (Semua Akses)</option>
-                                <option value="admin_paud">Admin Bidang PAUD & PKBM</option>
-                                <option value="admin_sd">Admin Bidang SD</option>
-                                <option value="admin_smp">Admin Bidang SMP</option>
-                                <option value="manager_bos">Manager BOS (Persetujuan Akhir)</option>
+                                <option value="admin_paud">Admin Bidang PAUD & PKBM (Verifikator)</option>
+                                <option value="admin_sd">Admin Bidang SD (Verifikator)</option>
+                                <option value="admin_smp">Admin Bidang SMP (Verifikator)</option>
+                                <option value="manager_paud">Manager BOS PAUD (Persetujuan Akhir)</option>
+                                <option value="manager_sd">Manager BOS SD (Persetujuan Akhir)</option>
+                                <option value="manager_smp">Manager BOS SMP (Persetujuan Akhir)</option>
                             </select>
                         </div> 
                         <div><label class="block text-xs font-semibold mb-1">Password</label><input type="password" id="inp-adm-pass" class="w-full px-3 py-2 border rounded-lg text-sm"></div> 
@@ -686,10 +694,10 @@
         function getFilteredUsers() {
             if (currentRole !== 'dinas') return [];
             let lvl = currentUser.level || '';
-            if (lvl === 'superadmin' || lvl === 'manager_bos') return currentUsersData;
-            if (lvl === 'admin_paud') return currentUsersData.filter(u => u.jenjang === 'PAUD' || u.jenjang === 'PKBM');
-            if (lvl === 'admin_sd') return currentUsersData.filter(u => u.jenjang === 'SD');
-            if (lvl === 'admin_smp') return currentUsersData.filter(u => u.jenjang === 'SMP');
+            if (lvl === 'superadmin') return currentUsersData;
+            if (lvl.includes('paud')) return currentUsersData.filter(u => u.jenjang === 'PAUD' || u.jenjang === 'PKBM');
+            if (lvl.includes('sd')) return currentUsersData.filter(u => u.jenjang === 'SD');
+            if (lvl.includes('smp')) return currentUsersData.filter(u => u.jenjang === 'SMP');
             return currentUsersData;
         }
 
@@ -752,7 +760,15 @@
 
             if (role === 'dinas') {
                 const lvl = currentUser.level || '';
-                let rank = '(Admin)'; if(lvl === 'superadmin') rank = '(Super Admin)'; else if(lvl === 'manager_bos') rank = '(Manager BOS)'; else if(lvl === 'admin_paud') rank = '(Bidang PAUD)'; else if(lvl === 'admin_sd') rank = '(Bidang SD)'; else if(lvl === 'admin_smp') rank = '(Bidang SMP)';
+                let rank = '(Admin)'; 
+                if(lvl === 'superadmin') rank = '(Super Admin)'; 
+                else if(lvl === 'admin_paud') rank = '(Admin PAUD)'; 
+                else if(lvl === 'admin_sd') rank = '(Admin SD)'; 
+                else if(lvl === 'admin_smp') rank = '(Admin SMP)';
+                else if(lvl === 'manager_paud') rank = '(Manager PAUD)'; 
+                else if(lvl === 'manager_sd') rank = '(Manager SD)'; 
+                else if(lvl === 'manager_smp') rank = '(Manager SMP)';
+
                 const sapaan = `<i class="fa-solid fa-user-shield text-primary mr-1"></i> ${currentUser.nama} ${rank}`;
                 safeSetHTML('userGreeting', sapaan); safeSetText('dashboardTitle', "Dashboard Dinas");
                 
@@ -769,6 +785,7 @@
                 document.getElementById('panel-unduh-dinas').classList.remove('hidden'); document.getElementById('panel-unduh-dinas').classList.add('grid');
                 document.getElementById('lpj-dinas-container').classList.remove('hidden'); document.getElementById('lpj-dinas-container').classList.add('flex');
                 document.getElementById('btn-force-distribusi').classList.add('hidden');
+                document.getElementById('headerTahapContainer').classList.remove('hidden'); document.getElementById('headerTahapContainer').classList.add('flex');
                 safeSetText('dash-pagu-total', "Memuat...");
                 
                 // Ambil semua data di awal (paralel)
@@ -791,8 +808,9 @@
                 
                 document.getElementById('panel-unduh-sekolah').classList.remove('hidden');
                 document.getElementById('lpj-sekolah-container').classList.remove('hidden');
+                document.getElementById('headerTahapContainer').classList.remove('hidden'); document.getElementById('headerTahapContainer').classList.add('flex');
                 
-                globalPagu.total = parseInt(currentUser.total_pagu)||0; globalPagu.pegawai = parseInt(currentUser.paguPegawai)||0; globalPagu.barjas = parseInt(currentUser.paguBarjas)||0; globalPagu.alat = parseInt(currentUser.paguAlat)||0; globalPagu.aset = parseInt(currentUser.paguAset)||0;
+                globalPagu.total = parseInt(currentUser.totalPagu)||0; globalPagu.pegawai = parseInt(currentUser.paguPegawai)||0; globalPagu.barjas = parseInt(currentUser.paguBarjas)||0; globalPagu.alat = parseInt(currentUser.paguAlat)||0; globalPagu.aset = parseInt(currentUser.paguAset)||0;
                 document.getElementById('btn-tambah-aset-tabel').classList.remove('hidden');
                 
                 // Ambil semua data dokumen & LPJ di awal
@@ -1052,7 +1070,7 @@
                 let lvl = currentUser.level || '';
                 if ((lvl.includes('admin_') || lvl === 'superadmin') && st === 'diproses') {
                     btnAksi = `<button onclick="updateStatusLPJ('${item.npsn}', '${item.tahap}', 'verifikasi_dinas')" class="bg-purple-500 text-white px-2 py-1 rounded text-xs mr-1 shadow hover:bg-purple-600 transition-colors">Terima (Ke Manager)</button> <button onclick="tolakLPJ('${item.npsn}', '${item.tahap}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs shadow hover:bg-red-600 transition-colors">Tolak</button>`;
-                } else if ((lvl === 'superadmin' || lvl === 'manager_bos') && st === 'verifikasi_dinas') {
+                } else if ((lvl === 'superadmin' || lvl.includes('manager_')) && st === 'verifikasi_dinas') {
                     btnAksi = `<button onclick="setujuiLPJ('${item.npsn}', '${item.tahap}')" class="bg-green-500 text-white px-2 py-1 rounded text-xs mr-1 shadow hover:bg-green-600 transition-colors">Setujui Final</button> <button onclick="tolakLPJ('${item.npsn}', '${item.tahap}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs shadow hover:bg-red-600 transition-colors">Tolak</button>`;
                 } else {
                     btnAksi = '<span class="text-xs text-gray-400">-</span>';
@@ -1100,7 +1118,7 @@
                 input: 'url',
                 inputPlaceholder: 'https://docs.google.com/...',
                 showCancelButton: true,
-                confirmButtonText: 'Setujui Final',
+                confirmButtonText: 'Kirim & Setujui Final',
                 confirmButtonColor: '#10B981',
                 cancelButtonText: 'Batal',
                 inputValidator: (value) => {
