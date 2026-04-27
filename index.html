@@ -68,7 +68,7 @@
 <body class="h-screen w-screen flex flex-col overflow-hidden text-gray-800">
 
     <!-- Loading Overlay Berpersentase -->
-    <div id="api-loading-overlay">
+    <div id="api-loading-overlay" class="z-[9999]">
         <div class="spinner-api"></div>
         <p class="text-sm font-bold text-gray-700" id="api-loading-text">Memproses Data...</p>
         <div class="w-48 h-2.5 bg-gray-200 rounded-full mt-4 overflow-hidden shadow-inner">
@@ -81,9 +81,8 @@
         // ==========================================================
         // ⚠️ PASTE URL APPSCRIPT ANDA DI BAWAH INI ⚠️
         // ==========================================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbz42LqOT9qpzf7vufPQC3WtzSPkAx1kTXMtoUtADxc7751FgN5inVOeJ-LFsWsQDARCiw/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbwXFuCC8XmHR9_xvEPIphu-efU9PlPOQyf24LjTMDHjHJdxDp60HtAAxnkUCRnvApBfLQ/exec"; 
 
-        // Manajemen Progress Bar Loading
         let loadingProgressInterval = null;
         let currentProgress = 0;
 
@@ -97,12 +96,7 @@
         function showLoading(text) { 
             safeSetText('api-loading-text', text || 'Memproses Data...'); 
             document.getElementById('api-loading-overlay').style.display = 'flex'; 
-            
-            // Reset dan mulai simulasi persentase
-            currentProgress = 0;
-            updateProgressBar(0);
-            clearInterval(loadingProgressInterval);
-            
+            currentProgress = 0; updateProgressBar(0); clearInterval(loadingProgressInterval);
             loadingProgressInterval = setInterval(() => {
                 if (currentProgress < 90) {
                     currentProgress += Math.floor(Math.random() * 15) + 5; 
@@ -113,20 +107,13 @@
         }
 
         function hideLoading() { 
-            clearInterval(loadingProgressInterval);
-            updateProgressBar(100); 
-            
-            setTimeout(() => {
-                document.getElementById('api-loading-overlay').style.display = 'none'; 
-            }, 300);
+            clearInterval(loadingProgressInterval); updateProgressBar(100); 
+            setTimeout(() => { document.getElementById('api-loading-overlay').style.display = 'none'; }, 300);
         }
 
         async function apiCall(action, payload = {}) {
             return new Promise((resolve, reject) => {
-                if (!API_URL || API_URL === "PASTE URL DISINI") {
-                    reject(new Error("URL AppScript belum dimasukkan!"));
-                    return;
-                }
+                if (!API_URL || API_URL === "PASTE URL DISINI") { reject(new Error("URL AppScript belum dimasukkan!")); return; }
                 fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, payload: payload }) })
                 .then(res => res.json()).then(data => resolve(data)).catch(err => {
                     console.error("Fetch Error:", err);
@@ -156,8 +143,6 @@
             <p class="text-xs text-primary font-bold tracking-widest">KABUPATEN DONGGALA</p>
         </div>
         <div class="flex items-center gap-2 md:gap-3 relative z-10 shrink-0 whitespace-nowrap">
-            
-            <!-- Tahap Selector (Dipindah ke Header agar selalu nampak di HP) -->
             <div id="headerTahapContainer" class="hidden items-center gap-1 bg-indigo-50 border border-indigo-100 rounded px-2 py-1 md:py-1.5 shadow-sm">
                 <i class="fa-solid fa-calendar-days text-primary text-[10px] md:text-sm"></i>
                 <select id="globalTahap" onchange="changeGlobalTahap(this.value)" class="text-[10px] md:text-xs font-bold text-primary bg-transparent outline-none cursor-pointer">
@@ -166,12 +151,9 @@
                     <option value="2">Tahap 2</option>
                 </select>
             </div>
-
             <div class="hidden sm:flex items-center gap-1 md:gap-2 text-[10px] md:text-sm font-medium text-gray-600 sm:border-r sm:pr-3 border-gray-200 ml-1">
                 <i class="fa-regular fa-clock text-primary"></i><span id="clockWITA">Memuat...</span>
             </div>
-            
-            <!-- Tombol Pengaturan -->
             <button id="btnSettings" onclick="openPengaturan()" class="hidden text-gray-500 hover:text-indigo-600 p-1 md:p-2 transition-colors" title="Pengaturan Akun">
                 <i class="fa-solid fa-gear text-lg md:text-xl"></i>
             </button>
@@ -248,7 +230,6 @@
                 </button>
             </div>
             
-            <!-- 4 KARTU GRID SEJAJAR -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <!-- 1. Total Pagu -->
                 <div class="card-wrapper opacity-0 h-full">
@@ -363,7 +344,7 @@
             </div>
         </div>
 
-        <!-- View: Progres Sekolah -->
+        <!-- View: Progres Sekolah (Dinas) -->
         <div id="view-progres" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24"> 
             <div class="mb-2"><h2 class="text-2xl font-bold text-gray-800">Progres Sekolah <span class="t-label-tahap font-normal ml-2"></span></h2></div> 
             <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100"> 
@@ -534,34 +515,50 @@
             </div> 
         </div>
 
-        <!-- View: Kelola LPJ -->
+        <!-- View: Kelola LPJ (31 Checklist Item) -->
         <div id="view-lpj" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24">
             <div class="flex justify-between items-center mb-2">
-                <div><h2 class="text-2xl font-bold">Kelola LPJ <span class="t-label-tahap text-lg font-normal text-gray-500 ml-2"></span></h2><p class="text-sm text-gray-500" id="lpj-subtitle">Unggah Link Laporan Pertanggungjawaban dan pantau statusnya.</p></div>
+                <div><h2 class="text-2xl font-bold">Kelola LPJ <span class="t-label-tahap text-lg font-normal text-gray-500 ml-2"></span></h2><p class="text-sm text-gray-500" id="lpj-subtitle">Checklist dan pantau verifikasi Laporan Pertanggungjawaban.</p></div>
             </div>
 
             <!-- Tampilan LPJ untuk SEKOLAH -->
-            <div id="lpj-sekolah-container" class="hidden">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border card-3d max-w-lg mx-auto">
-                    <h3 class="font-bold text-gray-800 mb-4 border-b pb-2"><i class="fa-solid fa-file-contract text-primary mr-2"></i> Form Pengajuan LPJ <span class="t-label-tahap"></span></h3>
-                    <div class="mb-4">
-                        <label class="block text-xs font-bold text-gray-600 mb-1">Link Dokumen LPJ (Google Drive)</label>
-                        <input type="url" id="inp-link-lpj" placeholder="https://docs.google.com/..." class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-primary outline-none transition-colors">
-                    </div>
-                    <div class="mb-5 flex justify-between items-center bg-gray-50 p-3 rounded border">
-                        <span class="text-xs font-bold">Status Saat Ini:</span>
-                        <span id="badge-status-lpj" class="px-2 py-1 rounded text-xs font-bold bg-gray-200 text-gray-600">Belum Mengajukan</span>
-                    </div>
-                    <button id="btn-submit-lpj" onclick="submitLPJ()" class="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-semibold shadow hover:bg-indigo-700 transition-colors mb-2">Kirim Dokumen LPJ</button>
-                    
-                    <!-- Container Rekomendasi (Sekolah) -->
-                    <div id="container-rekomendasi-sekolah" class="hidden mt-5 pt-5 border-t border-gray-200">
-                        <h4 class="text-xs font-bold text-gray-600 mb-3"><i class="fa-solid fa-stamp text-emerald-500 mr-1"></i> Rekomendasi Dinas:</h4>
-                        <div class="flex flex-col gap-2">
-                            <button id="btn-download-rekom" class="hidden w-full bg-emerald-500 text-white py-2.5 rounded-lg text-sm font-bold shadow hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-download mr-1"></i> Download Rekomendasi</button>
-                        </div>
-                    </div>
-                </div>
+            <div id="lpj-sekolah-container" class="hidden flex-col w-full">
+               <div class="flex justify-between items-center mb-4 bg-white p-4 rounded-xl shadow-sm border">
+                   <div class="flex items-center gap-3">
+                       <div class="w-10 h-10 bg-indigo-50 text-primary rounded-full flex justify-center items-center text-lg"><i class="fa-solid fa-list-check"></i></div>
+                       <div>
+                           <h3 class="font-bold text-gray-800">Persyaratan LPJ</h3>
+                           <p class="text-[10px] font-bold text-gray-500" id="lpj-school-progress-text">0 / 31 Item Terisi</p>
+                       </div>
+                   </div>
+                   <div class="text-right">
+                       <span class="text-[10px] font-bold block mb-1 text-gray-500 uppercase tracking-wide">Status Keseluruhan</span>
+                       <span id="badge-status-lpj" class="px-3 py-1.5 rounded-full text-xs font-bold bg-gray-200 text-gray-600">BELUM MENGAJUKAN</span>
+                   </div>
+               </div>
+
+               <!-- Container Rekomendasi (Sekolah) -->
+               <div id="container-rekomendasi-sekolah" class="hidden mb-4 p-5 bg-emerald-50 border border-emerald-200 rounded-xl shadow-inner">
+                   <div class="flex justify-between items-center">
+                       <div>
+                           <h4 class="text-sm font-bold text-emerald-800"><i class="fa-solid fa-stamp mr-1"></i> LPJ Disetujui & Direkomendasikan</h4>
+                           <p class="text-xs text-emerald-600 mt-1">Silakan unduh dokumen rekomendasi yang diterbitkan oleh Manager BOS.</p>
+                       </div>
+                       <button id="btn-download-rekom" class="bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-download mr-1"></i> Download Rekomendasi</button>
+                   </div>
+               </div>
+
+               <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mb-4">
+                   <div class="overflow-x-auto max-h-[60vh] relative">
+                       <table class="w-full text-left text-xs whitespace-nowrap">
+                           <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm z-10 border-b">
+                               <tr><th class="py-3 px-4 w-10 text-center">No</th><th class="py-3 px-4">Uraian Persyaratan</th><th class="py-3 px-4 w-64">Link Dokumen (Google Drive)</th><th class="py-3 px-4 text-center w-24">Status</th><th class="py-3 px-4 text-center w-24">Aksi</th></tr>
+                           </thead>
+                           <tbody id="table-body-lpj-sekolah">
+                           </tbody>
+                       </table>
+                   </div>
+               </div>
             </div>
 
             <!-- Tampilan LPJ untuk DINAS (Verifikasi) -->
@@ -569,9 +566,9 @@
                 <div class="overflow-x-auto flex-1">
                     <table class="w-full text-left text-sm whitespace-nowrap">
                         <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b">
-                            <tr><th class="py-3 px-4">NPSN</th><th class="py-3 px-4">Nama Sekolah</th><th class="py-3 px-4 text-center">Tahap</th><th class="py-3 px-4">Link LPJ</th><th class="py-3 px-4 text-center">Rekomendasi</th><th class="py-3 px-4 text-center">Status</th><th class="py-3 px-4 text-center">Aksi Verifikasi</th></tr>
+                            <tr><th class="py-3 px-4">NPSN</th><th class="py-3 px-4">Nama Sekolah</th><th class="py-3 px-4 text-center">Tahap</th><th class="py-3 px-4 text-center">Progress Upload</th><th class="py-3 px-4 text-center">Status</th><th class="py-3 px-4 text-center">Aksi Verifikasi</th></tr>
                         </thead>
-                        <tbody id="table-body-lpj"><tr><td colspan="7" class="text-center py-8 text-gray-500">Memuat data LPJ...</td></tr></tbody>
+                        <tbody id="table-body-lpj-dinas"><tr><td colspan="6" class="text-center py-8 text-gray-500">Memuat data LPJ...</td></tr></tbody>
                     </table>
                 </div>
             </div>
@@ -679,16 +676,62 @@
             </div>
         </div>
 
+        <!-- MODAL VERIFIKASI LPJ DETAIL (DINAS) -->
+        <div id="modal-verif-lpj" class="fixed inset-0 z-[70] bg-gray-900/80 backdrop-blur-sm hidden justify-center items-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl overflow-hidden flex flex-col h-[95vh]">
+                <div class="px-6 py-4 border-b bg-indigo-600 text-white flex justify-between items-center shrink-0">
+                    <div>
+                        <h3 class="text-lg font-bold" id="title-modal-verif-lpj">Verifikasi Detail LPJ</h3>
+                        <p class="text-xs text-indigo-200" id="subtitle-modal-verif-lpj">NPSN - Nama Sekolah</p>
+                    </div>
+                    <button onclick="closeModalVerifLPJ()" class="text-white hover:text-red-300"><i class="fa-solid fa-xmark text-2xl"></i></button>
+                </div>
+                <div class="p-0 overflow-y-auto flex-1 bg-gray-50 relative">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                       <thead class="bg-white text-gray-600 sticky top-0 shadow-sm z-10 border-b">
+                           <tr><th class="py-3 px-4 w-10 text-center">No</th><th class="py-3 px-4">Uraian Persyaratan</th><th class="py-3 px-4 w-48 text-center">Link Dokumen</th><th class="py-3 px-4 text-center w-24">Status</th><th class="py-3 px-4 text-center w-40">Verifikasi Item</th></tr>
+                       </thead>
+                       <tbody id="table-body-verif-lpj">
+                       </tbody>
+                   </table>
+                </div>
+                <div class="px-6 py-4 border-t bg-white flex flex-col sm:flex-row justify-between items-center shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20 shrink-0 gap-3">
+                    <div class="text-xs font-bold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200" id="verif-progress-text">Disetujui: 0 / 31</div>
+                    <div id="footer-modal-verif" class="flex gap-3 w-full sm:w-auto">
+                        <!-- Tombol Setujui Final / Teruskan ke manager akan muncul disini -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <nav class="md:hidden mobile-bottom-nav"><ul id="navMenuMobile" class="flex justify-around items-center w-full px-1"></ul></nav>
     </main>
 
     <!-- FUNGSI UTAMA JAVASCRIPT -->
     <script>
+        const LPJ_REQ = [
+            "RAPBS (K1)", "RKAS (K2)", "BUKU KAS UMUM (K3)", "BUKU PEMBANTU KAS (K4)", "BUKU PEMBANTU BANK (K5)",
+            "BUKU PEMBANTU PAJAK (K6)", "BUKU PEMBANTU RINCIAN OBJEK BELANJA", "REALISASI PENGGUNAAN DANA (K7)",
+            "REKAPITULASI (K7A)", "OPNAME KAS (K7B)", "REKENING KORAN", "REKAP REALISASI BELANJA MODAL (BHM) DI ARKAS",
+            "REKAP REALISASI BARANG HABIS PAKAI (BHP) DI ARKAS", "BERITA ACARA PEMERIKSAAN KAS (K7C)",
+            "INVENTARIS BARANG (BOS 09)", "FILE EXCEL BELANJA MODAL BERDASARKAN BHM ARKAS", "PRINT OUT KERTAS KERJA DARI ARKAS",
+            "DAFTAR PEMBAYARAN HONOR GAJI SESUAI ARKAS (PERBULAN)", "REKAPITULASI DAFTAR HADIR",
+            "SK HONOR", "DOKUMENTASI MENGAJAR", "PROFIL DAPODIK", "SPTJM AKTIF BEKERJA",
+            "SPTJM PEMBAYARAN GAJI PERSEMESTER & TTD KEPSEK (MATERAI)", "PEMBELANJAAN DI SIPLah (PO, Invoice, BAST, Terima, Kwitansi)",
+            "PEMBELANJAAN LUAR SIPLah (Kwitansi, Nota, BAST, Foto, Pajak, SP3B)",
+            "BIAYA RAPAT/KEGIATAN (Kwitansi, Terima, Nota, Undangan, Hadir, SK, Dok, Notulen)",
+            "BIAYA LEMBUR (Kwitansi, Terima, Hadir, Tugas, Laporan, Dok)",
+            "BIAYA RENOVASI (Kwitansi Bahan, Upah, Foto Sblm/Proses/Ssdh)",
+            "BIAYA TRANSPORT (Kwitansi, Rincian, Tugas, SPPD, Riil, Laporan, Dok)",
+            "DOKUMENTASI BUKTI PUBLIKASI DANA BOS"
+        ];
+
         let currentUser = null; let currentRole = null; let currentAsetData = []; let currentUsersData = []; let currentAdminsData = []; let allDokumenUrls = null; let allLpjData = [];
         let barChartInstance = null; let pieChartInstance = null; let progBarChartInst = null; let progPieChartInst = null;
         let editModeUser = false; let editModeAsetId = null; let editModeAdmin = false;
         let activeTahap = 'all'; let uploadTahap = '1'; let currentInputTab = 'modal'; let currentDataTab = 'modal'; 
         let globalPagu = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 }; let globalRealisasi = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 };
+        let currentVerifNpsn = null; let currentVerifTahap = null;
 
         // --- CORE HELPER FUNCTIONS ---
         function getFilteredUsers() {
@@ -699,14 +742,6 @@
             if (lvl.includes('sd')) return currentUsersData.filter(u => u.jenjang === 'SD');
             if (lvl.includes('smp')) return currentUsersData.filter(u => u.jenjang === 'SMP');
             return currentUsersData;
-        }
-
-        function getBtnClass(k) {
-            if(k === 'pegawai') return 'w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-amber-600 transition-colors';
-            if(k === 'barjas') return 'w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-purple-600 transition-colors';
-            if(k === 'peralatan') return 'w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-sky-600 transition-colors';
-            if(k === 'aset') return 'w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-emerald-600 transition-colors';
-            return 'w-full bg-primary text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-indigo-600 transition-colors';
         }
 
         // --- INIT & MENU ---
@@ -777,7 +812,7 @@
                 html += createNav('Sekolah', 'fa-users', 'view-kelola-user');
                 html += createNav('Progres', 'fa-chart-line', 'view-progres');
                 html += createNav('Data', 'fa-folder-open', 'view-data-aset');
-                html += createNav('LPJ', 'fa-file-contract', 'view-lpj');
+                html += createNav('LPJ', 'fa-list-check', 'view-lpj');
                 html += createNav('Unduh', 'fa-download', 'view-unduh');
                 navD.innerHTML = html; navM.innerHTML = html; 
                 
@@ -802,12 +837,13 @@
                 html += `<li><a href="#" onclick="openInputData()" class="nav-link mobile-nav-item mobile-inactive transition-all duration-200"><i class="fa-solid fa-keyboard mobile-nav-icon"></i><span class="mobile-nav-text font-semibold">Input</span></a></li>`;
                 html += createNav('Dokumen', 'fa-file-arrow-up', 'view-upload');
                 html += createNav('Data', 'fa-folder-open', 'view-data-aset');
-                html += createNav('LPJ', 'fa-file-contract', 'view-lpj');
+                html += createNav('LPJ', 'fa-list-check', 'view-lpj');
                 html += createNav('Unduh', 'fa-download', 'view-unduh');
                 navD.innerHTML = html; navM.innerHTML = html;
                 
                 document.getElementById('panel-unduh-sekolah').classList.remove('hidden');
                 document.getElementById('lpj-sekolah-container').classList.remove('hidden');
+                document.getElementById('lpj-sekolah-container').classList.add('flex');
                 document.getElementById('headerTahapContainer').classList.remove('hidden'); document.getElementById('headerTahapContainer').classList.add('flex');
                 
                 globalPagu.total = parseInt(currentUser.totalPagu)||0; globalPagu.pegawai = parseInt(currentUser.paguPegawai)||0; globalPagu.barjas = parseInt(currentUser.paguBarjas)||0; globalPagu.alat = parseInt(currentUser.paguAlat)||0; globalPagu.aset = parseInt(currentUser.paguAset)||0;
@@ -897,6 +933,14 @@
         async function gantiPassword(e) { e.preventDefault(); const p1 = document.getElementById('inp-pass-baru').value; const p2 = document.getElementById('inp-pass-konfirm').value; if(p1 !== p2) { Swal.fire('Error', 'Konfirmasi password tidak cocok!', 'error'); return; } showLoading('Mengubah password...'); try { const idKey = currentRole === 'dinas' ? currentUser.username : currentUser.npsn; const res = await apiCall('changePassword', { id: idKey, role: currentRole, newPassword: p1 }); hideLoading(); if(res.success) { Swal.fire('Sukses', 'Password berhasil diubah!', 'success'); closePengaturan(); } else Swal.fire('Gagal', res.message, 'error'); } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
 
         // --- FITUR BAST VIA LINK ---
+        function getUploadBtnClass(k) {
+            if(k === 'pegawai') return 'w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-amber-600 transition-colors';
+            if(k === 'barjas') return 'w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-purple-600 transition-colors';
+            if(k === 'peralatan') return 'w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-sky-600 transition-colors';
+            if(k === 'aset') return 'w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-emerald-600 transition-colors';
+            return 'w-full bg-primary text-white py-2 rounded-lg text-xs font-semibold shadow-md';
+        }
+
         function switchUploadTahap(t) { 
             uploadTahap = t; 
             document.getElementById('tab-up-1').className = t==='1'?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all'; 
@@ -912,15 +956,15 @@
                     inp.value = link || ''; 
                     
                     if(link && link.trim() !== '') {
-                        btn.textContent = 'Lihat Dokumen';
+                        btn.innerHTML = '<i class="fa-solid fa-link mr-1"></i> Lihat Dokumen';
                         btn.onclick = () => window.open(link, '_blank');
                         btn.className = 'w-full bg-indigo-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-indigo-600 transition-colors mt-2';
                         inp.readOnly = true;
                         inp.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
                     } else {
-                        btn.textContent = 'Kirim Dokumen';
+                        btn.innerHTML = 'Kirim Dokumen';
                         btn.onclick = () => simpanLinkDokumen(k);
-                        btn.className = getBtnClass(k);
+                        btn.className = getUploadBtnClass(k);
                         inp.readOnly = false;
                         inp.classList.remove('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
                     }
@@ -931,7 +975,7 @@
         async function loadDokumenUrls() { try { const res = await apiCall('getDokumenUrls', { npsn: currentUser.npsn }); if(res.success) { allDokumenUrls = res.data; switchUploadTahap(uploadTahap); } } catch(err){console.error(err)} }
         async function simpanLinkDokumen(type) { const link = document.getElementById('link-'+type).value; if(!link) { Swal.fire('Perhatian', 'Link tidak boleh kosong!', 'warning'); return; } showLoading(`Menyimpan link Tahap ${uploadTahap}...`); try { const res = await apiCall('simpanLinkDokumen', { npsn: currentUser.npsn, tipe: type, tahap: uploadTahap, linkUrl: link }); hideLoading(); if(res.success) { Swal.fire('Sukses', 'Link berhasil disimpan!', 'success'); loadDokumenUrls(); } else Swal.fire('Gagal', res.message, 'error'); } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
 
-        // --- FITUR LPJ (DIOPTIMALISASI) ---
+        // --- FITUR LPJ (CHECKLIST LENGKAP 31 ITEM) ---
         async function fetchMyLPJData() {
             try {
                 const res = await apiCall('getLPJSekolah', { npsn: currentUser.npsn });
@@ -945,99 +989,117 @@
         function renderLPJSekolahUI() {
             let lpjItem = null;
             if(allLpjData && allLpjData.length > 0) { 
-                lpjItem = allLpjData.find(l => l.tahap === (activeTahap==='all'?'1':activeTahap)); 
-            }
-            if(!lpjItem && activeTahap === 'all' && allLpjData && allLpjData.length > 0) {
-                lpjItem = allLpjData[0]; 
+                let targetTahap = activeTahap === 'all' ? '1' : activeTahap.toString();
+                lpjItem = allLpjData.find(l => l.tahap.toString() === targetTahap); 
             }
             
-            const inp = document.getElementById('inp-link-lpj');
+            let stateObj = {};
+            if (lpjItem && lpjItem.link_lpj && lpjItem.link_lpj.startsWith('{')) {
+                try { stateObj = JSON.parse(lpjItem.link_lpj); } catch(e) {}
+            }
+            
+            let overallStatus = lpjItem ? (lpjItem.status || 'kosong') : 'kosong';
             const badge = document.getElementById('badge-status-lpj'); 
-            const btnSubmit = document.getElementById('btn-submit-lpj');
-            const btnRekom = document.getElementById('btn-download-rekom');
             const containerRekom = document.getElementById('container-rekomendasi-sekolah');
+            const btnRekom = document.getElementById('btn-download-rekom');
 
-            if(lpjItem) {
-                inp.value = lpjItem.link_lpj || '';
-                let st = lpjItem.status || 'kosong';
-                
-                if(st === 'diproses') badge.className = "px-2 py-1 rounded text-xs font-bold bg-blue-100 text-blue-700";
-                else if(st === 'verifikasi_dinas') badge.className = "px-2 py-1 rounded text-xs font-bold bg-purple-100 text-purple-700";
-                else if(st === 'disetujui_manager') { badge.className = "px-2 py-1 rounded text-xs font-bold bg-green-100 text-green-700"; }
-                else if(st === 'ditolak') badge.className = "px-2 py-1 rounded text-xs font-bold bg-red-100 text-red-700";
-                badge.textContent = st.replace('_', ' ').toUpperCase();
+            // Set Badge Status Keseluruhan
+            if(overallStatus === 'diproses') badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700 shadow-sm";
+            else if(overallStatus === 'verifikasi_dinas') badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-700 shadow-sm";
+            else if(overallStatus === 'disetujui_manager') badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 shadow-sm";
+            else if(overallStatus === 'ditolak') badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700 shadow-sm";
+            else badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-gray-200 text-gray-600 shadow-sm";
+            badge.textContent = overallStatus === 'kosong' ? 'BELUM MENGAJUKAN' : overallStatus.replace('_', ' ').toUpperCase();
 
-                if(st === 'diproses' || st === 'verifikasi_dinas' || st === 'disetujui_manager') {
-                    // KUNCI KOLOM LINK
-                    inp.readOnly = true;
-                    inp.classList.add('bg-gray-100', 'cursor-not-allowed', 'text-gray-500');
-                    
-                    btnSubmit.classList.remove('hidden');
-                    btnSubmit.innerHTML = `<i class="fa-solid fa-link mr-1"></i> Lihat Dokumen LPJ`;
-                    btnSubmit.onclick = () => window.open(inp.value, '_blank');
-                    btnSubmit.className = "w-full bg-indigo-500 text-white py-2.5 rounded-lg text-sm font-semibold shadow hover:bg-indigo-600 transition-colors mb-2";
-                    
-                    if(st === 'disetujui_manager') {
-                        containerRekom.classList.remove('hidden');
-                        
-                        if(lpjItem.keterangan && lpjItem.keterangan.startsWith('http')) {
-                            btnRekom.classList.remove('hidden');
-                            btnRekom.innerHTML = `<i class="fa-solid fa-download mr-1"></i> Download Rekomendasi`;
-                            btnRekom.onclick = () => window.open(lpjItem.keterangan, '_blank');
-                            btnRekom.className = "w-full bg-emerald-500 text-white py-2.5 rounded-lg text-sm font-bold shadow hover:bg-emerald-600 transition-colors";
-                        } else {
-                            btnRekom.classList.remove('hidden');
-                            btnRekom.innerHTML = `<i class="fa-solid fa-clock mr-1"></i> Menunggu Dokumen Rekomendasi`;
-                            btnRekom.onclick = null;
-                            btnRekom.className = "w-full bg-gray-200 text-gray-500 py-2.5 rounded-lg text-sm font-bold shadow cursor-not-allowed";
-                        }
-                    } else {
-                        containerRekom.classList.add('hidden');
-                    }
+            // Munculkan Container Rekomendasi
+            if (overallStatus === 'disetujui_manager') {
+                containerRekom.classList.remove('hidden');
+                if (lpjItem.keterangan && lpjItem.keterangan.startsWith('http')) {
+                    btnRekom.classList.remove('hidden');
+                    btnRekom.onclick = () => window.open(lpjItem.keterangan, '_blank');
                 } else {
-                    // BUKA KUNCI (Belum ada / Ditolak)
-                    inp.readOnly = false;
-                    inp.classList.remove('bg-gray-100', 'cursor-not-allowed', 'text-gray-500');
-                    btnSubmit.classList.remove('hidden');
-                    containerRekom.classList.add('hidden');
-                    
-                    btnSubmit.onclick = submitLPJ;
-                    btnSubmit.className = "w-full bg-primary text-white py-2.5 rounded-lg text-sm font-semibold shadow hover:bg-indigo-700 transition-colors mb-2";
-                    
-                    if(st === 'ditolak') {
-                        btnSubmit.textContent = "Kirim Ulang Dokumen LPJ";
-                    } else {
-                        btnSubmit.textContent = "Kirim Dokumen LPJ";
-                    }
+                    btnRekom.classList.add('hidden');
                 }
             } else {
-                inp.value = '';
-                inp.readOnly = false;
-                inp.classList.remove('bg-gray-100', 'cursor-not-allowed', 'text-gray-500');
-                btnSubmit.classList.remove('hidden');
-                btnSubmit.textContent = "Kirim Dokumen LPJ";
-                btnSubmit.onclick = submitLPJ;
-                btnSubmit.className = "w-full bg-primary text-white py-2.5 rounded-lg text-sm font-semibold shadow hover:bg-indigo-700 transition-colors mb-2";
-                badge.className = "px-2 py-1 rounded text-xs font-bold bg-gray-200 text-gray-600"; 
-                badge.textContent = "BELUM MENGAJUKAN";
                 containerRekom.classList.add('hidden');
             }
+
+            let filledCount = 0;
+            let html = '';
+            
+            // Kunci keseluruhan baris hanya jika statusnya dipindah ke manager atau selesai disetujui.
+            // Status "diproses" (oleh admin bidang) tidak mengunci baris kosong agar sekolah bisa menyicil input
+            let isOverallLocked = ['verifikasi_dinas', 'disetujui_manager'].includes(overallStatus);
+
+            LPJ_REQ.forEach((req, i) => {
+                let itemState = stateObj[i] || { link: '', status: '', ket: '' };
+                let link = itemState.link;
+                let st = itemState.status;
+                let ket = itemState.ket;
+                
+                if(link) filledCount++;
+
+                let statusHtml = '<span class="text-gray-400">-</span>';
+                let aksiHtml = '';
+                let inputHtml = '';
+
+                let isItemLocked = (st === 'diproses' || st === 'disetujui' || isOverallLocked);
+
+                if (isItemLocked) {
+                    if (link) {
+                        let badgeText = (st === 'disetujui') ? 'DISETUJUI' : (st === 'diproses' ? 'DIPROSES' : 'TERKUNCI');
+                        let badgeColor = (st === 'disetujui') ? 'bg-green-50 text-green-600' : (st === 'diproses' ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-500');
+                        statusHtml = `<span class="${badgeColor} px-2 py-1 rounded text-[9px] font-bold border tracking-wider">${badgeText}</span>`;
+                        inputHtml = `<a href="${link}" target="_blank" class="text-blue-500 hover:underline text-xs truncate block max-w-[250px]"><i class="fa-solid fa-link mr-1"></i> Lihat Dokumen</a>`;
+                        aksiHtml = `<i class="fa-solid fa-lock text-gray-300" title="Terkunci"></i>`;
+                    } else {
+                        statusHtml = `<span class="bg-gray-100 text-gray-500 px-2 py-1 rounded text-[9px] font-bold border tracking-wider">KOSONG</span>`;
+                        inputHtml = `<span class="text-xs text-gray-400 italic">Tidak dikirim</span>`;
+                        aksiHtml = `<i class="fa-solid fa-lock text-gray-300" title="Terkunci"></i>`;
+                    }
+                } else if (st === 'ditolak') {
+                    statusHtml = `<span class="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[9px] font-bold cursor-help" title="${ket}">DITOLAK</span>`;
+                    inputHtml = `<div class="flex flex-col gap-1"><input type="url" id="lpj-link-${i}" value="${link}" placeholder="Masukkan link perbaikan..." class="w-full px-2 py-1.5 border border-red-300 rounded text-xs focus:ring-primary outline-none shadow-sm"><span class="text-[9px] text-red-500"><i class="fa-solid fa-circle-exclamation"></i> ${ket}</span></div>`;
+                    aksiHtml = `<button onclick="simpanItemLPJ(${i})" class="bg-primary text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-indigo-600 transition-colors shadow">Kirim Ulang</button>`;
+                } else {
+                    statusHtml = `<span class="text-xs text-gray-400 italic">Belum diisi</span>`;
+                    inputHtml = `<input type="url" id="lpj-link-${i}" value="${link}" placeholder="https://docs.google.com/..." class="w-full px-2 py-1.5 border rounded text-xs focus:ring-primary outline-none shadow-sm">`;
+                    aksiHtml = `<button onclick="simpanItemLPJ(${i})" class="bg-primary text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-indigo-600 transition-colors shadow">Kirim</button>`;
+                }
+                
+                html += `<tr class="border-b bg-white hover:bg-gray-50"><td class="py-2.5 px-4 text-center font-bold text-gray-400">${i+1}</td><td class="py-2.5 px-4 whitespace-normal min-w-[250px] leading-snug font-medium text-gray-700">${req}</td><td class="py-2.5 px-4">${inputHtml}</td><td class="py-2.5 px-4 text-center">${statusHtml}</td><td class="py-2.5 px-4 text-center">${aksiHtml}</td></tr>`;
+            });
+            document.getElementById('table-body-lpj-sekolah').innerHTML = html;
+            document.getElementById('lpj-school-progress-text').textContent = `${filledCount} / 31 Item Persyaratan Terisi`;
         }
 
-        async function submitLPJ() {
-            const link = document.getElementById('inp-link-lpj').value; const t = activeTahap === 'all' ? '1' : activeTahap;
-            if(!link) { Swal.fire('Error', 'Isi Link LPJ dulu!', 'error'); return; }
-            showLoading('Mengajukan LPJ...');
+        async function simpanItemLPJ(index) {
+            const link = document.getElementById(`lpj-link-${index}`).value;
+            if (!link) { Swal.fire('Error', 'Link tidak boleh kosong!', 'error'); return; }
+            if (!link.startsWith('http')) { Swal.fire('Error', 'Format link tidak valid! Harus berawalan http atau https', 'error'); return; }
+            
+            let stateObj = {};
+            let targetTahap = activeTahap === 'all' ? '1' : activeTahap.toString();
+            let lpjItem = allLpjData.find(l => l.tahap.toString() === targetTahap);
+            if(lpjItem && lpjItem.link_lpj && lpjItem.link_lpj.startsWith('{')) {
+                try { stateObj = JSON.parse(lpjItem.link_lpj); } catch(e) {}
+            }
+            
+            stateObj[index] = { link: link, status: 'diproses', ket: '' }; // Langsung diproses per item
+            
+            showLoading('Mengirim Dokumen...');
             try {
-                const res = await apiCall('submitLPJ', { npsn: currentUser.npsn, namaSekolah: currentUser.nama_sekolah, tahap: t, linkUrl: link });
-                hideLoading(); 
-                if(res.success) { 
-                    Swal.fire('Sukses', 'LPJ diajukan dan sedang diproses!', 'success'); 
-                    fetchMyLPJData(); // Refresh ulang data LPJ dari server
+                const t = activeTahap === 'all' ? '1' : activeTahap.toString();
+                const res = await apiCall('updateLPJItemState', { npsn: currentUser.npsn, namaSekolah: currentUser.nama_sekolah, tahap: t, stateJson: JSON.stringify(stateObj), isSchoolUpload: true });
+                hideLoading();
+                if (res.success) {
+                    Swal.fire({toast:true, position:'top-end', icon:'success', title:'Dokumen Terkirim', showConfirmButton:false, timer:1500});
+                    fetchMyLPJData(); // reload UI
                 } else Swal.fire('Gagal', res.message, 'error');
             } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
         }
 
+        // --- FETCH LPJ (DINAS) ---
         async function fetchAllLPJData() {
             try {
                 const res = await apiCall('getAllLPJ', { tahap: 'all' });
@@ -1049,7 +1111,7 @@
         }
 
         function renderTableLPJ() {
-            const tbody = document.getElementById('table-body-lpj');
+            const tbody = document.getElementById('table-body-lpj-dinas');
             const allowedUsers = getFilteredUsers(); const allowedNPSN = allowedUsers.map(u => u.npsn.toString());
             
             let filteredLPJ = allLpjData.filter(l => allowedNPSN.includes(l.npsn.toString()));
@@ -1057,83 +1119,164 @@
                 filteredLPJ = filteredLPJ.filter(l => l.tahap.toString() === activeTahap.toString());
             }
             
-            if(filteredLPJ.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center py-6 text-gray-500">Belum ada LPJ diajukan pada filter/tahap ini.</td></tr>'; return; }
+            if(filteredLPJ.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center py-6 text-gray-500">Belum ada LPJ diajukan pada filter/tahap ini.</td></tr>'; return; }
             
             let html = '';
             filteredLPJ.forEach(item => {
-                let badge = '', btnAksi = ''; let st = item.status || '';
+                let stateObj = {}; try { stateObj = JSON.parse(item.link_lpj); } catch(e){}
+                let filledCount = Object.keys(stateObj).filter(k => stateObj[k].link).length;
+                
+                let badge = ''; let st = item.status || '';
                 if(st === 'diproses') badge = '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">DIPROSES DINAS</span>';
                 else if(st === 'verifikasi_dinas') badge = '<span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">VERIFIKASI MANAGER</span>';
                 else if(st === 'disetujui_manager') badge = '<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">SELESAI</span>';
                 else if(st === 'ditolak') badge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold cursor-help" title="${item.keterangan || ''}">DITOLAK</span>`;
                 
-                let lvl = currentUser.level || '';
-                if ((lvl.includes('admin_') || lvl === 'superadmin') && st === 'diproses') {
-                    btnAksi = `<button onclick="updateStatusLPJ('${item.npsn}', '${item.tahap}', 'verifikasi_dinas')" class="bg-purple-500 text-white px-2 py-1 rounded text-xs mr-1 shadow hover:bg-purple-600 transition-colors">Terima (Ke Manager)</button> <button onclick="tolakLPJ('${item.npsn}', '${item.tahap}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs shadow hover:bg-red-600 transition-colors">Tolak</button>`;
-                } else if ((lvl === 'superadmin' || lvl.includes('manager_')) && st === 'verifikasi_dinas') {
-                    btnAksi = `<button onclick="setujuiLPJ('${item.npsn}', '${item.tahap}')" class="bg-green-500 text-white px-2 py-1 rounded text-xs mr-1 shadow hover:bg-green-600 transition-colors">Setujui Final</button> <button onclick="tolakLPJ('${item.npsn}', '${item.tahap}')" class="bg-red-500 text-white px-2 py-1 rounded text-xs shadow hover:bg-red-600 transition-colors">Tolak</button>`;
-                } else {
-                    btnAksi = '<span class="text-xs text-gray-400">-</span>';
-                }
+                let btnAksi = `<button onclick="bukaVerifikasiLPJ('${item.npsn}', '${item.tahap}')" class="bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-indigo-600 transition-colors"><i class="fa-solid fa-list-check mr-1"></i> Verifikasi Detail</button>`;
 
-                // Kolom Rekomendasi 
-                let rekomendasiHtml = '-';
-                if(st === 'disetujui_manager') {
-                    if (item.keterangan && item.keterangan.startsWith('http')) {
-                        rekomendasiHtml = `<a href="${item.keterangan}" target="_blank" class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-1 rounded font-bold hover:bg-emerald-100 block text-center w-full"><i class="fa-solid fa-link"></i> Link Rekomendasi</a>`;
-                    } else {
-                        rekomendasiHtml = `<span class="text-[10px] text-gray-500">Belum ada link</span>`;
-                    }
-                }
-
-                html += `<tr class="border-b hover:bg-gray-50 text-sm">
-                    <td class="py-3 px-4">${item.npsn}</td>
-                    <td class="py-3 px-4">${item.namaSekolah}</td>
-                    <td class="py-3 px-4 text-center whitespace-nowrap">Tahap ${item.tahap}</td>
-                    <td class="py-3 px-4"><a href="${item.link_lpj}" target="_blank" class="text-blue-500 hover:underline font-medium"><i class="fa-solid fa-file-contract mr-1"></i> Lihat Dokumen</a></td>
-                    <td class="py-3 px-4 text-center">${rekomendasiHtml}</td>
-                    <td class="py-3 px-4 text-center">${badge}</td>
-                    <td class="py-3 px-4 text-center whitespace-nowrap">${btnAksi}</td>
-                </tr>`;
+                html += `<tr class="border-b hover:bg-gray-50"><td class="py-3 px-4">${item.npsn}</td><td class="py-3 px-4 font-medium">${item.namaSekolah}</td><td class="py-3 px-4 text-center">Tahap ${item.tahap}</td><td class="py-3 px-4 text-center"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-[10px] font-bold border border-gray-200">${filledCount} / 31 Item</span></td><td class="py-3 px-4 text-center">${badge}</td><td class="py-3 px-4 text-center">${btnAksi}</td></tr>`;
             });
             tbody.innerHTML = html;
         }
 
-        async function updateStatusLPJ(npsn, tahap, newStatus, alasan='') {
-            showLoading('Update Status...');
-            try { 
-                const res = await apiCall('updateStatusLPJ', { npsn, tahap, status: newStatus, keterangan: alasan }); 
-                hideLoading(); 
-                if(res.success) fetchAllLPJData(); 
-                else Swal.fire('Error', res.message, 'error'); 
+        // --- VERIFIKASI MODAL (DINAS) ---
+        function bukaVerifikasiLPJ(npsn, tahap) {
+            currentVerifNpsn = npsn; currentVerifTahap = tahap;
+            const item = allLpjData.find(l => l.npsn.toString() === npsn.toString() && l.tahap.toString() === tahap.toString());
+            if(!item) return;
+
+            document.getElementById('title-modal-verif-lpj').textContent = `Verifikasi LPJ - ${item.namaSekolah}`;
+            document.getElementById('subtitle-modal-verif-lpj').textContent = `NPSN: ${npsn} | Tahap ${tahap}`;
+            
+            let stateObj = {}; try { stateObj = JSON.parse(item.link_lpj); } catch(e){}
+            let approvedCount = 0;
+            let html = '';
+            let overallStatus = item.status;
+            let isVerified = (overallStatus === 'disetujui_manager');
+            
+            LPJ_REQ.forEach((req, i) => {
+                let itemState = stateObj[i] || { link: '', status: '', ket: '' };
+                let link = itemState.link;
+                let st = itemState.status;
+                let ket = itemState.ket;
+                
+                if(st === 'disetujui') approvedCount++;
+
+                let linkHtml = link ? `<a href="${link}" target="_blank" class="text-blue-500 hover:underline text-xs truncate block max-w-[200px] mx-auto"><i class="fa-solid fa-link mr-1"></i> Lihat Dokumen</a>` : `<span class="text-xs text-gray-400 italic">Belum ada</span>`;
+                let statusHtml = '<span class="text-gray-400">-</span>';
+                let aksiHtml = '<span class="text-gray-400">-</span>';
+                
+                if (isVerified) {
+                    statusHtml = '<span class="bg-green-50 text-green-600 px-2 py-1 rounded text-[9px] font-bold border border-green-100">DISETUJUI</span>';
+                    aksiHtml = `<i class="fa-solid fa-check-circle text-green-500 text-lg"></i>`;
+                } else if (st === 'diproses' || st === 'draft' || !st) {
+                    if (!link) {
+                        statusHtml = '<span class="bg-gray-100 text-gray-500 px-2 py-1 rounded text-[9px] font-bold border border-gray-200">KOSONG</span>';
+                    } else {
+                        statusHtml = '<span class="bg-blue-50 text-blue-600 px-2 py-1 rounded text-[9px] font-bold border border-blue-100">MENUNGGU</span>';
+                        aksiHtml = `<div class="flex justify-center gap-1"><button onclick="verifyItemLPJ(${i}, 'disetujui', '')" class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold hover:bg-green-200 transition-colors shadow-sm"><i class="fa-solid fa-check"></i> Setujui</button> <button onclick="promptTolakItemLPJ(${i})" class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold hover:bg-red-200 transition-colors shadow-sm"><i class="fa-solid fa-xmark"></i> Tolak</button></div>`;
+                    }
+                } else if (st === 'disetujui') {
+                    statusHtml = '<span class="bg-green-50 text-green-600 px-2 py-1 rounded text-[9px] font-bold border border-green-100">DISETUJUI</span>';
+                    aksiHtml = `<i class="fa-solid fa-check-circle text-green-500 text-lg"></i>`;
+                } else if (st === 'ditolak') {
+                    statusHtml = `<span class="bg-red-50 text-red-600 px-2 py-1 rounded text-[9px] font-bold border border-red-100 cursor-help" title="${ket}">DITOLAK</span>`;
+                    aksiHtml = `<span class="text-[9px] text-red-500 max-w-[120px] truncate block mx-auto" title="${ket}">${ket}</span>`;
+                }
+                
+                html += `<tr class="border-b bg-white"><td class="py-2.5 px-4 text-center font-bold text-gray-400">${i+1}</td><td class="py-2.5 px-4 whitespace-normal min-w-[250px] leading-snug font-medium text-gray-700">${req}</td><td class="py-2.5 px-4 text-center">${linkHtml}</td><td class="py-2.5 px-4 text-center">${statusHtml}</td><td class="py-2.5 px-4 text-center">${aksiHtml}</td></tr>`;
+            });
+            
+            document.getElementById('table-body-verif-lpj').innerHTML = html;
+            document.getElementById('verif-progress-text').innerHTML = `Item Disetujui: <span class="${approvedCount === 31 ? 'text-green-600' : 'text-primary'} text-sm ml-1">${approvedCount} / 31</span>`;
+
+            // Render Footer Buttons
+            let lvl = currentUser.level || '';
+            let footerHtml = `<button onclick="closeModalVerifLPJ()" class="bg-gray-100 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors border shadow-sm">Tutup</button>`;
+            
+            if ((lvl.includes('admin_') || lvl === 'superadmin') && overallStatus === 'diproses') {
+                footerHtml += `<button onclick="updateOverallLPJ('verifikasi_dinas')" class="bg-purple-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow hover:bg-purple-700 transition-colors"><i class="fa-solid fa-share mr-2"></i> Teruskan ke Manager BOS</button>`;
+            } else if ((lvl === 'superadmin' || lvl.includes('manager_')) && overallStatus === 'verifikasi_dinas') {
+                footerHtml += `<button onclick="promptRekomendasiFinal()" class="bg-emerald-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-stamp mr-2"></i> Setujui Final & Berikan Link Rekomendasi</button>`;
+            }
+            
+            document.getElementById('footer-modal-verif').innerHTML = footerHtml;
+            document.getElementById('modal-verif-lpj').classList.remove('hidden');
+            document.getElementById('modal-verif-lpj').classList.add('flex');
+        }
+
+        function closeModalVerifLPJ() {
+            document.getElementById('modal-verif-lpj').classList.add('hidden');
+            document.getElementById('modal-verif-lpj').classList.remove('flex');
+            currentVerifNpsn = null; currentVerifTahap = null;
+        }
+
+        function promptTolakItemLPJ(index) {
+            Swal.fire({ title: 'Alasan Penolakan', input: 'text', inputPlaceholder: 'Cth: Dokumen buram, salah berkas', showCancelButton: true, confirmButtonText: 'Tolak Dokumen', confirmButtonColor: '#ef4444' }).then((res) => {
+                if(res.isConfirmed && res.value) { verifyItemLPJ(index, 'ditolak', res.value); }
+            });
+        }
+
+        async function verifyItemLPJ(index, newStatus, ket) {
+            const item = allLpjData.find(l => l.npsn.toString() === currentVerifNpsn.toString() && l.tahap.toString() === currentVerifTahap.toString());
+            let stateObj = {}; try { stateObj = JSON.parse(item.link_lpj); } catch(e){}
+            if(stateObj[index]) {
+                stateObj[index].status = newStatus;
+                stateObj[index].ket = ket;
+            }
+            
+            showLoading('Menyimpan Verifikasi...');
+            try {
+                const res = await apiCall('updateLPJItemState', { npsn: currentVerifNpsn, namaSekolah: item.namaSekolah, tahap: currentVerifTahap, stateJson: JSON.stringify(stateObj), isSchoolUpload: false });
+                hideLoading();
+                if (res.success) {
+                    item.link_lpj = JSON.stringify(stateObj); // Update memori
+                    bukaVerifikasiLPJ(currentVerifNpsn, currentVerifTahap); // Render ulang modal
+                } else Swal.fire('Gagal', res.message, 'error');
             } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
         }
 
-        function tolakLPJ(npsn, tahap) { Swal.fire({ title: 'Alasan Penolakan', input: 'text', inputPlaceholder: 'Ketik alasan penolakan...', showCancelButton: true, confirmButtonText: 'Tolak LPJ', confirmButtonColor: '#ef4444' }).then((res) => { if(res.isConfirmed) updateStatusLPJ(npsn, tahap, 'ditolak', res.value); }); }
-        
-        function setujuiLPJ(npsn, tahap) {
-            Swal.fire({
-                title: 'Setujui LPJ & Kirim Rekomendasi',
-                text: 'Masukkan Link Google Drive dokumen Rekomendasi untuk didownload oleh sekolah:',
-                input: 'url',
-                inputPlaceholder: 'https://docs.google.com/...',
-                showCancelButton: true,
-                confirmButtonText: 'Kirim & Setujui Final',
-                confirmButtonColor: '#10B981',
-                cancelButtonText: 'Batal',
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'Link Rekomendasi wajib diisi!'
-                    }
-                }
-            }).then((res) => {
+        function updateOverallLPJ(newStatus) {
+            Swal.fire({ title: 'Teruskan ke Manager BOS?', text: 'Pastikan semua dokumen telah Anda cek dan disetujui.', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Teruskan', confirmButtonColor: '#9333EA' }).then(async (res) => {
                 if(res.isConfirmed) {
-                    updateStatusLPJ(npsn, tahap, 'disetujui_manager', res.value);
+                    showLoading('Memproses...');
+                    try { 
+                        const r = await apiCall('updateStatusLPJ', { npsn: currentVerifNpsn, tahap: currentVerifTahap, status: newStatus, keterangan: '' }); 
+                        hideLoading(); 
+                        if(r.success) { closeModalVerifLPJ(); fetchAllLPJData(); Swal.fire('Sukses', 'Berhasil diteruskan', 'success'); } 
+                        else Swal.fire('Error', r.message, 'error'); 
+                    } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
                 }
             });
         }
 
-        // --- MANAJEMEN USER & ADMIN ---
+        function promptRekomendasiFinal() {
+            Swal.fire({
+                title: 'Setujui Final & Berikan Rekomendasi',
+                text: 'Masukkan Link Google Drive dokumen Rekomendasi yang telah ditandatangani untuk diunduh sekolah:',
+                input: 'url',
+                inputPlaceholder: 'https://docs.google.com/...',
+                showCancelButton: true,
+                confirmButtonText: 'Setujui & Kirim Link',
+                confirmButtonColor: '#10B981',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value) return 'Link Rekomendasi wajib diisi untuk disetujui!';
+                }
+            }).then(async (res) => {
+                if(res.isConfirmed) {
+                    showLoading('Menyetujui LPJ...');
+                    try { 
+                        const r = await apiCall('updateStatusLPJ', { npsn: currentVerifNpsn, tahap: currentVerifTahap, status: 'disetujui_manager', keterangan: res.value }); 
+                        hideLoading(); 
+                        if(r.success) { closeModalVerifLPJ(); fetchAllLPJData(); Swal.fire('Sukses', 'LPJ Disetujui & Link Rekomendasi Dikirim', 'success'); } 
+                        else Swal.fire('Error', r.message, 'error'); 
+                    } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
+                }
+            });
+        }
+
+        // --- MANAJEMEN ASET / USERS / UNDUH / DISTRIBUSI ---
         async function loadDataUsers() { try { const res = await apiCall('getDataUsers'); if(res.success) { currentUsersData = res.data; renderTableUsers(); } } catch(err){} }
         function renderTableUsers() {
             const tbody = document.getElementById('table-body-users');
@@ -1161,7 +1304,6 @@
         async function saveUser(e) { e.preventDefault(); const n=document.getElementById('inp-npsn').value; const t=parseUang(document.getElementById('inp-total-pagu-admin').value); const lck=document.getElementById('inp-reset-lock')?document.getElementById('inp-reset-lock').checked:false; const data={npsn:n, nama:document.getElementById('inp-nama').value, jenjang:document.getElementById('inp-jenjang').value, kecamatan:document.getElementById('inp-kecamatan').value, totalPagu:t, password:document.getElementById('inp-password').value, resetLock:lck}; showLoading('Menyimpan...'); try{const res=await apiCall(editModeUser?'updateUserSekolah':'simpanUserSekolah', data); hideLoading(); if(res.success){Swal.fire('Sukses', 'Tersimpan', 'success'); loadDataUsers(); closeModalUser();}else Swal.fire('Error', res.message, 'error');}catch(e){} }
         function editUser(n) { const u=currentUsersData.find(x=>x.npsn.toString()===n.toString()); if(u){editModeUser=true; document.getElementById('inp-npsn').value=u.npsn; document.getElementById('inp-npsn').readOnly=true; document.getElementById('inp-nama').value=u.nama; document.getElementById('inp-jenjang').value=u.jenjang; document.getElementById('inp-kecamatan').value=u.kecamatan; document.getElementById('inp-total-pagu-admin').value=parseInt(u.totalPagu).toLocaleString('id-ID'); if(u.isLocked) document.getElementById('container-reset-lock').classList.remove('hidden'); else document.getElementById('container-reset-lock').classList.add('hidden'); document.getElementById('modal-user').classList.remove('hidden'); document.getElementById('modal-user').classList.add('flex'); } }
 
-        // --- MANAJEMEN ASET ---
         async function loadDataAset() { try { const res = await apiCall('getDataAset', {role: currentRole, npsn: currentUser.npsn}); if(res.success) { currentAsetData = res.data; renderTableAset(currentAsetData); } } catch(err){} }
         
         function renderTableAset(data) {
@@ -1386,11 +1528,9 @@
             showLoading('Menyegarkan Data...');
             try {
                 if (currentRole === 'dinas') {
-                    // Update: Kita tarik fetchAllLPJData bersamaan dengan memuat data lain
                     await Promise.all([loadDataUsers(), loadDataAset(), fetchAllLPJData()]);
                     if (currentUser && currentUser.level === 'superadmin') { await loadDataAdmins(); }
                 } else {
-                    // Update: Tarik fetchMyLPJData bersamaan data aset
                     await Promise.all([loadDataAset(), loadDokumenUrls(), fetchMyLPJData()]);
                 }
                 const npsnProg = document.getElementById('prog_npsn_selected') ? document.getElementById('prog_npsn_selected').value : null;
