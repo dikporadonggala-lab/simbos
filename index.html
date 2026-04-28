@@ -932,7 +932,7 @@
         function closePengaturan() { document.getElementById('modal-pengaturan').classList.add('hidden'); document.getElementById('modal-pengaturan').classList.remove('flex'); }
         async function gantiPassword(e) { e.preventDefault(); const p1 = document.getElementById('inp-pass-baru').value; const p2 = document.getElementById('inp-pass-konfirm').value; if(p1 !== p2) { Swal.fire('Error', 'Konfirmasi password tidak cocok!', 'error'); return; } showLoading('Mengubah password...'); try { const idKey = currentRole === 'dinas' ? currentUser.username : currentUser.npsn; const res = await apiCall('changePassword', { id: idKey, role: currentRole, newPassword: p1 }); hideLoading(); if(res.success) { Swal.fire('Sukses', 'Password berhasil diubah!', 'success'); closePengaturan(); } else Swal.fire('Gagal', res.message, 'error'); } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
 
-        // --- FITUR BAST VIA LINK ---
+        // --- FITUR BAST VIA LINK (DIUPDATE) ---
         function getUploadBtnClass(k) {
             if(k === 'pegawai') return 'w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-amber-600 transition-colors';
             if(k === 'barjas') return 'w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-purple-600 transition-colors';
@@ -1043,6 +1043,7 @@
                 let aksiHtml = '';
                 let inputHtml = '';
 
+                // Kunci per baris
                 let isItemLocked = (st === 'diproses' || st === 'disetujui' || isOverallLocked);
 
                 if (isItemLocked) {
@@ -1126,20 +1127,42 @@
                 let stateObj = {}; try { stateObj = JSON.parse(item.link_lpj); } catch(e){}
                 let filledCount = Object.keys(stateObj).filter(k => stateObj[k].link).length;
                 
-                let badge = ''; let st = item.status || '';
+                let badge = ''; let btnAksi = ''; let st = item.status || '';
+                let lvl = currentUser.level || '';
+
                 if(st === 'diproses') badge = '<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">DIPROSES DINAS</span>';
                 else if(st === 'verifikasi_dinas') badge = '<span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-bold">VERIFIKASI MANAGER</span>';
                 else if(st === 'disetujui_manager') badge = '<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">SELESAI</span>';
                 else if(st === 'ditolak') badge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold cursor-help" title="${item.keterangan || ''}">DITOLAK</span>`;
                 
-                let btnAksi = `<button onclick="bukaVerifikasiLPJ('${item.npsn}', '${item.tahap}')" class="bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-indigo-600 transition-colors"><i class="fa-solid fa-list-check mr-1"></i> Verifikasi Detail</button>`;
+                // Bypass Modal Logic untuk Manager
+                if (lvl.includes('admin_') || lvl === 'superadmin') {
+                    if (st === 'diproses') {
+                        btnAksi = `<button onclick="bukaVerifikasiLPJ('${item.npsn}', '${item.tahap}')" class="bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-indigo-600 transition-colors"><i class="fa-solid fa-list-check mr-1"></i> Verifikasi Detail</button>`;
+                    } else if (st === 'verifikasi_dinas' || st === 'disetujui_manager') {
+                        btnAksi = `<span class="text-xs text-gray-500"><i class="fa-solid fa-check"></i> Selesai Diverifikasi Admin</span>`;
+                    } else {
+                        btnAksi = `<span class="text-xs text-gray-400">-</span>`;
+                    }
+                } 
+                
+                // Manager hanya melihat tombol bypass setujui/tolak langsung di tabel
+                if (lvl.includes('manager_') || lvl === 'superadmin') {
+                    if (st === 'verifikasi_dinas') {
+                        btnAksi = `<div class="flex justify-center gap-2"><button onclick="promptRekomendasiFinal('${item.npsn}', '${item.tahap}')" class="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-green-600 transition-colors"><i class="fa-solid fa-check mr-1"></i> Setujui Final</button> <button onclick="tolakLPJ('${item.npsn}', '${item.tahap}')" class="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-red-600 transition-colors"><i class="fa-solid fa-xmark mr-1"></i> Tolak</button></div>`;
+                    } else if (st === 'disetujui_manager') {
+                        btnAksi = `<span class="text-xs text-green-600 font-bold"><i class="fa-solid fa-check-double"></i> Selesai</span>`;
+                    } else if (st === 'diproses') {
+                        btnAksi = `<span class="text-xs text-gray-400">Menunggu Admin</span>`;
+                    }
+                }
 
                 html += `<tr class="border-b hover:bg-gray-50"><td class="py-3 px-4">${item.npsn}</td><td class="py-3 px-4 font-medium">${item.namaSekolah}</td><td class="py-3 px-4 text-center">Tahap ${item.tahap}</td><td class="py-3 px-4 text-center"><span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-[10px] font-bold border border-gray-200">${filledCount} / 31 Item</span></td><td class="py-3 px-4 text-center">${badge}</td><td class="py-3 px-4 text-center">${btnAksi}</td></tr>`;
             });
             tbody.innerHTML = html;
         }
 
-        // --- VERIFIKASI MODAL (DINAS) ---
+        // --- VERIFIKASI MODAL (ADMIN DINAS) ---
         function bukaVerifikasiLPJ(npsn, tahap) {
             currentVerifNpsn = npsn; currentVerifTahap = tahap;
             const item = allLpjData.find(l => l.npsn.toString() === npsn.toString() && l.tahap.toString() === tahap.toString());
@@ -1195,10 +1218,8 @@
             let footerHtml = `<button onclick="closeModalVerifLPJ()" class="bg-gray-100 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors border shadow-sm">Tutup</button>`;
             
             if ((lvl.includes('admin_') || lvl === 'superadmin') && overallStatus === 'diproses') {
-                footerHtml += `<button onclick="updateOverallLPJ('verifikasi_dinas')" class="bg-purple-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow hover:bg-purple-700 transition-colors"><i class="fa-solid fa-share mr-2"></i> Teruskan ke Manager BOS</button>`;
-            } else if ((lvl === 'superadmin' || lvl.includes('manager_')) && overallStatus === 'verifikasi_dinas') {
-                footerHtml += `<button onclick="promptRekomendasiFinal()" class="bg-emerald-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-stamp mr-2"></i> Setujui Final & Berikan Link Rekomendasi</button>`;
-            }
+                footerHtml += `<button onclick="updateOverallLPJ('verifikasi_dinas')" class="bg-purple-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold shadow hover:bg-purple-700 transition-colors"><i class="fa-solid fa-share mr-2"></i> Lanjutkan ke Manager BOS</button>`;
+            } 
             
             document.getElementById('footer-modal-verif').innerHTML = footerHtml;
             document.getElementById('modal-verif-lpj').classList.remove('hidden');
@@ -1237,7 +1258,7 @@
         }
 
         function updateOverallLPJ(newStatus) {
-            Swal.fire({ title: 'Teruskan ke Manager BOS?', text: 'Pastikan semua dokumen telah Anda cek dan disetujui.', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Teruskan', confirmButtonColor: '#9333EA' }).then(async (res) => {
+            Swal.fire({ title: 'Lanjutkan ke Manager BOS?', text: 'Pastikan semua dokumen telah Anda cek dan disetujui.', icon: 'question', showCancelButton: true, confirmButtonText: 'Ya, Lanjutkan', confirmButtonColor: '#9333EA' }).then(async (res) => {
                 if(res.isConfirmed) {
                     showLoading('Memproses...');
                     try { 
@@ -1250,7 +1271,7 @@
             });
         }
 
-        function promptRekomendasiFinal() {
+        function promptRekomendasiFinal(npsn, tahap) {
             Swal.fire({
                 title: 'Setujui Final & Berikan Rekomendasi',
                 text: 'Masukkan Link Google Drive dokumen Rekomendasi yang telah ditandatangani untuk diunduh sekolah:',
@@ -1267,7 +1288,7 @@
                 if(res.isConfirmed) {
                     showLoading('Menyetujui LPJ...');
                     try { 
-                        const r = await apiCall('updateStatusLPJ', { npsn: currentVerifNpsn, tahap: currentVerifTahap, status: 'disetujui_manager', keterangan: res.value }); 
+                        const r = await apiCall('updateStatusLPJ', { npsn: npsn, tahap: tahap, status: 'disetujui_manager', keterangan: res.value }); 
                         hideLoading(); 
                         if(r.success) { closeModalVerifLPJ(); fetchAllLPJData(); Swal.fire('Sukses', 'LPJ Disetujui & Link Rekomendasi Dikirim', 'success'); } 
                         else Swal.fire('Error', r.message, 'error'); 
@@ -1276,7 +1297,9 @@
             });
         }
 
-        // --- MANAJEMEN ASET / USERS / UNDUH / DISTRIBUSI ---
+        function tolakLPJ(npsn, tahap) { Swal.fire({ title: 'Alasan Penolakan', input: 'text', inputPlaceholder: 'Ketik alasan penolakan...', showCancelButton: true, confirmButtonText: 'Tolak LPJ', confirmButtonColor: '#ef4444' }).then((res) => { if(res.isConfirmed) updateStatusLPJ(npsn, tahap, 'ditolak', res.value); }); }
+
+        // --- MANAJEMEN USER & ADMIN ---
         async function loadDataUsers() { try { const res = await apiCall('getDataUsers'); if(res.success) { currentUsersData = res.data; renderTableUsers(); } } catch(err){} }
         function renderTableUsers() {
             const tbody = document.getElementById('table-body-users');
@@ -1528,9 +1551,11 @@
             showLoading('Menyegarkan Data...');
             try {
                 if (currentRole === 'dinas') {
+                    // Update: Kita tarik fetchAllLPJData bersamaan dengan memuat data lain
                     await Promise.all([loadDataUsers(), loadDataAset(), fetchAllLPJData()]);
                     if (currentUser && currentUser.level === 'superadmin') { await loadDataAdmins(); }
                 } else {
+                    // Update: Tarik fetchMyLPJData bersamaan data aset
                     await Promise.all([loadDataAset(), loadDokumenUrls(), fetchMyLPJData()]);
                 }
                 const npsnProg = document.getElementById('prog_npsn_selected') ? document.getElementById('prog_npsn_selected').value : null;
