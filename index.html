@@ -21,6 +21,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: { primary: '#4F46E5', secondary: '#10B981' } } } }
     </script>
@@ -30,7 +31,6 @@
         .glass-login { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); }
         .tab-active { border-bottom: 3px solid #4F46E5; color: #4F46E5; font-weight: 600; }
         .tab-inactive { color: #6B7280; font-weight: 500; }
-        .tab-inactive:hover { color: #374151; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         #api-loading-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(3px); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
@@ -67,7 +67,7 @@
 </head>
 <body class="h-screen w-screen flex flex-col overflow-hidden text-gray-800">
 
-    <!-- Loading Overlay Berpersentase -->
+    <!-- Loading Overlay -->
     <div id="api-loading-overlay" class="z-[9999]">
         <div class="spinner-api"></div>
         <p class="text-sm font-bold text-gray-700" id="api-loading-text">Memproses Data...</p>
@@ -81,7 +81,13 @@
         // ==========================================================
         // ⚠️ PASTE URL APPSCRIPT ANDA DI BAWAH INI ⚠️
         // ==========================================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbwXFuCC8XmHR9_xvEPIphu-efU9PlPOQyf24LjTMDHjHJdxDp60HtAAxnkUCRnvApBfLQ/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbwxX5k70BYT_hX0m7Nky3ls-7NNMjsTKVzGBIgQwMjDu4VwxHHlXK0uRQ77y3zHf1vy5w/exec"; 
+
+        // ==========================================================
+        // ⚠️ PASTE URL PANDUAN DAN FORMAT LPJ DI BAWAH INI ⚠️
+        // ==========================================================
+        const URL_PANDUAN = "PASTE URL PANDUAN DISINI";
+        const URL_FORMAT_LPJ = "PASTE URL FORMAT LPJ DISINI";
 
         let loadingProgressInterval = null;
         let currentProgress = 0;
@@ -113,11 +119,11 @@
 
         async function apiCall(action, payload = {}) {
             return new Promise((resolve, reject) => {
-                if (!API_URL || API_URL === "PASTE URL DISINI") { reject(new Error("URL AppScript belum dimasukkan!")); return; }
+                if (!API_URL || API_URL.includes("PASTE URL")) { reject(new Error("URL AppScript belum dimasukkan!")); return; }
                 fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: action, payload: payload }) })
                 .then(res => res.json()).then(data => resolve(data)).catch(err => {
                     console.error("Fetch Error:", err);
-                    reject(new Error("Koneksi ke server gagal. Periksa jaringan atau URL AppScript."));
+                    reject(new Error("Koneksi ke server gagal. Periksa URL AppScript."));
                 });
             });
         }
@@ -154,7 +160,7 @@
             <div class="hidden sm:flex items-center gap-1 md:gap-2 text-[10px] md:text-sm font-medium text-gray-600 sm:border-r sm:pr-3 border-gray-200 ml-1">
                 <i class="fa-regular fa-clock text-primary"></i><span id="clockWITA">Memuat...</span>
             </div>
-            <button id="btnSettings" onclick="openPengaturan()" class="hidden text-gray-500 hover:text-indigo-600 p-1 md:p-2 transition-colors" title="Pengaturan Akun">
+            <button id="btnSettings" onclick="openPengaturan()" class="hidden text-gray-500 hover:text-indigo-600 p-1 md:p-2 transition-colors" title="Pengaturan">
                 <i class="fa-solid fa-gear text-lg md:text-xl"></i>
             </button>
             <button id="btnLogout" onclick="logout()" class="hidden bg-red-50 text-red-500 hover:bg-red-500 hover:text-white px-2 md:px-3 py-1 md:py-1.5 rounded-md text-[10px] md:text-xs font-semibold transition-colors flex items-center">
@@ -329,17 +335,36 @@
                 <div><h2 class="text-2xl font-bold text-gray-800">Data Realisasi <span class="t-label-tahap text-lg font-normal text-gray-500 ml-2"></span></h2></div>
                 <button id="btn-tambah-aset-tabel" onclick="openInputData()" class="hidden bg-secondary text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md"><i class="fa-solid fa-plus mr-1"></i> Tambah Data</button>
             </div>
-            <div class="flex flex-wrap md:flex-nowrap bg-gray-100 p-1.5 rounded-xl w-full mx-2 md:mx-6 md:w-auto shadow-inner gap-1" style="max-width: fit-content;">
+            
+            <div id="tab-data-filters" class="flex flex-wrap md:flex-nowrap bg-gray-100 p-1.5 rounded-xl w-full mx-2 md:mx-6 md:w-auto shadow-inner gap-1 hidden" style="max-width: fit-content;">
                 <button type="button" id="tab-data-pegawai" onclick="switchDataTab('pegawai')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-users mr-1"></i> Belanja Pegawai</button>
                 <button type="button" id="tab-data-barjas" onclick="switchDataTab('barjas')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-box-open mr-1"></i> Barang & Jasa</button>
                 <button type="button" id="tab-data-modal" onclick="switchDataTab('modal')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg bg-white text-primary shadow-sm transition-all"><i class="fa-solid fa-desktop mr-1"></i> Belanja Modal</button>
             </div>
-            <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px] mx-2 md:mx-6">
+
+            <!-- SUMMARY CONTAINER (Khusus Dinas) -->
+            <div id="aset-summary-container" class="hidden flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex-col min-h-[400px] mx-2 md:mx-6">
+                <div class="bg-blue-50 text-blue-800 text-xs p-3 border-b border-blue-100"><i class="fa-solid fa-info-circle mr-1"></i> Rekapitulasi Pembelanjaan Sekolah. Klik tombol <b>Detail Pembelanjaan</b> untuk melihat rincian item per sekolah.</div>
                 <div class="overflow-x-auto flex-1">
                     <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b" id="thead-aset"></thead>
-                        <tbody id="table-body-aset" class="divide-y divide-gray-100"><tr><td colspan="20" class="text-center py-8 text-gray-500">Memuat data...</td></tr></tbody>
+                        <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b">
+                            <tr><th class="py-3 px-4 font-bold">NPSN</th><th class="py-3 px-4 font-bold">Nama Sekolah</th><th class="py-3 px-4 font-bold">Kecamatan</th><th class="py-3 px-4 text-right font-bold">Pegawai</th><th class="py-3 px-4 text-right font-bold">Barang & Jasa</th><th class="py-3 px-4 text-right font-bold">Alat</th><th class="py-3 px-4 text-right font-bold">Aset Lain</th><th class="py-3 px-4 text-right font-bold text-primary">Total Realisasi</th><th class="py-3 px-4 text-center font-bold">Aksi</th></tr>
+                        </thead>
+                        <tbody id="table-body-aset-summary" class="divide-y divide-gray-100"></tbody>
                     </table>
+                </div>
+            </div>
+
+            <!-- DETAIL CONTAINER -->
+            <div id="aset-detail-container" class="hidden flex-1 flex-col mx-2 md:mx-6">
+                <button id="btn-back-summary" onclick="backToAsetSummary()" class="mb-3 w-max bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 shadow-sm transition-colors hidden"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Daftar Sekolah</button>
+                <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px]">
+                    <div class="overflow-x-auto flex-1">
+                        <table class="w-full text-left text-xs whitespace-nowrap">
+                            <thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b" id="thead-aset"></thead>
+                            <tbody id="table-body-aset" class="divide-y divide-gray-100"><tr><td colspan="20" class="text-center py-8 text-gray-500">Memuat data...</td></tr></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -466,7 +491,7 @@
                     </div> 
                     <div class="md:col-span-3 border-t border-gray-100 pt-5 flex flex-col md:flex-row justify-between items-center gap-4"> 
                         <div id="info-sisa-pagu" class="text-xs md:text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-lg border border-gray-200">Sisa Anggaran: <span class="font-bold text-gray-400">-</span></div>
-                        <div class="flex w-full md:w-auto justify-end gap-3"><button type="button" id="btn-batal-aset" onclick="switchView('view-data-aset')" class="hidden px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-100">Batal Edit</button> <button type="submit" id="btn-submit-aset" class="bg-secondary hover:bg-emerald-600 text-white px-8 py-2.5 rounded-lg text-sm font-bold shadow-lg"><i class="fa-solid fa-save mr-2"></i> Simpan</button></div>
+                        <div class="flex w-full md:w-auto justify-end gap-3"><button type="button" id="btn-batal-aset" onclick="backToAsetSummary()" class="hidden px-6 py-2.5 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-100">Batal Edit</button> <button type="submit" id="btn-submit-aset" class="bg-secondary hover:bg-emerald-600 text-white px-8 py-2.5 rounded-lg text-sm font-bold shadow-lg"><i class="fa-solid fa-save mr-2"></i> Simpan</button></div>
                     </div> 
                 </form> 
             </div> 
@@ -544,7 +569,7 @@
                            <h4 class="text-sm font-bold text-emerald-800"><i class="fa-solid fa-stamp mr-1"></i> LPJ Disetujui & Direkomendasikan</h4>
                            <p class="text-xs text-emerald-600 mt-1">Silakan unduh dokumen rekomendasi yang diterbitkan oleh Manager BOS.</p>
                        </div>
-                       <button id="btn-download-rekom" class="bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-download mr-1"></i> Download Rekomendasi</button>
+                       <button id="btn-download-rekom" class="bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-download mr-1"></i> Cetak Rekomendasi</button>
                    </div>
                </div>
 
@@ -576,25 +601,80 @@
 
         <!-- View: Unduh -->
         <div id="view-unduh" class="app-view hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex-col space-y-6 pb-24"> 
-            <div class="mb-2"><h2 class="text-2xl font-bold">Unduh Laporan Excel <span class="t-label-tahap text-lg font-normal text-gray-500 ml-2"></span></h2></div> 
-            <div id="panel-unduh-dinas" class="hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="mb-2"><h2 class="text-2xl font-bold">Unduh Laporan & Dokumen <span class="t-label-tahap text-lg font-normal text-gray-500 ml-2"></span></h2></div> 
+            <div id="panel-unduh-dinas" class="hidden grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Data Keseluruhan -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border flex flex-col justify-between card-3d"><div><div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-inner"><i class="fa-solid fa-database"></i></div><h3 class="font-bold text-gray-800 text-lg mb-2">Data Keseluruhan</h3><p class="text-xs text-gray-500 mb-4">Unduh rekap data aset jenjang yang Anda tangani.</p></div><button onclick="downloadExcel('all')" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-semibold shadow-md"><i class="fa-solid fa-download mr-1"></i> Unduh Excel</button></div>
+                <!-- Per Sekolah -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border flex flex-col justify-between card-3d"><div><div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-inner"><i class="fa-solid fa-school"></i></div><h3 class="font-bold text-gray-800 text-lg mb-2">Per Sekolah</h3><p class="text-xs text-gray-500 mb-3">Cari sekolah untuk diunduh.</p><div class="relative w-full mb-4"><i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i><input type="text" id="inp-unduh-sekolah" placeholder="NPSN / Nama..." class="w-full pl-8 pr-3 py-2 border rounded-lg text-sm" onkeyup="filterUnduhSekolah()"><ul id="list-unduh-sekolah" class="absolute z-50 w-full bg-white border rounded-lg mt-1 shadow-2xl max-h-40 overflow-y-auto hidden text-xs"></ul></div><input type="hidden" id="selected-unduh-npsn"></div><button onclick="downloadExcel('sekolah')" class="w-full bg-emerald-500 text-white py-2.5 rounded-lg text-sm font-semibold shadow-md"><i class="fa-solid fa-download mr-1"></i> Unduh Excel</button></div>
+                <!-- Format & Panduan Tambahan -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border flex flex-col justify-between card-3d lg:col-span-2">
+                    <div>
+                        <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-inner"><i class="fa-solid fa-file-word"></i></div>
+                        <h3 class="font-bold text-gray-800 text-lg mb-2">Format & Panduan Aplikasi</h3>
+                        <p class="text-xs text-gray-500 mb-3">Unduh template format persyaratan LPJ dan Buku Panduan penggunaan aplikasi SIMBOS.</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3 mt-4">
+                        <button onclick="unduhFormat('lpj')" class="w-full bg-purple-500 text-white py-2 rounded-lg text-sm font-semibold shadow-md hover:bg-purple-600 transition-colors"><i class="fa-solid fa-download mr-1"></i> Format LPJ</button>
+                        <button onclick="unduhFormat('panduan')" class="w-full bg-blue-500 text-white py-2 rounded-lg text-sm font-semibold shadow-md hover:bg-blue-600 transition-colors"><i class="fa-solid fa-download mr-1"></i> Panduan Pengisian</button>
+                    </div>
+                </div>
             </div>
-            <div id="panel-unduh-sekolah" class="hidden">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border card-3d max-w-sm"><div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner"><i class="fa-solid fa-file-excel"></i></div><h3 class="font-bold text-gray-800 text-xl mb-2">Data Realisasi Aset</h3><p class="text-sm text-gray-500 mb-6">Unduh data realisasi belanja sekolah Anda.</p><button onclick="downloadExcel('all')" class="w-full bg-green-500 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg"><i class="fa-solid fa-download mr-2"></i> Unduh Excel</button></div>
+            
+            <!-- Panel Sekolah Unduh -->
+            <div id="panel-unduh-sekolah" class="hidden grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border card-3d max-w-sm"><div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner"><i class="fa-solid fa-file-excel"></i></div><h3 class="font-bold text-gray-800 text-xl mb-2">Data Realisasi Aset</h3><p class="text-sm text-gray-500 mb-6">Unduh data realisasi belanja sekolah Anda.</p><button onclick="downloadExcel('all')" class="w-full bg-green-500 text-white px-6 py-3 rounded-xl text-sm font-semibold shadow-lg hover:bg-green-600 transition-colors"><i class="fa-solid fa-download mr-2"></i> Unduh Excel</button></div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border card-3d max-w-sm"><div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner"><i class="fa-solid fa-book-open"></i></div><h3 class="font-bold text-gray-800 text-xl mb-2">Format & Panduan</h3><p class="text-sm text-gray-500 mb-6">Unduh format LPJ atau panduan SIMBOS.</p><div class="flex flex-col gap-2"><button onclick="unduhFormat('lpj')" class="w-full bg-purple-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg hover:bg-purple-600 transition-colors"><i class="fa-solid fa-download mr-2"></i> Format LPJ</button><button onclick="unduhFormat('panduan')" class="w-full bg-blue-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg hover:bg-blue-600 transition-colors"><i class="fa-solid fa-download mr-2"></i> Panduan Pengisian</button></div></div>
             </div>
         </div>
 
-        <!-- MODAL PENGATURAN (GANTI PASSWORD) -->
+        <!-- MODAL PENGATURAN (DINAMIS: PASSWORD / PEJABAT / SEKOLAH) -->
         <div id="modal-pengaturan" class="fixed inset-0 z-[60] bg-gray-900/50 backdrop-blur-sm hidden justify-center items-center p-4">
-            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
                 <div class="px-6 py-4 border-b bg-gray-50 flex justify-between items-center"><h3 class="text-lg font-bold"><i class="fa-solid fa-gear mr-2"></i> Pengaturan Akun</h3><button onclick="closePengaturan()" class="text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button></div>
-                <div class="p-6">
+                
+                <div class="flex border-b bg-white">
+                    <button id="tab-set-akun" onclick="switchSettingTab('akun')" class="flex-1 py-3 text-sm font-bold text-primary border-b-2 border-primary">Akun (Password)</button>
+                    <button id="tab-set-profil" onclick="switchSettingTab('profil')" class="hidden flex-1 py-3 text-sm font-bold text-gray-500 hover:text-gray-700">Profil Sekolah</button>
+                    <button id="tab-set-pejabat" onclick="switchSettingTab('pejabat')" class="hidden flex-1 py-3 text-sm font-bold text-gray-500 hover:text-gray-700">Data Pejabat</button>
+                </div>
+
+                <div class="p-6 overflow-y-auto">
+                    <!-- Form Ganti Password -->
                     <form id="form-ganti-password" onsubmit="gantiPassword(event)">
                         <div class="mb-4"><label class="block text-xs font-semibold mb-1">Password Baru</label><input type="password" id="inp-pass-baru" required class="w-full px-3 py-2 border rounded-lg text-sm"></div>
                         <div class="mb-6"><label class="block text-xs font-semibold mb-1">Konfirmasi Password</label><input type="password" id="inp-pass-konfirm" required class="w-full px-3 py-2 border rounded-lg text-sm"></div>
                         <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-lg text-sm font-bold shadow hover:bg-indigo-700">Simpan Password</button>
+                    </form>
+
+                    <!-- Form Profil Sekolah (Khusus Login Sekolah) -->
+                    <form id="form-profil-sekolah" class="hidden space-y-4" onsubmit="simpanProfilSekolah(event)">
+                        <div class="bg-blue-50 p-3 rounded-lg text-xs text-blue-800 mb-2"><i class="fa-solid fa-info-circle"></i> Data ini akan digunakan untuk cetak dokumen otomatis.</div>
+                        <div><label class="block text-xs font-semibold mb-1">Nama Kepala Sekolah</label><input type="text" id="inp-set-kepsek" required class="w-full px-3 py-2 border rounded-lg text-sm"></div>
+                        <div><label class="block text-xs font-semibold mb-1">Nama Bendahara</label><input type="text" id="inp-set-bendahara" required class="w-full px-3 py-2 border rounded-lg text-sm"></div>
+                        <div><label class="block text-xs font-semibold mb-1">Nama Operator</label><input type="text" id="inp-set-operator" required class="w-full px-3 py-2 border rounded-lg text-sm"></div>
+                        <button type="submit" class="w-full bg-emerald-500 text-white py-2.5 rounded-lg text-sm font-bold shadow mt-2 hover:bg-emerald-600">Simpan Profil</button>
+                    </form>
+
+                    <!-- Form Data Pejabat (Khusus Superadmin) -->
+                    <form id="form-pejabat-dinas" class="hidden space-y-4" onsubmit="simpanPejabatDinas(event)">
+                        <div class="bg-amber-50 p-3 rounded-lg text-xs text-amber-800 mb-2"><i class="fa-solid fa-triangle-exclamation"></i> Data Pejabat Manager BOS ini akan muncul di dokumen Rekomendasi sekolah.</div>
+                        <div class="border p-3 rounded-lg bg-gray-50">
+                            <h4 class="text-xs font-bold text-gray-700 mb-2 border-b pb-1">Bidang PAUD</h4>
+                            <input type="text" id="inp-pej-paud-nama" placeholder="Nama Lengkap & Gelar" class="w-full px-3 py-2 border rounded-lg text-sm mb-2">
+                            <input type="text" id="inp-pej-paud-nip" placeholder="NIP Pejabat" class="w-full px-3 py-2 border rounded-lg text-sm">
+                        </div>
+                        <div class="border p-3 rounded-lg bg-gray-50">
+                            <h4 class="text-xs font-bold text-gray-700 mb-2 border-b pb-1">Bidang SD</h4>
+                            <input type="text" id="inp-pej-sd-nama" placeholder="Nama Lengkap & Gelar" class="w-full px-3 py-2 border rounded-lg text-sm mb-2">
+                            <input type="text" id="inp-pej-sd-nip" placeholder="NIP Pejabat" class="w-full px-3 py-2 border rounded-lg text-sm">
+                        </div>
+                        <div class="border p-3 rounded-lg bg-gray-50">
+                            <h4 class="text-xs font-bold text-gray-700 mb-2 border-b pb-1">Bidang SMP</h4>
+                            <input type="text" id="inp-pej-smp-nama" placeholder="Nama Lengkap & Gelar" class="w-full px-3 py-2 border rounded-lg text-sm mb-2">
+                            <input type="text" id="inp-pej-smp-nip" placeholder="NIP Pejabat" class="w-full px-3 py-2 border rounded-lg text-sm">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-bold shadow mt-2 hover:bg-indigo-700">Simpan Data Pejabat</button>
                     </form>
                 </div>
             </div>
@@ -677,7 +757,7 @@
         </div>
 
         <!-- MODAL VERIFIKASI LPJ DETAIL (DINAS) -->
-        <div id="modal-verif-lpj" class="fixed inset-0 z-[70] bg-gray-900/80 backdrop-blur-sm hidden justify-center items-center p-4">
+        <div id="modal-verif-lpj" class="fixed inset-0 z-[70] bg-white backdrop-blur-sm hidden justify-center items-center p-4">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-6xl overflow-hidden flex flex-col h-[95vh]">
                 <div class="px-6 py-4 border-b bg-indigo-600 text-white flex justify-between items-center shrink-0">
                     <div>
@@ -727,11 +807,29 @@
         ];
 
         let currentUser = null; let currentRole = null; let currentAsetData = []; let currentUsersData = []; let currentAdminsData = []; let allDokumenUrls = null; let allLpjData = [];
+        let pengaturanGlobal = {}; // Simpan data pejabat
         let barChartInstance = null; let pieChartInstance = null; let progBarChartInst = null; let progPieChartInst = null;
         let editModeUser = false; let editModeAsetId = null; let editModeAdmin = false;
         let activeTahap = 'all'; let uploadTahap = '1'; let currentInputTab = 'modal'; let currentDataTab = 'modal'; 
         let globalPagu = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 }; let globalRealisasi = { total: 0, pegawai: 0, barjas: 0, alat: 0, aset: 0 };
-        let currentVerifNpsn = null; let currentVerifTahap = null;
+        let currentVerifNpsn = null; let currentVerifTahap = null; let currentViewNpsnDetail = null;
+
+        // --- UNDUH FORMAT & PANDUAN ---
+        function unduhFormat(tipe) {
+            if(tipe === 'lpj') {
+                if (URL_FORMAT_LPJ && !URL_FORMAT_LPJ.includes("PASTE URL")) {
+                    window.open(URL_FORMAT_LPJ, '_blank');
+                } else {
+                    Swal.fire('Info', 'Link Template/Format LPJ belum diatur.', 'info');
+                }
+            } else {
+                if (URL_PANDUAN && !URL_PANDUAN.includes("PASTE URL")) {
+                    window.open(URL_PANDUAN, '_blank');
+                } else {
+                    Swal.fire('Info', 'Link Panduan Pengisian belum diatur.', 'info');
+                }
+            }
+        }
 
         // --- CORE HELPER FUNCTIONS ---
         function getFilteredUsers() {
@@ -756,7 +854,6 @@
             const npsnProg = document.getElementById('prog_npsn_selected') ? document.getElementById('prog_npsn_selected').value : null;
             if(npsnProg) selectSchoolProgres(npsnProg);
             
-            // Optimalisasi: Tidak ada loading (HTTP Request) saat mengganti tahap LPJ.
             if (document.getElementById('view-lpj').classList.contains('block') || document.getElementById('view-lpj').classList.contains('flex')) {
                 if (currentRole === 'dinas') renderTableLPJ(); 
                 else renderLPJSekolahUI();
@@ -768,7 +865,7 @@
         function switchView(viewId, el) {
             document.querySelectorAll('.app-view').forEach(v => { v.classList.add('hidden'); v.classList.remove('block', 'flex'); });
             const target = document.getElementById(viewId);
-            if(target) { target.classList.remove('hidden'); if(['view-kelola-user', 'view-kelola-admin', 'view-input-data', 'view-data-aset', 'view-progres', 'view-lpj'].includes(viewId)) { target.classList.add('flex'); } else { target.classList.add('block'); } }
+            if(target) { target.classList.remove('hidden'); if(['view-kelola-user', 'view-kelola-admin', 'view-input-data', 'view-data-aset', 'view-progres', 'view-lpj', 'view-unduh'].includes(viewId)) { target.classList.add('flex'); } else { target.classList.add('block'); } }
             if(el) {
                 document.querySelectorAll('.nav-link').forEach(a => { a.classList.remove('mobile-active'); a.classList.add('mobile-inactive'); });
                 const targetText = el.querySelector('.mobile-nav-text')?.textContent;
@@ -784,7 +881,19 @@
         // --- AUTH & SETUP ---
         document.addEventListener("DOMContentLoaded", function() { const u = localStorage.getItem('simbos_user'); const r = localStorage.getItem('simbos_role'); if (u && r) { currentUser = JSON.parse(u); currentRole = r; document.getElementById('loginPage').classList.add('hidden'); document.getElementById('loginPage').classList.remove('flex'); document.getElementById('dashboardPage').classList.remove('hidden'); document.getElementById('dashboardPage').classList.add('flex'); setupDashboard(currentRole); } });
         
-        async function handleLogin(e, role) { e.preventDefault(); const user = role==='dinas'?document.getElementById('inp-dinas-user').value:document.getElementById('inp-sek-npsn').value; const pass = role==='dinas'?document.getElementById('inp-dinas-pass').value:document.getElementById('inp-sek-pass').value; showLoading('Mengecek Identitas...'); try { const res = await apiCall('verifyLogin', { username: user, password: pass, role: role }); hideLoading(); if(res.success) { currentUser = res.data; currentRole = role; localStorage.setItem('simbos_user', JSON.stringify(currentUser)); localStorage.setItem('simbos_role', role); Swal.fire({icon:'success', title:'Berhasil', text: `Selamat datang, ${currentUser.nama || currentUser.nama_sekolah}`, timer:1500, showConfirmButton:false}).then(()=>{ document.getElementById('loginPage').classList.add('hidden'); document.getElementById('loginPage').classList.remove('flex'); document.getElementById('dashboardPage').classList.remove('hidden'); document.getElementById('dashboardPage').classList.add('flex'); setupDashboard(role); }); } else Swal.fire('Error', res.message, 'error'); } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
+        async function handleLogin(e, role) { 
+            e.preventDefault(); 
+            const user = (role==='dinas' ? document.getElementById('inp-dinas-user').value : document.getElementById('inp-sek-npsn').value).trim(); 
+            const pass = (role==='dinas' ? document.getElementById('inp-dinas-pass').value : document.getElementById('inp-sek-pass').value).trim(); 
+            showLoading('Mengecek Identitas...'); 
+            try { 
+                const res = await apiCall('verifyLogin', { username: user, password: pass, role: role }); 
+                hideLoading(); 
+                if(res.success) { 
+                    currentUser = res.data; currentRole = role; localStorage.setItem('simbos_user', JSON.stringify(currentUser)); localStorage.setItem('simbos_role', role); Swal.fire({icon:'success', title:'Berhasil', text: `Selamat datang, ${currentUser.nama}`, timer:1500, showConfirmButton:false}).then(()=>{ document.getElementById('loginPage').classList.add('hidden'); document.getElementById('loginPage').classList.remove('flex'); document.getElementById('dashboardPage').classList.remove('hidden'); document.getElementById('dashboardPage').classList.add('flex'); setupDashboard(role); }); 
+                } else Swal.fire('Error', res.message, 'error'); 
+            } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } 
+        }
         
         function setupDashboard(role) {
             const navD = document.getElementById('navMenuDesktop'); const navM = document.getElementById('navMenuMobile');
@@ -823,25 +932,28 @@
                 document.getElementById('headerTahapContainer').classList.remove('hidden'); document.getElementById('headerTahapContainer').classList.add('flex');
                 safeSetText('dash-pagu-total', "Memuat...");
                 
-                // Ambil semua data di awal (paralel)
+                // Fetch Global Settings (Nama/NIP Manager)
+                apiCall('getPengaturanGlobal').then(res => { if(res.success) pengaturanGlobal = res.data; });
+                
                 loadDataUsers(); 
                 fetchAllLPJData();
             } else {
                 let isLck = currentUser.isLocked; if(isLck === "false" || isLck === "FALSE" || isLck === "") isLck = false;
                 if(!isLck) { document.getElementById('btn-force-distribusi').classList.remove('hidden'); setTimeout(showDistribusiModal, 800); } else { document.getElementById('btn-force-distribusi').classList.add('hidden'); }
                 
-                const sapaan = `<img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" class="h-4 w-4 mr-2 object-contain inline"> ${currentUser.nama_sekolah}`;
-                safeSetHTML('userGreeting', sapaan); safeSetText('dashboardTitle', `Dasbor (${currentUser.nama_sekolah})`);
+                const sapaan = `<img src="https://i.ibb.co.com/MyM5n9S7/logo-transparan.png" class="h-4 w-4 mr-2 object-contain inline"> ${currentUser.nama}`;
+                safeSetHTML('userGreeting', sapaan); safeSetText('dashboardTitle', `Dasbor (${currentUser.nama})`);
                 
                 let html = createNav('Beranda', 'fa-chart-pie', 'view-dashboard', true);
                 html += `<li><a href="#" onclick="openInputData()" class="nav-link mobile-nav-item mobile-inactive transition-all duration-200"><i class="fa-solid fa-keyboard mobile-nav-icon"></i><span class="mobile-nav-text font-semibold">Input</span></a></li>`;
                 html += createNav('Dokumen', 'fa-file-arrow-up', 'view-upload');
                 html += createNav('Data', 'fa-folder-open', 'view-data-aset');
-                html += createNav('LPJ', 'fa-list-check', 'view-lpj');
+                html += createNav('LPJ', 'fa-file-contract', 'view-lpj');
                 html += createNav('Unduh', 'fa-download', 'view-unduh');
                 navD.innerHTML = html; navM.innerHTML = html;
                 
                 document.getElementById('panel-unduh-sekolah').classList.remove('hidden');
+                document.getElementById('panel-unduh-sekolah').classList.add('grid');
                 document.getElementById('lpj-sekolah-container').classList.remove('hidden');
                 document.getElementById('lpj-sekolah-container').classList.add('flex');
                 document.getElementById('headerTahapContainer').classList.remove('hidden'); document.getElementById('headerTahapContainer').classList.add('flex');
@@ -849,7 +961,9 @@
                 globalPagu.total = parseInt(currentUser.totalPagu)||0; globalPagu.pegawai = parseInt(currentUser.paguPegawai)||0; globalPagu.barjas = parseInt(currentUser.paguBarjas)||0; globalPagu.alat = parseInt(currentUser.paguAlat)||0; globalPagu.aset = parseInt(currentUser.paguAset)||0;
                 document.getElementById('btn-tambah-aset-tabel').classList.remove('hidden');
                 
-                // Ambil semua data dokumen & LPJ di awal
+                // Fetch Global Settings untuk Sekolah (buat jaga-jaga kalau perlu info manager)
+                apiCall('getPengaturanGlobal').then(res => { if(res.success) pengaturanGlobal = res.data; });
+
                 loadDokumenUrls(); 
                 fetchMyLPJData();
             }
@@ -927,20 +1041,100 @@
             }
         }
 
-        // --- FITUR GANTI PASSWORD ---
-        function openPengaturan() { document.getElementById('modal-pengaturan').classList.remove('hidden'); document.getElementById('modal-pengaturan').classList.add('flex'); document.getElementById('form-ganti-password').reset(); }
-        function closePengaturan() { document.getElementById('modal-pengaturan').classList.add('hidden'); document.getElementById('modal-pengaturan').classList.remove('flex'); }
-        async function gantiPassword(e) { e.preventDefault(); const p1 = document.getElementById('inp-pass-baru').value; const p2 = document.getElementById('inp-pass-konfirm').value; if(p1 !== p2) { Swal.fire('Error', 'Konfirmasi password tidak cocok!', 'error'); return; } showLoading('Mengubah password...'); try { const idKey = currentRole === 'dinas' ? currentUser.username : currentUser.npsn; const res = await apiCall('changePassword', { id: idKey, role: currentRole, newPassword: p1 }); hideLoading(); if(res.success) { Swal.fire('Sukses', 'Password berhasil diubah!', 'success'); closePengaturan(); } else Swal.fire('Gagal', res.message, 'error'); } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
+        // --- FITUR PENGATURAN (PASSWORD / PROFIL / PEJABAT) ---
+        function switchSettingTab(tab) {
+            const tabs = ['akun', 'profil', 'pejabat'];
+            tabs.forEach(t => {
+                const el = document.getElementById('tab-set-' + t);
+                if(el) {
+                    if (t === tab) {
+                        el.classList.add('text-primary', 'border-b-2', 'border-primary');
+                        el.classList.remove('text-gray-500', 'hover:text-gray-700');
+                    } else {
+                        el.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                        el.classList.add('text-gray-500', 'hover:text-gray-700');
+                    }
+                }
+            });
+            
+            document.getElementById('form-ganti-password').classList.add('hidden');
+            document.getElementById('form-profil-sekolah').classList.add('hidden');
+            document.getElementById('form-pejabat-dinas').classList.add('hidden');
 
-        // --- FITUR BAST VIA LINK (DIUPDATE) ---
-        function getUploadBtnClass(k) {
-            if(k === 'pegawai') return 'w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-amber-600 transition-colors';
-            if(k === 'barjas') return 'w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-purple-600 transition-colors';
-            if(k === 'peralatan') return 'w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-sky-600 transition-colors';
-            if(k === 'aset') return 'w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-emerald-600 transition-colors';
-            return 'w-full bg-primary text-white py-2 rounded-lg text-xs font-semibold shadow-md';
+            if(tab === 'akun') document.getElementById('form-ganti-password').classList.remove('hidden');
+            else if(tab === 'profil') document.getElementById('form-profil-sekolah').classList.remove('hidden');
+            else if(tab === 'pejabat') document.getElementById('form-pejabat-dinas').classList.remove('hidden');
         }
 
+        function openPengaturan() { 
+            document.getElementById('modal-pengaturan').classList.remove('hidden'); 
+            document.getElementById('modal-pengaturan').classList.add('flex'); 
+            
+            // Atur Tab visibility berdasarkan role
+            document.getElementById('tab-set-profil').classList.add('hidden');
+            document.getElementById('tab-set-pejabat').classList.add('hidden');
+
+            if (currentRole === 'sekolah') {
+                document.getElementById('tab-set-profil').classList.remove('hidden');
+                document.getElementById('inp-set-kepsek').value = currentUser.kepsek || '';
+                document.getElementById('inp-set-bendahara').value = currentUser.bendahara || '';
+                document.getElementById('inp-set-operator').value = currentUser.operator || '';
+            } else if (currentRole === 'dinas' && currentUser.level === 'superadmin') {
+                document.getElementById('tab-set-pejabat').classList.remove('hidden');
+                document.getElementById('inp-pej-paud-nama').value = pengaturanGlobal.manager_paud_nama || '';
+                document.getElementById('inp-pej-paud-nip').value = pengaturanGlobal.manager_paud_nip || '';
+                document.getElementById('inp-pej-sd-nama').value = pengaturanGlobal.manager_sd_nama || '';
+                document.getElementById('inp-pej-sd-nip').value = pengaturanGlobal.manager_sd_nip || '';
+                document.getElementById('inp-pej-smp-nama').value = pengaturanGlobal.manager_smp_nama || '';
+                document.getElementById('inp-pej-smp-nip').value = pengaturanGlobal.manager_smp_nip || '';
+            }
+
+            switchSettingTab('akun');
+            document.getElementById('form-ganti-password').reset(); 
+        }
+        function closePengaturan() { document.getElementById('modal-pengaturan').classList.add('hidden'); document.getElementById('modal-pengaturan').classList.remove('flex'); }
+        
+        async function gantiPassword(e) { e.preventDefault(); const p1 = document.getElementById('inp-pass-baru').value; const p2 = document.getElementById('inp-pass-konfirm').value; if(p1 !== p2) { Swal.fire('Error', 'Konfirmasi password tidak cocok!', 'error'); return; } showLoading('Mengubah password...'); try { const idKey = currentRole === 'dinas' ? currentUser.username : currentUser.npsn; const res = await apiCall('changePassword', { id: idKey, role: currentRole, newPassword: p1 }); hideLoading(); if(res.success) { Swal.fire('Sukses', 'Password berhasil diubah!', 'success'); closePengaturan(); } else Swal.fire('Gagal', res.message, 'error'); } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
+
+        async function simpanProfilSekolah(e) {
+            e.preventDefault();
+            const kepsek = document.getElementById('inp-set-kepsek').value;
+            const bendahara = document.getElementById('inp-set-bendahara').value;
+            const op = document.getElementById('inp-set-operator').value;
+            showLoading('Menyimpan Profil...');
+            try {
+                const res = await apiCall('updateProfilSekolah', { npsn: currentUser.npsn, kepsek: kepsek, bendahara: bendahara, operator: op });
+                hideLoading();
+                if(res.success) {
+                    currentUser.kepsek = kepsek; currentUser.bendahara = bendahara; currentUser.operator = op;
+                    localStorage.setItem('simbos_user', JSON.stringify(currentUser));
+                    Swal.fire('Sukses', 'Profil sekolah diperbarui.', 'success');
+                } else Swal.fire('Error', res.message, 'error');
+            } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
+        }
+
+        async function simpanPejabatDinas(e) {
+            e.preventDefault();
+            const data = {
+                manager_paud_nama: document.getElementById('inp-pej-paud-nama').value,
+                manager_paud_nip: document.getElementById('inp-pej-paud-nip').value,
+                manager_sd_nama: document.getElementById('inp-pej-sd-nama').value,
+                manager_sd_nip: document.getElementById('inp-pej-sd-nip').value,
+                manager_smp_nama: document.getElementById('inp-pej-smp-nama').value,
+                manager_smp_nip: document.getElementById('inp-pej-smp-nip').value
+            };
+            showLoading('Menyimpan Data Pejabat...');
+            try {
+                const res = await apiCall('simpanPengaturanGlobal', data);
+                hideLoading();
+                if(res.success) {
+                    pengaturanGlobal = {...pengaturanGlobal, ...data};
+                    Swal.fire('Sukses', 'Data Pejabat / Manager BOS diperbarui.', 'success');
+                } else Swal.fire('Error', res.message, 'error');
+            } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
+        }
+
+        // --- FITUR BAST VIA LINK ---
         function switchUploadTahap(t) { 
             uploadTahap = t; 
             document.getElementById('tab-up-1').className = t==='1'?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all'; 
@@ -962,9 +1156,15 @@
                         inp.readOnly = true;
                         inp.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
                     } else {
+                        let btnClass = 'w-full bg-primary text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-indigo-600 transition-colors';
+                        if(k === 'pegawai') btnClass = 'w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-amber-600 transition-colors';
+                        if(k === 'barjas') btnClass = 'w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-purple-600 transition-colors';
+                        if(k === 'peralatan') btnClass = 'w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-sky-600 transition-colors';
+                        if(k === 'aset') btnClass = 'w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-emerald-600 transition-colors';
+
                         btn.innerHTML = 'Kirim Dokumen';
                         btn.onclick = () => simpanLinkDokumen(k);
-                        btn.className = getUploadBtnClass(k);
+                        btn.className = btnClass;
                         inp.readOnly = false;
                         inp.classList.remove('bg-gray-100', 'text-gray-500', 'cursor-not-allowed');
                     }
@@ -1003,7 +1203,6 @@
             const containerRekom = document.getElementById('container-rekomendasi-sekolah');
             const btnRekom = document.getElementById('btn-download-rekom');
 
-            // Set Badge Status Keseluruhan
             if(overallStatus === 'diproses') badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-blue-100 text-blue-700 shadow-sm";
             else if(overallStatus === 'verifikasi_dinas') badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-purple-100 text-purple-700 shadow-sm";
             else if(overallStatus === 'disetujui_manager') badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-green-100 text-green-700 shadow-sm";
@@ -1011,24 +1210,16 @@
             else badge.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-gray-200 text-gray-600 shadow-sm";
             badge.textContent = overallStatus === 'kosong' ? 'BELUM MENGAJUKAN' : overallStatus.replace('_', ' ').toUpperCase();
 
-            // Munculkan Container Rekomendasi
             if (overallStatus === 'disetujui_manager') {
                 containerRekom.classList.remove('hidden');
-                if (lpjItem.keterangan && lpjItem.keterangan.startsWith('http')) {
-                    btnRekom.classList.remove('hidden');
-                    btnRekom.onclick = () => window.open(lpjItem.keterangan, '_blank');
-                } else {
-                    btnRekom.classList.add('hidden');
-                }
+                btnRekom.classList.remove('hidden');
+                btnRekom.onclick = () => cetakRekomendasi(currentUser.npsn, lpjItem.tahap);
             } else {
                 containerRekom.classList.add('hidden');
             }
 
             let filledCount = 0;
             let html = '';
-            
-            // Kunci keseluruhan baris hanya jika statusnya dipindah ke manager atau selesai disetujui.
-            // Status "diproses" (oleh admin bidang) tidak mengunci baris kosong agar sekolah bisa menyicil input
             let isOverallLocked = ['verifikasi_dinas', 'disetujui_manager'].includes(overallStatus);
 
             LPJ_REQ.forEach((req, i) => {
@@ -1043,7 +1234,6 @@
                 let aksiHtml = '';
                 let inputHtml = '';
 
-                // Kunci per baris
                 let isItemLocked = (st === 'diproses' || st === 'disetujui' || isOverallLocked);
 
                 if (isItemLocked) {
@@ -1086,16 +1276,16 @@
                 try { stateObj = JSON.parse(lpjItem.link_lpj); } catch(e) {}
             }
             
-            stateObj[index] = { link: link, status: 'diproses', ket: '' }; // Langsung diproses per item
+            stateObj[index] = { link: link, status: 'diproses', ket: '' };
             
             showLoading('Mengirim Dokumen...');
             try {
                 const t = activeTahap === 'all' ? '1' : activeTahap.toString();
-                const res = await apiCall('updateLPJItemState', { npsn: currentUser.npsn, namaSekolah: currentUser.nama_sekolah, tahap: t, stateJson: JSON.stringify(stateObj), isSchoolUpload: true });
+                const res = await apiCall('updateLPJItemState', { npsn: currentUser.npsn, namaSekolah: currentUser.nama, tahap: t, stateJson: JSON.stringify(stateObj), isSchoolUpload: true });
                 hideLoading();
                 if (res.success) {
                     Swal.fire({toast:true, position:'top-end', icon:'success', title:'Dokumen Terkirim', showConfirmButton:false, timer:1500});
-                    fetchMyLPJData(); // reload UI
+                    fetchMyLPJData(); 
                 } else Swal.fire('Gagal', res.message, 'error');
             } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
         }
@@ -1106,7 +1296,9 @@
                 const res = await apiCall('getAllLPJ', { tahap: 'all' });
                 if(res.success) { 
                     allLpjData = res.data; 
-                    renderTableLPJ(); 
+                    if (currentRole === 'dinas' && (document.getElementById('view-lpj').classList.contains('block') || document.getElementById('view-lpj').classList.contains('flex'))) {
+                        renderTableLPJ();
+                    }
                 }
             } catch(e) { console.error(e); }
         }
@@ -1135,24 +1327,28 @@
                 else if(st === 'disetujui_manager') badge = '<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">SELESAI</span>';
                 else if(st === 'ditolak') badge = `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold cursor-help" title="${item.keterangan || ''}">DITOLAK</span>`;
                 
-                // Bypass Modal Logic untuk Manager
+                // Aksi Admin Verifikator
                 if (lvl.includes('admin_') || lvl === 'superadmin') {
                     if (st === 'diproses') {
                         btnAksi = `<button onclick="bukaVerifikasiLPJ('${item.npsn}', '${item.tahap}')" class="bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-indigo-600 transition-colors"><i class="fa-solid fa-list-check mr-1"></i> Verifikasi Detail</button>`;
-                    } else if (st === 'verifikasi_dinas' || st === 'disetujui_manager') {
-                        btnAksi = `<span class="text-xs text-gray-500"><i class="fa-solid fa-check"></i> Selesai Diverifikasi Admin</span>`;
+                    } else if (st === 'disetujui_manager') {
+                        // LOGIKA BARU: Jika sudah disetujui, Admin bisa mencetak
+                        btnAksi = `<button onclick="cetakRekomendasi('${item.npsn}', '${item.tahap}')" class="bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-print mr-1"></i> Cetak Rekomendasi</button>`;
+                    } else if (st === 'verifikasi_dinas') {
+                        btnAksi = `<span class="text-xs text-gray-500"><i class="fa-solid fa-check"></i> Menunggu Manager</span>`;
                     } else {
                         btnAksi = `<span class="text-xs text-gray-400">-</span>`;
                     }
                 } 
                 
-                // Manager hanya melihat tombol bypass setujui/tolak langsung di tabel
+                // Aksi Manager (Setujui Final)
                 if (lvl.includes('manager_') || lvl === 'superadmin') {
+                    // Kalau Superadmin, tambahkan tombol di samping tombol cetak jika statusnya verifikasi_dinas
                     if (st === 'verifikasi_dinas') {
                         btnAksi = `<div class="flex justify-center gap-2"><button onclick="promptRekomendasiFinal('${item.npsn}', '${item.tahap}')" class="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-green-600 transition-colors"><i class="fa-solid fa-check mr-1"></i> Setujui Final</button> <button onclick="tolakLPJ('${item.npsn}', '${item.tahap}')" class="bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:bg-red-600 transition-colors"><i class="fa-solid fa-xmark mr-1"></i> Tolak</button></div>`;
-                    } else if (st === 'disetujui_manager') {
-                        btnAksi = `<span class="text-xs text-green-600 font-bold"><i class="fa-solid fa-check-double"></i> Selesai</span>`;
-                    } else if (st === 'diproses') {
+                    } else if (st === 'disetujui_manager' && !lvl.includes('admin_')) { // Jika manager_ biasa yg login
+                        btnAksi = `<span class="text-xs text-green-600 font-bold"><i class="fa-solid fa-check-double"></i> Disetujui</span>`;
+                    } else if (st === 'diproses' && !lvl.includes('admin_')) {
                         btnAksi = `<span class="text-xs text-gray-400">Menunggu Admin</span>`;
                     }
                 }
@@ -1213,7 +1409,6 @@
             document.getElementById('table-body-verif-lpj').innerHTML = html;
             document.getElementById('verif-progress-text').innerHTML = `Item Disetujui: <span class="${approvedCount === 31 ? 'text-green-600' : 'text-primary'} text-sm ml-1">${approvedCount} / 31</span>`;
 
-            // Render Footer Buttons
             let lvl = currentUser.level || '';
             let footerHtml = `<button onclick="closeModalVerifLPJ()" class="bg-gray-100 text-gray-600 px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-200 transition-colors border shadow-sm">Tutup</button>`;
             
@@ -1251,8 +1446,8 @@
                 const res = await apiCall('updateLPJItemState', { npsn: currentVerifNpsn, namaSekolah: item.namaSekolah, tahap: currentVerifTahap, stateJson: JSON.stringify(stateObj), isSchoolUpload: false });
                 hideLoading();
                 if (res.success) {
-                    item.link_lpj = JSON.stringify(stateObj); // Update memori
-                    bukaVerifikasiLPJ(currentVerifNpsn, currentVerifTahap); // Render ulang modal
+                    item.link_lpj = JSON.stringify(stateObj); 
+                    bukaVerifikasiLPJ(currentVerifNpsn, currentVerifTahap); 
                 } else Swal.fire('Gagal', res.message, 'error');
             } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
         }
@@ -1273,33 +1468,151 @@
 
         function promptRekomendasiFinal(npsn, tahap) {
             Swal.fire({
-                title: 'Setujui Final & Berikan Rekomendasi',
-                text: 'Masukkan Link Google Drive dokumen Rekomendasi yang telah ditandatangani untuk diunduh sekolah:',
-                input: 'url',
-                inputPlaceholder: 'https://docs.google.com/...',
+                title: 'Setujui Final?',
+                text: 'Sekolah dan Admin Verifikator akan bisa mencetak surat rekomendasi secara otomatis.',
+                icon: 'question',
                 showCancelButton: true,
-                confirmButtonText: 'Setujui & Kirim Link',
+                confirmButtonText: 'Setujui Final',
                 confirmButtonColor: '#10B981',
-                cancelButtonText: 'Batal',
-                inputValidator: (value) => {
-                    if (!value) return 'Link Rekomendasi wajib diisi untuk disetujui!';
-                }
+                cancelButtonText: 'Batal'
             }).then(async (res) => {
                 if(res.isConfirmed) {
                     showLoading('Menyetujui LPJ...');
                     try { 
-                        const r = await apiCall('updateStatusLPJ', { npsn: npsn, tahap: tahap, status: 'disetujui_manager', keterangan: res.value }); 
+                        const r = await apiCall('updateStatusLPJ', { npsn: npsn, tahap: tahap, status: 'disetujui_manager', keterangan: '' }); 
                         hideLoading(); 
-                        if(r.success) { closeModalVerifLPJ(); fetchAllLPJData(); Swal.fire('Sukses', 'LPJ Disetujui & Link Rekomendasi Dikirim', 'success'); } 
+                        if(r.success) { closeModalVerifLPJ(); fetchAllLPJData(); Swal.fire('Sukses', 'LPJ Disetujui! Surat rekomendasi siap dicetak.', 'success'); } 
                         else Swal.fire('Error', r.message, 'error'); 
                     } catch(e) { hideLoading(); Swal.fire('Error', e.message, 'error'); }
                 }
             });
         }
 
-        function tolakLPJ(npsn, tahap) { Swal.fire({ title: 'Alasan Penolakan', input: 'text', inputPlaceholder: 'Ketik alasan penolakan...', showCancelButton: true, confirmButtonText: 'Tolak LPJ', confirmButtonColor: '#ef4444' }).then((res) => { if(res.isConfirmed) updateStatusLPJ(npsn, tahap, 'ditolak', res.value); }); }
+        function tolakLPJ(npsn, tahap) { Swal.fire({ title: 'Alasan Penolakan', input: 'text', inputPlaceholder: 'Ketik alasan penolakan...', showCancelButton: true, confirmButtonText: 'Tolak LPJ', confirmButtonColor: '#ef4444' }).then((res) => { if(res.isConfirmed) updateOverallLPJ(npsn, tahap, 'ditolak', res.value); }); }
 
-        // --- MANAJEMEN USER & ADMIN ---
+        // --- CETAK REKOMENDASI HTML OTOMATIS (DENGAN DATA PEJABAT DINAMIS) ---
+        function cetakRekomendasi(npsn, tahapStr) {
+            // Ambil data user, jika dari sekolah gunakan currentUser
+            let user = currentUsersData.find(u => u.npsn && u.npsn.toString() === npsn.toString());
+            if (!user && currentRole === 'sekolah' && npsn.toString() === currentUser.npsn.toString()) {
+                user = currentUser;
+            }
+            if(!user) { Swal.fire('Error', 'Data sekolah tidak ditemukan', 'error'); return; }
+
+            let totalPagu = parseInt(user.totalPagu) || 0;
+            let paguAlat = parseInt(user.paguAlat) || 0;
+            let paguAset = parseInt(user.paguAset) || 0;
+            
+            // HITUNG REALISASI TAHAP 1
+            let rPeg_T1 = 0, rBar_T1 = 0, rAla_T1 = 0, rAse_T1 = 0;
+            currentAsetData.forEach(a => {
+                if(a.npsn && a.npsn.toString() === npsn.toString() && getTahapFromDate(a.tgl_bast) === '1') {
+                    let hrg = parseInt(a.total_harga) || 0;
+                    let kod = a.kodefikasi || '';
+                    if(kod.includes('PEGAWAI')) rPeg_T1 += hrg;
+                    else if(kod.includes('BARANG DAN JASA')) rBar_T1 += hrg;
+                    else if(kod.includes('PERALATAN')) rAla_T1 += hrg;
+                    else if(kod.includes('ASET TETAP')) rAse_T1 += hrg;
+                }
+            });
+            let rTot_T1 = rPeg_T1 + rBar_T1 + rAla_T1 + rAse_T1;
+
+            let belanjaModal = paguAlat + paguAset;
+            let bos = totalPagu; 
+            
+            // JIKA CETAK TAHAP 2: Pagu Setahun dikurangi Realisasi Tahap 1
+            if (tahapStr.toString() === '2') {
+                bos = bos - rTot_T1;
+                belanjaModal = belanjaModal - (rAla_T1 + rAse_T1);
+                totalPagu = bos; // Update baris 'Total' menyesuaikan sisa pencairan
+            }
+            
+            // Tarik data manager dari pengaturanGlobal berdasarkan jenjang
+            let jenjangKecil = user.jenjang ? user.jenjang.toLowerCase() : '';
+            if (jenjangKecil === 'pkbm') jenjangKecil = 'paud'; // Gabung paud & pkbm
+            let namaManager = pengaturanGlobal[`manager_${jenjangKecil}_nama`] || ".........................";
+            let nipManager = pengaturanGlobal[`manager_${jenjangKecil}_nip`] || ".........................";
+
+            const tgl = new Date();
+            const arrBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            const tglStr = `${tgl.getDate()} ${arrBulan[tgl.getMonth()]} ${tgl.getFullYear()}`;
+            
+            let htmlSurat = `
+                <html>
+                <head>
+                    <title>Rekomendasi BOS - ${user.nama || user.nama_sekolah}</title>
+                    <style>
+                        @page { size: A4; margin: 2cm; }
+                        body { font-family: "Times New Roman", Times, serif; padding: 0; line-height: 1.5; color: black; max-width: 800px; margin: 0 auto; }
+                        .kop { text-align: center; border-bottom: 3px solid black; padding-bottom: 10px; margin-bottom: 30px; position: relative; }
+                        .kop img { position: absolute; left: 10px; top: 0; width: 80px; }
+                        .kop h3 { margin: 0; font-size: 14pt; letter-spacing: 1px; font-weight: bold;}
+                        .kop h2 { margin: 0; font-size: 13.5pt; font-weight: bold; letter-spacing: 0.5px;}
+                        .kop p { margin: 0; font-size: 10pt; }
+                        .judul { text-align: center; margin-bottom: 25px; }
+                        .judul h4 { margin: 0; text-decoration: underline; font-size: 14pt; font-weight: bold; letter-spacing: 3px;}
+                        .judul p { margin: 0; font-size: 12pt; }
+                        .content { font-size: 12pt; text-align: justify; }
+                        .tabel-data { margin: 15px 0 15px 40px; font-size: 12pt; }
+                        .tabel-data td { padding: 4px 10px; vertical-align: top; }
+                        .ttd-container { width: 100%; margin-top: 50px; display: flex; justify-content: flex-end; }
+                        .ttd { width: 350px; text-align: left; font-size: 12pt; }
+                        .ttd .nama-pejabat { font-weight: bold; text-decoration: underline; margin-bottom: 0; margin-top: 80px;}
+                        .ttd .nip { margin-top: 0; }
+                    </style>
+                </head>
+                <body>
+                    <div class="kop">
+                        <img src="https://i.ibb.co.com/5xhN0cm1/Logo-Donggala.png" alt="Logo Donggala">
+                        <h3>PEMERINTAH KABUPATEN DONGGALA</h3>
+                        <h2>DINAS PENDIDIKAN PEMUDA DAN OLAHRAGA</h2>
+                        <p>ALAMAT : JL. JATI BARU GUNUNG BALE TELP. (0457) 71775, 71885, 71880</p>
+                    </div>
+                    
+                    <div class="judul">
+                        <h4>R E K O M E N D A S I</h4>
+                        <p>Nomor : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ 800/DIKBUD/DGL/${tgl.getFullYear()}</p>
+                    </div>
+                    
+                    <div class="content">
+                        <p>Sehubungan telah terpenuhinya syarat-syarat pencairan Dana BOS Reguler sesuai dengan Petunjuk Teknis Penggunaan Dana BOS Reguler Tahun ${tgl.getFullYear()}, selaku Kepala Dinas Pendidikan Pemuda dan Olahraga Kabupaten Donggala merekomendasikan kepada BANK Pembangunan Daerah (BPD) Sulawesi Tengah untuk mencairkan Dana BOS Reguler kepada :</p>
+                        
+                        <table class="tabel-data">
+                            <tr><td>Sekolah</td><td>:</td><td><b>${user.nama || user.nama_sekolah}</b></td></tr>
+                            <tr><td>Tahap</td><td>:</td><td><b>Tahap ${tahapStr}</b></td></tr>
+                            <tr><td>BOS</td><td>:</td><td><b>Rp ${bos.toLocaleString('id-ID')}</b></td></tr>
+                            <tr><td>Belanja Modal</td><td>:</td><td><b>Rp ${belanjaModal.toLocaleString('id-ID')}</b></td></tr>
+                            <tr><td>Total</td><td>:</td><td><b>Rp ${totalPagu.toLocaleString('id-ID')}</b></td></tr>
+                        </table>
+                        
+                        <p>Demikian Rekomendasi ini diberikan kepada yang bersangkutan untuk digunakan sebagaimana mestinya.</p>
+                    </div>
+                    
+                    <div class="ttd-container">
+                        <div class="ttd">
+                            <p>Donggala, ${tglStr}</p>
+                            <p>a.n. Kepala Dinas Pendidikan Pemuda dan Olahraga<br>Kabupaten Donggala<br>Manager BOS Bidang ${user.jenjang},</p>
+                            <p class="nama-pejabat">${namaManager}</p>
+                            <p class="nip">NIP. ${nipManager}</p>
+                        </div>
+                    </div>
+                    
+                    <script>
+                        window.onload = function() { 
+                            setTimeout(function() { window.print(); }, 500);
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            const printWin = window.open('', '_blank');
+            printWin.document.open();
+            printWin.document.write(htmlSurat);
+            printWin.document.close();
+        }
+
+        // --- MANAJEMEN ASET / USERS / UNDUH / DISTRIBUSI ---
         async function loadDataUsers() { try { const res = await apiCall('getDataUsers'); if(res.success) { currentUsersData = res.data; renderTableUsers(); } } catch(err){} }
         function renderTableUsers() {
             const tbody = document.getElementById('table-body-users');
@@ -1329,18 +1642,51 @@
 
         async function loadDataAset() { try { const res = await apiCall('getDataAset', {role: currentRole, npsn: currentUser.npsn}); if(res.success) { currentAsetData = res.data; renderTableAset(currentAsetData); } } catch(err){} }
         
+        function backToAsetSummary() { currentViewNpsnDetail = null; renderTableAset(currentAsetData); }
+        function lihatDetailAset(npsn) { currentViewNpsnDetail = npsn; renderTableAset(currentAsetData); }
+
+        function renderAsetSummary(dataArr) {
+            const summary = {};
+            dataArr.forEach(item => {
+                let npsn = item.npsn;
+                if (!summary[npsn]) { summary[npsn] = { npsn: npsn, nama: item.nama_sekolah, kec: item.kecamatan, pegawai: 0, barjas: 0, alat: 0, aset: 0, total: 0 }; }
+                
+                if (activeTahap !== 'all' && getTahapFromDate(item.tgl_bast) !== activeTahap) return;
+
+                let hrg = parseInt(item.total_harga) || 0;
+                let kod = item.kodefikasi || '';
+                if(kod.includes('PEGAWAI')) summary[npsn].pegawai += hrg;
+                else if(kod.includes('BARANG DAN JASA')) summary[npsn].barjas += hrg;
+                else if(kod.includes('PERALATAN')) summary[npsn].alat += hrg;
+                else if(kod.includes('ASET TETAP')) summary[npsn].aset += hrg;
+                
+                summary[npsn].total += hrg;
+            });
+
+            let html = '';
+            Object.values(summary).forEach(s => {
+                html += `<tr class="hover:bg-gray-50 border-b">
+                    <td class="py-2.5 px-4 font-bold text-gray-700">${s.npsn}</td>
+                    <td class="py-2.5 px-4">${s.nama}</td>
+                    <td class="py-2.5 px-4">${s.kec}</td>
+                    <td class="py-2.5 px-4 text-right">Rp ${s.pegawai.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-4 text-right">Rp ${s.barjas.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-4 text-right">Rp ${s.alat.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-4 text-right">Rp ${s.aset.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-4 text-right font-bold text-primary">Rp ${s.total.toLocaleString('id-ID')}</td>
+                    <td class="py-2.5 px-4 text-center">
+                        <button onclick="lihatDetailAset('${s.npsn}')" class="bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg font-bold hover:bg-indigo-200 transition-colors shadow-sm"><i class="fa-solid fa-list mr-1"></i> Detail</button>
+                    </td>
+                </tr>`;
+            });
+            if (Object.keys(summary).length === 0) html = '<tr><td colspan="9" class="text-center py-4 text-gray-500">Belum ada data realisasi.</td></tr>';
+            document.getElementById('table-body-aset-summary').innerHTML = html;
+        }
+
         function renderTableAset(data) {
             currentAsetData = data || [];
-            const thead = document.getElementById('thead-aset'); const tbody = document.getElementById('table-body-aset');
-            let actHead = currentRole === 'sekolah' ? `<th class="py-3 px-3 font-semibold text-center sticky right-0 bg-gray-50 shadow-[-4px_0_10px_rgba(0,0,0,0.05)]">Aksi</th>` : '';
-            let colNoSP = currentDataTab === 'pegawai' ? '' : `<th class="py-3 px-3 font-semibold">No. SP</th><th class="py-3 px-3 font-semibold">Tgl SP</th>`;
-            let colMerek = currentDataTab === 'pegawai' ? '' : `<th class="py-3 px-3 font-semibold">Merek/Tipe</th>`;
-            let colSPV = currentDataTab === 'modal' ? `<th class="py-3 px-3 font-semibold">No. SPV</th><th class="py-3 px-3 font-semibold">Tgl SPV</th>` : '';
-            let headerPenyedia = currentDataTab === 'pegawai' ? 'Penerima' : 'Penyedia'; let headerUraian = currentDataTab === 'pegawai' ? 'Uraian Kegiatan / Pembayaran' : 'Nama Barang/Uraian';
-
-            thead.innerHTML = `<tr><th class="py-3 px-3 font-semibold">NPSN</th><th class="py-3 px-3 font-semibold">Nama Sekolah</th><th class="py-3 px-3 font-semibold">Jenjang</th><th class="py-3 px-3 font-semibold">Kecamatan</th><th class="py-3 px-3 font-semibold">Tahap</th><th class="py-3 px-3 font-semibold">No Kuitansi/BAST</th><th class="py-3 px-3 font-semibold">Tgl Kuitansi/BAST</th>${colNoSP}<th class="py-3 px-3 font-semibold">${headerPenyedia}</th><th class="py-3 px-3 font-semibold">Rekening</th><th class="py-3 px-3 font-semibold">Kodefikasi</th><th class="py-3 px-3 font-semibold">${headerUraian}</th>${colMerek}<th class="py-3 px-3 font-semibold text-center">Satuan</th><th class="py-3 px-3 font-semibold text-center">Qty</th><th class="py-3 px-3 font-semibold text-right">Harga Satuan</th><th class="py-3 px-3 font-semibold text-right">Total Harga</th>${colSPV}${actHead}</tr>`;
-
             let allowedData = currentAsetData;
+            
             if (currentRole === 'dinas') {
                 const allowedNpsns = getFilteredUsers().map(u => u.npsn.toString());
                 allowedData = currentAsetData.filter(item => allowedNpsns.includes((item.npsn||'').toString()));
@@ -1369,38 +1715,70 @@
                 else if(kod.includes('PERALATAN')) rAla += harga;
                 else if(kod.includes('ASET TETAP')) rAse += harga;
             });
-
             globalRealisasi.pegawai = rPeg; globalRealisasi.barjas = rBar; globalRealisasi.alat = rAla; globalRealisasi.aset = rAse; globalRealisasi.total = rPeg + rBar + rAla + rAse;
 
             updateDashboardCardsUI(); updateCharts(rPeg, rBar, rAla, rAse, dataForDashboard);
 
-            let dataForTable = dataForDashboard.filter(item => {
-                let kod = item.kodefikasi || '';
-                if (currentDataTab === 'pegawai') return kod.includes('PEGAWAI');
-                if (currentDataTab === 'barjas') return kod.includes('BARANG DAN JASA');
-                if (currentDataTab === 'modal') return kod.includes('PERALATAN') || kod.includes('ASET TETAP');
-                return true;
-            });
+            if (currentRole === 'dinas' && !currentViewNpsnDetail) {
+                document.getElementById('aset-summary-container').classList.remove('hidden');
+                document.getElementById('aset-summary-container').classList.add('flex');
+                document.getElementById('aset-detail-container').classList.add('hidden');
+                document.getElementById('aset-detail-container').classList.remove('flex');
+                document.getElementById('tab-data-filters').classList.add('hidden');
+                
+                renderAsetSummary(allowedData);
+            } else {
+                document.getElementById('aset-summary-container').classList.add('hidden');
+                document.getElementById('aset-summary-container').classList.remove('flex');
+                document.getElementById('aset-detail-container').classList.remove('hidden');
+                document.getElementById('aset-detail-container').classList.add('flex');
+                document.getElementById('tab-data-filters').classList.remove('hidden');
+                
+                if(currentRole === 'sekolah') document.getElementById('btn-back-summary').classList.add('hidden');
+                else document.getElementById('btn-back-summary').classList.remove('hidden');
 
-            let colSpanCount = currentRole === 'sekolah' ? 20 : 19;
-            if (currentDataTab === 'pegawai') colSpanCount -= 5;
-            if (currentDataTab === 'barjas') colSpanCount -= 2;
+                let dataForDetail = dataForDashboard;
+                if (currentRole === 'dinas' && currentViewNpsnDetail) {
+                    dataForDetail = dataForDashboard.filter(i => i.npsn.toString() === currentViewNpsnDetail.toString());
+                }
+                
+                let dataForTable = dataForDetail.filter(item => {
+                    let kod = item.kodefikasi || '';
+                    if (currentDataTab === 'pegawai') return kod.includes('PEGAWAI');
+                    if (currentDataTab === 'barjas') return kod.includes('BARANG DAN JASA');
+                    if (currentDataTab === 'modal') return kod.includes('PERALATAN') || kod.includes('ASET TETAP');
+                    return true;
+                });
 
-            if(dataForTable.length === 0) { tbody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center py-4 text-gray-500">Belum ada data realisasi untuk kategori ini.</td></tr>`; return; }
+                const thead = document.getElementById('thead-aset'); const tbody = document.getElementById('table-body-aset');
+                let actHead = currentRole === 'sekolah' ? `<th class="py-3 px-3 font-semibold text-center sticky right-0 bg-gray-50 shadow-[-4px_0_10px_rgba(0,0,0,0.05)]">Aksi</th>` : '';
+                let colNoSP = currentDataTab === 'pegawai' ? '' : `<th class="py-3 px-3 font-semibold">No. SP</th><th class="py-3 px-3 font-semibold">Tgl SP</th>`;
+                let colMerek = currentDataTab === 'pegawai' ? '' : `<th class="py-3 px-3 font-semibold">Merek/Tipe</th>`;
+                let colSPV = currentDataTab === 'modal' ? `<th class="py-3 px-3 font-semibold">No. SPV</th><th class="py-3 px-3 font-semibold">Tgl SPV</th>` : '';
+                let headerPenyedia = currentDataTab === 'pegawai' ? 'Penerima' : 'Penyedia'; let headerUraian = currentDataTab === 'pegawai' ? 'Uraian Kegiatan / Pembayaran' : 'Nama Barang/Uraian';
 
-            let html = '';
-            dataForTable.forEach(item => {
-                let harga = parseInt(item.total_harga) || 0; let hargaSatuan = parseInt(item.harga_satuan) || 0; let itemTahap = getTahapFromDate(item.tgl_bast); let kod = item.kodefikasi || '';
-                let badgeColor = kod.includes('PEGAWAI') ? 'bg-amber-50 text-amber-600 border-amber-200' : (kod.includes('BARANG DAN JASA') ? 'bg-purple-50 text-purple-600 border-purple-200' : (kod.includes('PERALATAN') ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'));
+                thead.innerHTML = `<tr><th class="py-3 px-3 font-semibold">NPSN</th><th class="py-3 px-3 font-semibold">Nama Sekolah</th><th class="py-3 px-3 font-semibold">Jenjang</th><th class="py-3 px-3 font-semibold">Kecamatan</th><th class="py-3 px-3 font-semibold">Tahap</th><th class="py-3 px-3 font-semibold">No Kuitansi/BAST</th><th class="py-3 px-3 font-semibold">Tgl Kuitansi/BAST</th>${colNoSP}<th class="py-3 px-3 font-semibold">${headerPenyedia}</th><th class="py-3 px-3 font-semibold">Rekening</th><th class="py-3 px-3 font-semibold">Kodefikasi</th><th class="py-3 px-3 font-semibold">${headerUraian}</th>${colMerek}<th class="py-3 px-3 font-semibold text-center">Satuan</th><th class="py-3 px-3 font-semibold text-center">Qty</th><th class="py-3 px-3 font-semibold text-right">Harga Satuan</th><th class="py-3 px-3 font-semibold text-right">Total Harga</th>${colSPV}${actHead}</tr>`;
 
-                let actTd = currentRole === 'sekolah' ? `<td class="py-2 px-3 text-center sticky right-0 bg-white shadow-[-4px_0_10px_rgba(0,0,0,0.05)]"><button onclick="editAset('${item.id}')" class="text-blue-500 hover:bg-blue-50 p-1.5 rounded"><i class="fa-solid fa-pen-to-square"></i></button></td>` : '';
-                let tdNoSP = currentDataTab === 'pegawai' ? '' : `<td class="py-2 px-3">${item.no_sp || '-'}</td><td class="py-2 px-3 whitespace-nowrap">${formatTglDisplay(item.tgl_sp)}</td>`;
-                let tdMerek = currentDataTab === 'pegawai' ? '' : `<td class="py-2 px-3">${item.merek || '-'}</td>`;
-                let tdSPV = currentDataTab === 'modal' ? `<td class="py-2 px-3">${item.no_spv || '-'}</td><td class="py-2 px-3 whitespace-nowrap">${formatTglDisplay(item.tgl_spv)}</td>` : '';
+                let colSpanCount = currentRole === 'sekolah' ? 20 : 19;
+                if (currentDataTab === 'pegawai') colSpanCount -= 5;
+                if (currentDataTab === 'barjas') colSpanCount -= 2;
 
-                html += `<tr class="hover:bg-gray-50 transition-colors border-b text-xs"><td class="py-2 px-3">${item.npsn || '-'}</td><td class="py-2 px-3 font-medium">${item.nama_sekolah || '-'}</td><td class="py-2 px-3">${item.jenjang || '-'}</td><td class="py-2 px-3">${item.kecamatan || '-'}</td><td class="py-2 px-3 font-bold text-center"><span class="px-2 py-0.5 bg-indigo-50 text-primary rounded">Tahap ${itemTahap}</span></td><td class="py-2 px-3 font-medium text-gray-800">${item.no_bast || '-'}</td><td class="py-2 px-3 whitespace-nowrap font-medium text-gray-800">${formatTglDisplay(item.tgl_bast)}</td>${tdNoSP}<td class="py-2 px-3">${item.penyedia || '-'}</td><td class="py-2 px-3 max-w-[150px] truncate" title="${item.rekening}">${item.rekening || '-'}</td><td class="py-2 px-3"><span class="px-2 py-1 rounded-full border font-bold ${badgeColor}">${item.kodefikasi || '-'}</span></td><td class="py-2 px-3 max-w-[200px] truncate" title="${item.uraian}">${item.uraian || '-'}</td>${tdMerek}<td class="py-2 px-3 text-center">${item.satuan || '-'}</td><td class="py-2 px-3 text-center">${item.qty || '-'}</td><td class="py-2 px-3 text-right whitespace-nowrap">Rp ${hargaSatuan.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right font-medium text-gray-800 whitespace-nowrap">Rp ${harga.toLocaleString('id-ID')}</td>${tdSPV}${actTd}</tr>`;
-            });
-            tbody.innerHTML = html;
+                if(dataForTable.length === 0) { tbody.innerHTML = `<tr><td colspan="${colSpanCount}" class="text-center py-4 text-gray-500">Belum ada data realisasi untuk kategori ini.</td></tr>`; return; }
+
+                let html = '';
+                dataForTable.forEach(item => {
+                    let harga = parseInt(item.total_harga) || 0; let hargaSatuan = parseInt(item.harga_satuan) || 0; let itemTahap = getTahapFromDate(item.tgl_bast); let kod = item.kodefikasi || '';
+                    let badgeColor = kod.includes('PEGAWAI') ? 'bg-amber-50 text-amber-600 border-amber-200' : (kod.includes('BARANG DAN JASA') ? 'bg-purple-50 text-purple-600 border-purple-200' : (kod.includes('PERALATAN') ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200'));
+
+                    let actTd = currentRole === 'sekolah' ? `<td class="py-2 px-3 text-center sticky right-0 bg-white shadow-[-4px_0_10px_rgba(0,0,0,0.05)]"><button onclick="editAset('${item.id}')" class="text-blue-500 hover:bg-blue-50 p-1.5 rounded"><i class="fa-solid fa-pen-to-square"></i></button></td>` : '';
+                    let tdNoSP = currentDataTab === 'pegawai' ? '' : `<td class="py-2 px-3">${item.no_sp || '-'}</td><td class="py-2 px-3 whitespace-nowrap">${formatTglDisplay(item.tgl_sp)}</td>`;
+                    let tdMerek = currentDataTab === 'pegawai' ? '' : `<td class="py-2 px-3">${item.merek || '-'}</td>`;
+                    let tdSPV = currentDataTab === 'modal' ? `<td class="py-2 px-3">${item.no_spv || '-'}</td><td class="py-2 px-3 whitespace-nowrap">${formatTglDisplay(item.tgl_spv)}</td>` : '';
+
+                    html += `<tr class="hover:bg-gray-50 transition-colors border-b text-xs"><td class="py-2 px-3">${item.npsn || '-'}</td><td class="py-2 px-3 font-medium">${item.nama_sekolah || '-'}</td><td class="py-2 px-3">${item.jenjang || '-'}</td><td class="py-2 px-3">${item.kecamatan || '-'}</td><td class="py-2 px-3 font-bold text-center"><span class="px-2 py-0.5 bg-indigo-50 text-primary rounded">Tahap ${itemTahap}</span></td><td class="py-2 px-3 font-medium text-gray-800">${item.no_bast || '-'}</td><td class="py-2 px-3 whitespace-nowrap font-medium text-gray-800">${formatTglDisplay(item.tgl_bast)}</td>${tdNoSP}<td class="py-2 px-3">${item.penyedia || '-'}</td><td class="py-2 px-3 max-w-[150px] truncate" title="${item.rekening}">${item.rekening || '-'}</td><td class="py-2 px-3"><span class="px-2 py-1 rounded-full border font-bold ${badgeColor}">${item.kodefikasi || '-'}</span></td><td class="py-2 px-3 max-w-[200px] truncate" title="${item.uraian}">${item.uraian || '-'}</td>${tdMerek}<td class="py-2 px-3 text-center">${item.satuan || '-'}</td><td class="py-2 px-3 text-center">${item.qty || '-'}</td><td class="py-2 px-3 text-right whitespace-nowrap">Rp ${hargaSatuan.toLocaleString('id-ID')}</td><td class="py-2 px-3 text-right font-medium text-gray-800 whitespace-nowrap">Rp ${harga.toLocaleString('id-ID')}</td>${tdSPV}${actTd}</tr>`;
+                });
+                tbody.innerHTML = html;
+            }
         }
         
         function switchDataTab(tab) {
@@ -1522,7 +1900,7 @@
             let nBast = document.getElementById('inp-no-bast') ? document.getElementById('inp-no-bast').value : '-'; if(nBast === '') nBast = '-';
 
             const dataAset = { 
-                id: editModeAsetId, npsn: currentUser.npsn, nama_sekolah: currentUser.nama_sekolah, jenjang: currentUser.jenjang, kecamatan: currentUser.kecamatan || "Lainnya", 
+                id: editModeAsetId, npsn: currentUser.npsn, nama_sekolah: currentUser.nama, jenjang: currentUser.jenjang, kecamatan: currentUser.kecamatan || "Lainnya", 
                 no_sp: nSp, tgl_sp: tSp, penyedia: document.getElementById('inp-penyedia').value, rekening: document.getElementById('inp-rekening').value, kodefikasi: document.getElementById('inp-kodefikasi').value, 
                 uraian: document.getElementById('inp-uraian').value, merek: document.getElementById('inp-merek') ? document.getElementById('inp-merek').value : '', satuan: document.getElementById('inp-satuan').value, qty: document.getElementById('inp-qty').value, harga_satuan: inputHargaSatuan, 
                 total_harga: totalHargaBaru, no_bast: nBast, tgl_bast: tglBast, no_spv: nSpv, tgl_spv: tSpv 
@@ -1551,13 +1929,15 @@
             showLoading('Menyegarkan Data...');
             try {
                 if (currentRole === 'dinas') {
-                    // Update: Kita tarik fetchAllLPJData bersamaan dengan memuat data lain
                     await Promise.all([loadDataUsers(), loadDataAset(), fetchAllLPJData()]);
                     if (currentUser && currentUser.level === 'superadmin') { await loadDataAdmins(); }
                 } else {
-                    // Update: Tarik fetchMyLPJData bersamaan data aset
                     await Promise.all([loadDataAset(), loadDokumenUrls(), fetchMyLPJData()]);
                 }
+                
+                const pgRes = await apiCall('getPengaturanGlobal');
+                if (pgRes.success) pengaturanGlobal = pgRes.data;
+
                 const npsnProg = document.getElementById('prog_npsn_selected') ? document.getElementById('prog_npsn_selected').value : null;
                 if(npsnProg && document.getElementById('view-progres').classList.contains('block')) { selectSchoolProgres(npsnProg); }
                 
@@ -1591,7 +1971,7 @@
                 filteredData = filteredData.filter(item => item.npsn && item.npsn.toString() === npsn.toString());
                 const user = currentUsersData.find(u => u.npsn && u.npsn.toString() === npsn.toString()); fileNameSuffix += `_${user && user.nama ? user.nama.replace(/\s+/g, '_') : npsn}`;
             } else if (currentRole === 'sekolah') {
-                fileNameSuffix += `_${currentUser.nama_sekolah ? currentUser.nama_sekolah.replace(/\s+/g, '_') : 'Sekolah'}`; 
+                fileNameSuffix += `_${currentUser.nama ? currentUser.nama.replace(/\s+/g, '_') : 'Sekolah'}`; 
             } else {
                 fileNameSuffix += "_Dinas_Pendidikan"; 
             }
