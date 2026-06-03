@@ -62,7 +62,7 @@
         // ==========================================================
         // ⚠️ PASTE URL APPSCRIPT ANDA DI BAWAH INI ⚠️
         // ==========================================================
-        const API_URL = "https://script.google.com/macros/s/AKfycbxOMbqDwjFXuUuOLYhMg8qasHoFME2jR8uwL5elPt-qXBnzgzFEKeqgCTYuKj5168wnMg/exec"; 
+        const API_URL = "https://script.google.com/macros/s/AKfycbxHOqj-KZ648Dz_6n7iAGz-SMHYoAb-KpdEvk4wLEe5W6xB6_GhqxBNghuU1td_OSixMQ/exec"; 
 
         // ==========================================================
         // ⚠️ PASTE URL PANDUAN DAN FORMAT LPJ DI BAWAH INI ⚠️
@@ -291,7 +291,7 @@
                         <thead>
                             <tr class="bg-gray-50 border-b border-gray-200 text-xs font-bold text-gray-600 uppercase tracking-wider">
                                 <th class="p-3">TGL BKU</th><th class="p-3">URAIAN</th><th class="p-3">TAHAP</th><th class="p-3">PAJAK</th>
-                                <th class="p-3 text-right">POTONG (RP)</th><th class="p-3 text-right">SETOR (RP)</th><th class="p-3 text-center">AKSI</th>
+                                <th class="p-3 text-right">PEMOTONGAN</th><th class="p-3 text-right">PENYETORAN</th><th class="p-3 text-center">AKSI</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-pajak" class="text-sm text-gray-700 divide-y divide-gray-100">
@@ -486,7 +486,6 @@
         // --- UTILITY FUNCTIONS ---
         function parseDateAman(dStr) { 
             if (!dStr || dStr === '-') return '-'; 
-            if (typeof dStr === 'string' && dStr.includes('T')) return dStr.split('T')[0]; 
             try { 
                 let d = new Date(dStr); 
                 if (!isNaN(d.getTime())) { 
@@ -818,7 +817,21 @@
             if (tempPajakData.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400 italic text-sm">Belum ada data pajak yang ditambahkan</td></tr>'; return; }
             tempPajakData.forEach((item, index) => {
                 const tr = document.createElement('tr'); tr.className = "hover:bg-gray-50 transition-colors";
-                tr.innerHTML = `<td class="p-3 text-xs text-gray-500 whitespace-nowrap">${parseDateAman(item.tglBku)}</td><td class="p-3 text-sm max-w-[200px] truncate" title="${item.uraian}">${item.uraian}</td><td class="p-3 text-sm text-gray-600">${item.tahap}</td><td class="p-3 text-sm font-bold text-blue-600">${item.jenis}</td><td class="p-3 text-sm text-right text-orange-600 font-medium">${formatUang(item.potongJml)}</td><td class="p-3 text-sm text-right text-green-600 font-medium">${formatUang(item.setorJml)}</td><td class="p-3 text-sm text-center space-x-2 whitespace-nowrap"><button onclick="editPajak(${index})" class="text-blue-500 hover:text-blue-700 transition-colors p-1" title="Edit Data"><i class="fa-solid fa-edit"></i></button><button onclick="hapusPajak(${index})" class="text-red-500 hover:text-red-700 transition-colors p-1" title="Hapus Data"><i class="fa-solid fa-trash"></i></button></td>`;
+                
+                let tglPotong = item.potongTgl && item.potongTgl !== '-' ? `<div class="text-[10px] text-gray-400 mb-0.5"><i class="fa-regular fa-calendar mr-1"></i>${parseDateAman(item.potongTgl)}</div>` : '';
+                let tglSetor = item.setorTgl && item.setorTgl !== '-' ? `<div class="text-[10px] text-gray-400 mb-0.5"><i class="fa-regular fa-calendar mr-1"></i>${parseDateAman(item.setorTgl)}</div>` : '';
+                
+                tr.innerHTML = `
+                    <td class="p-3 text-xs text-gray-500 whitespace-nowrap">${parseDateAman(item.tglBku)}</td>
+                    <td class="p-3 text-sm max-w-[200px] truncate" title="${item.uraian}">${item.uraian}</td>
+                    <td class="p-3 text-sm text-gray-600">${item.tahap}</td>
+                    <td class="p-3 text-sm font-bold text-blue-600">${item.jenis}</td>
+                    <td class="p-3 text-right whitespace-nowrap">${tglPotong}<div class="text-sm text-orange-600 font-medium">${formatUang(item.potongJml)}</div></td>
+                    <td class="p-3 text-right whitespace-nowrap">${tglSetor}<div class="text-sm text-green-600 font-medium">${formatUang(item.setorJml)}</div></td>
+                    <td class="p-3 text-sm text-center space-x-2 whitespace-nowrap">
+                        <button onclick="editPajak(${index})" class="text-blue-500 hover:text-blue-700 transition-colors p-1" title="Edit Data"><i class="fa-solid fa-edit"></i></button>
+                        <button onclick="hapusPajak(${index})" class="text-red-500 hover:text-red-700 transition-colors p-1" title="Hapus Data"><i class="fa-solid fa-trash"></i></button>
+                    </td>`;
                 tbody.appendChild(tr);
             });
         }
