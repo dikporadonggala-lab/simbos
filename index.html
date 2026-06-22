@@ -203,14 +203,18 @@
                 <button type="button" id="tab-data-barjas" onclick="switchDataTab('barjas')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-200 transition-all"><i class="fa-solid fa-box-open mr-1"></i> Barang & Jasa</button>
                 <button type="button" id="tab-data-modal" onclick="switchDataTab('modal')" class="flex-1 px-4 py-2 text-sm font-bold rounded-lg bg-white text-primary shadow-sm transition-all"><i class="fa-solid fa-desktop mr-1"></i> Belanja Modal</button>
             </div>
-            <!-- SUMMARY CONTAINER (Dinas) -->
             <div id="aset-summary-container" class="hidden flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex-col min-h-[400px] mx-2 md:mx-6">
-                <div class="bg-blue-50 text-blue-800 text-xs p-3 border-b border-blue-100"><i class="fa-solid fa-info-circle mr-1"></i> Rekapitulasi Pembelanjaan Sekolah. Klik tombol <b>Detail Pembelanjaan</b> untuk melihat rincian item per sekolah.</div>
+                <div class="bg-blue-50 text-blue-800 text-xs p-3 border-b border-blue-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2.5">
+                    <div><i class="fa-solid fa-info-circle mr-1"></i> Rekapitulasi Pembelanjaan Sekolah. Klik tombol <b>Detail</b> untuk melihat rincian item per sekolah.</div>
+                    <div class="relative w-full sm:w-64 shrink-0">
+                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-blue-400"></i>
+                        <input type="text" id="inp-search-aset-summary" onkeyup="filterAsetSummary()" placeholder="Cari NPSN / Nama Sekolah..." class="w-full pl-9 pr-3 py-1 bg-white border border-blue-200 rounded-lg text-xs outline-none focus:ring-primary text-gray-700 font-semibold shadow-sm">
+                    </div>
+                </div>
                 <div class="overflow-x-auto flex-1">
                     <table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b"><tr><th class="py-3 px-4 font-bold">NPSN</th><th class="py-3 px-4 font-bold">Nama Sekolah</th><th class="py-3 px-4 font-bold">Kecamatan</th><th class="py-3 px-4 text-right font-bold">Pegawai</th><th class="py-3 px-4 text-right font-bold">Barang & Jasa</th><th class="py-3 px-4 text-right font-bold">Alat</th><th class="py-3 px-4 text-right font-bold">Aset Lain</th><th class="py-3 px-4 text-right font-bold text-primary">Total Realisasi</th><th class="py-3 px-4 text-center font-bold">Aksi</th></tr></thead><tbody id="table-body-aset-summary" class="divide-y divide-gray-100"></tbody></table>
                 </div>
             </div>
-            <!-- DETAIL CONTAINER -->
             <div id="aset-detail-container" class="hidden flex-1 flex-col mx-2 md:mx-6">
                 <button id="btn-back-summary" onclick="backToAsetSummary()" class="mb-3 w-max bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-gray-100 shadow-sm transition-colors hidden"><i class="fa-solid fa-arrow-left mr-1"></i> Kembali ke Daftar Sekolah</button>
                 <div class="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex flex-col min-h-[400px]">
@@ -373,7 +377,7 @@
             <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100"> 
                 <div class="relative w-full md:w-1/2 mb-4 z-[60]"> 
                     <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i> 
-                    <input type="text" id="inp-search-progres" onkeyup="filterProgresSekolah()" placeholder="Ketik NPSN atau Nama Sekolah..." autocomplete="off" class="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary text-sm"> 
+                    <input type="text" id="inp-search-progres" onkeyup="filterProgresSekolah()" placeholder="Ketik NPSN atau Nama Sekolah..." autocomplete="off" class="w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary text-sm font-medium"> 
                     <ul id="list-sekolah-progres" class="absolute z-50 w-full bg-white border rounded-lg mt-1 shadow-2xl max-h-60 overflow-y-auto hidden"></ul> 
                 </div> 
                 <input type="hidden" id="prog_npsn_selected">
@@ -448,7 +452,16 @@
                <div id="container-rekomendasi-sekolah" class="hidden mb-4 p-5 bg-emerald-50 border border-emerald-200 rounded-xl shadow-inner"><div class="flex justify-between items-center"><div><h4 class="text-sm font-bold text-emerald-800"><i class="fa-solid fa-stamp mr-1"></i> LPJ Disetujui & Direkomendasikan</h4><p class="text-xs text-emerald-600 mt-1">Silakan unduh dokumen rekomendasi dari Manager BOS.</p></div><button id="btn-download-rekom" class="bg-emerald-500 text-white px-5 py-2.5 rounded-lg text-sm font-bold shadow-md hover:bg-emerald-600 transition-colors"><i class="fa-solid fa-download mr-1"></i> Cetak Rekomendasi</button></div></div>
                <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden mb-4"><div class="overflow-x-auto max-h-[60vh] relative"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm z-10 border-b"><tr><th class="py-3 px-4 w-10 text-center">No</th><th class="py-3 px-4">Uraian Persyaratan</th><th class="py-3 px-4 w-64">Link Dokumen (G-Drive)</th><th class="py-3 px-4 text-center w-24">Status</th><th class="py-3 px-4 text-center w-24">Aksi</th></tr></thead><tbody id="table-body-lpj-sekolah"></tbody></table></div></div>
             </div>
-            <div id="lpj-dinas-container" class="hidden bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex-col min-h-[400px]"><div class="overflow-x-auto flex-1"><table class="w-full text-left text-sm whitespace-nowrap"><thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b"><tr><th class="py-3 px-4">NPSN</th><th class="py-3 px-4">Nama Sekolah</th><th class="py-3 px-4 text-center">Tahap</th><th class="py-3 px-4 text-center">Progress Upload</th><th class="py-3 px-4 text-center">Status</th><th class="py-3 px-4 text-center">Aksi Verifikasi</th></tr></thead><tbody id="table-body-lpj-dinas"><tr><td colspan="6" class="text-center py-8 text-gray-500">Memuat data LPJ...</td></tr></tbody></table></div></div>
+            <div id="lpj-dinas-container" class="hidden bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex-col min-h-[400px]">
+                <div class="p-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-gray-50/40">
+                    <h3 class="font-bold text-gray-800 text-sm"><i class="fa-solid fa-folder-open text-primary mr-2"></i>Daftar Pengajuan LPJ Sekolah</h3>
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                        <input type="text" id="inp-search-lpj-dinas" onkeyup="filterLpjDinas()" placeholder="Cari NPSN / Nama Sekolah..." class="w-full pl-8 pr-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs outline-none focus:ring-primary font-medium shadow-sm">
+                    </div>
+                </div>
+                <div class="overflow-x-auto flex-1"><table class="w-full text-left text-sm whitespace-nowrap"><thead class="bg-gray-50 text-gray-600 sticky top-0 shadow-sm border-b"><tr><th class="py-3 px-4">NPSN</th><th class="py-3 px-4">Nama Sekolah</th><th class="py-3 px-4 text-center">Tahap</th><th class="py-3 px-4 text-center">Progress Upload</th><th class="py-3 px-4 text-center">Status</th><th class="py-3 px-4 text-center">Aksi Verifikasi</th></tr></thead><tbody id="table-body-lpj-dinas"><tr><td colspan="6" class="text-center py-8 text-gray-500">Memuat data LPJ...</td></tr></tbody></table></div>
+            </div>
         </div>
 
         <!-- View: Unduh -->
@@ -1127,6 +1140,34 @@
         function tolakDokumenAset(npsn, type, tahap) {
             Swal.fire({title:'Tolak Dokumen?', text:'Link dihapus & sekolah harus upload ulang.', icon:'warning', showCancelButton:true, confirmButtonColor:'#ef4444', confirmButtonText:'Ya, Tolak'}).then(async (res)=>{
                 if(res.isConfirmed) { showLoading('Menghapus link...'); try { const r = await apiCall('simpanLinkDokumen', {npsn:npsn, tipe:type, tahap:tahap, linkUrl:''}); hideLoading(); if(r.success) { Swal.fire('Ditolak', 'Dokumen berhasil ditolak.', 'success'); selectSchoolProgres(npsn); } else Swal.fire('Gagal', r.message, 'error'); }catch(e){ hideLoading(); Swal.fire('Error', e.message, 'error'); } }
+            });
+        }
+// ==========================================
+        // FITUR PENCARIAN DATA & LPJ (ADMIN DINAS)
+        // ==========================================
+        function filterAsetSummary() {
+            let input = document.getElementById('inp-search-aset-summary').value.toLowerCase();
+            let rows = document.querySelectorAll('#table-body-aset-summary tr');
+            rows.forEach(row => {
+                if (row.cells.length > 1) {
+                    let npsn = row.cells[0].textContent.toLowerCase();
+                    let nama = row.cells[1].textContent.toLowerCase();
+                    if (npsn.includes(input) || nama.includes(input)) row.style.display = '';
+                    else row.style.display = 'none';
+                }
+            });
+        }
+
+        function filterLpjDinas() {
+            let input = document.getElementById('inp-search-lpj-dinas').value.toLowerCase();
+            let rows = document.querySelectorAll('#table-body-lpj-dinas tr');
+            rows.forEach(row => {
+                if (row.cells.length > 1 && !row.cells[0].textContent.includes('Memuat')) {
+                    let npsn = row.cells[0].textContent.toLowerCase();
+                    let nama = row.cells[1].textContent.toLowerCase();
+                    if (npsn.includes(input) || nama.includes(input)) row.style.display = '';
+                    else row.style.display = 'none';
+                }
             });
         }
     </script>
