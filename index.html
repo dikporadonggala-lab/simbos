@@ -434,7 +434,7 @@
     
     <option value="Kg">Kg</option>
     <option value="Meter">Meter</option>
-    <option value="M2">M² (Meter Persegi)</option>
+    <option value="Kubik">Kubik</option>
     <option value="Batang">Batang</option>
     <option value="Sak">Sak</option>
     <option value="Kaleng">Kaleng</option>
@@ -691,21 +691,53 @@
             safeSetText('dash-real-total', formatUang(globalRealisasi.total)); safeSetText('dash-real-pegawai', formatUang(globalRealisasi.pegawai)); safeSetText('dash-real-barjas', formatUang(globalRealisasi.barjas)); safeSetText('dash-real-modal', formatUang(rMod));
             safeSetText('dash-selisih-total', formatUang(pTot - globalRealisasi.total)); safeSetText('dash-selisih-pegawai', formatUang(pPeg - globalRealisasi.pegawai)); safeSetText('dash-selisih-barjas', formatUang(pBar - globalRealisasi.barjas)); safeSetText('dash-selisih-modal', formatUang(pMod - rMod));
         }
+// ==========================================
+// PLUGIN KUSTOM: PERSENTASE DI ATAS GRAFIK BATANG ADMIN
+// ==========================================
+const adminProgressPlugin = {
+    id: 'adminProgressPlugin',
+    afterDatasetsDraw(chart, args, options) {
+        const { ctx, data, scales: { x, y } } = chart;
+        if (!data.datasets || data.datasets.length < 2) return;
 
-        function renderCharts(role) {
-            if(barChartInstance) barChartInstance.destroy(); if(pieChartInstance) pieChartInstance.destroy();
-            const isDinas = role === 'dinas';
-            if (isDinas) {
-                safeSetText('titleBarChart', 'Progress Realisasi per Kecamatan'); safeSetText('titlePieChart', 'Proporsi Anggaran Terserap');
-                barChartInstance = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'Sudah Input', data: [], backgroundColor: '#4F46E5' }, { label: 'Belum Input', data: [], backgroundColor: '#E5E7EB' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true } } } });
-                pieChartInstance = new Chart(document.getElementById('pieChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pegawai', 'Barjas', 'Peralatan & Mesin', 'Aset Tetap Lain'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#F59E0B', '#A855F7', '#0EA5E9', '#10B981'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%' } });
-            } else {
-                safeSetText('titleBarChart', 'Pagu vs Realisasi'); safeSetText('titlePieChart', 'Proporsi Realisasi (Kategori)');
-                barChartInstance = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: ['Pegawai', 'Barjas', 'Peralatan', 'Aset Lain'], datasets: [{ label: 'Pagu Anggaran', data: [0, 0, 0, 0], backgroundColor: '#E5E7EB', borderRadius: 4 }, { label: 'Realisasi Terserap', data: [0, 0, 0, 0], backgroundColor: '#4F46E5', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
-                pieChartInstance = new Chart(document.getElementById('pieChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pegawai', 'Barjas', 'Peralatan', 'Aset Lain'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#F59E0B', '#A855F7', '#0EA5E9', '#10B981'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '60%' } });
+        ctx.save();
+        ctx.font = 'bold 11px Inter, sans-serif';
+        ctx.fillStyle = '#374151';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        const meta0 = chart.getDatasetMeta(0);
+        const meta1 = chart.getDatasetMeta(1);
+
+        data.labels.forEach((label, i) => {
+            const val0 = data.datasets[0].data[i] || 0;
+            const val1 = data.datasets[1].data[i] || 0;
+            const total = val0 + val1;
+
+            if (total > 0 && meta0.data[i] && meta1.data[i]) {
+                const percentage = Math.round((val0 / total) * 100) + '%';
+                const barTop = Math.min(meta0.data[i].y, meta1.data[i].y);
+                const barX = meta0.data[i].x;
+                ctx.fillText(percentage, barX, barTop - 4);
             }
-        }
+        });
+        ctx.restore();
+    }
+};
 
+function renderCharts(role) {
+    if(barChartInstance) barChartInstance.destroy(); if(pieChartInstance) pieChartInstance.destroy();
+    const isDinas = role === 'dinas';
+    if (isDinas) {
+        safeSetText('titleBarChart', 'Progress Realisasi per Kecamatan'); safeSetText('titlePieChart', 'Proporsi Anggaran Terserap');
+        barChartInstance = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: [], datasets: [{ label: 'Sudah Input', data: [], backgroundColor: '#4F46E5' }, { label: 'Belum Input', data: [], backgroundColor: '#E5E7EB' }] }, options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } }, scales: { x: { stacked: true }, y: { stacked: true } } }, plugins: [adminProgressPlugin] });
+        pieChartInstance = new Chart(document.getElementById('pieChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pegawai', 'Barjas', 'Peralatan & Mesin', 'Aset Tetap Lain'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#F59E0B', '#A855F7', '#0EA5E9', '#10B981'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%' } });
+    } else {
+        safeSetText('titleBarChart', 'Pagu vs Realisasi'); safeSetText('titlePieChart', 'Proporsi Realisasi (Kategori)');
+        barChartInstance = new Chart(document.getElementById('barChart').getContext('2d'), { type: 'bar', data: { labels: ['Pegawai', 'Barjas', 'Peralatan', 'Aset Lain'], datasets: [{ label: 'Pagu Anggaran', data: [0, 0, 0, 0], backgroundColor: '#E5E7EB', borderRadius: 4 }, { label: 'Realisasi Terserap', data: [0, 0, 0, 0], backgroundColor: '#4F46E5', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
+        pieChartInstance = new Chart(document.getElementById('pieChart').getContext('2d'), { type: 'doughnut', data: { labels: ['Pegawai', 'Barjas', 'Peralatan', 'Aset Lain'], datasets: [{ data: [0, 0, 0, 0], backgroundColor: ['#F59E0B', '#A855F7', '#0EA5E9', '#10B981'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '60%' } });
+    }
+}
         function updateCharts(rPeg=0, rBar=0, rAla=0, rAse=0, dataArr=[]) {
             if (currentRole === 'dinas') {
                 if(pieChartInstance) { pieChartInstance.data.datasets[0].data = [globalRealisasi.pegawai, globalRealisasi.barjas, globalRealisasi.alat, globalRealisasi.aset]; pieChartInstance.update(); }
@@ -822,10 +854,75 @@
         async function saveAsetData(e) { e.preventDefault(); const inputQty = parseFloat(document.getElementById('inp-qty').value) || 0; const inputHargaSatuan = parseUang(document.getElementById('inp-harga').value); const totalHargaBaru = inputQty * inputHargaSatuan; const kodefikasiAset = document.getElementById('inp-kodefikasi').value; const tglBast = document.getElementById('inp-tgl-bast').value; const jenisDana = document.getElementById('inp-jenis-dana').value; const itemTahap = jenisDana; let paguKategoriSetahun = 0; if (kodefikasiAset.includes('PERALATAN')) paguKategoriSetahun = globalPagu.alat; else if (kodefikasiAset.includes('ASET TETAP')) paguKategoriSetahun = globalPagu.aset; else if (kodefikasiAset.includes('PEGAWAI')) paguKategoriSetahun = globalPagu.pegawai; else if (kodefikasiAset.includes('BARANG DAN JASA')) paguKategoriSetahun = globalPagu.barjas; let realisasiKategoriTahap1 = 0, realisasiKategoriTahapIni = 0; currentAsetData.forEach(a => { let kod = a.kodefikasi || ''; let isMatch = false; if (kodefikasiAset.includes('PERALATAN') && kod.includes('PERALATAN')) isMatch = true; else if (kodefikasiAset.includes('ASET TETAP') && kod.includes('ASET TETAP')) isMatch = true; else if (kodefikasiAset.includes('PEGAWAI') && kod.includes('PEGAWAI')) isMatch = true; else if (kodefikasiAset.includes('BARANG DAN JASA') && kod.includes('BARANG DAN JASA')) isMatch = true; if (isMatch) { if (getTahapFromItem(a) === '1') { realisasiKategoriTahap1 += (parseInt(a.total_harga) || 0); } if (getTahapFromItem(a) === itemTahap) { realisasiKategoriTahapIni += (parseInt(a.total_harga) || 0); } } }); let paguKategoriTahapIni = paguKategoriSetahun; if (itemTahap === '2') { paguKategoriTahapIni = paguKategoriSetahun - realisasiKategoriTahap1; } let hargaLamaEdit = 0; if (editModeAsetId) { const oldItem = currentAsetData.find(x => x.id.toString() === editModeAsetId.toString()); if (oldItem && getTahapFromItem(oldItem) === itemTahap && (oldItem.kodefikasi || '').includes(kodefikasiAset.substring(0,5))) { hargaLamaEdit = parseInt(oldItem.total_harga) || 0; } } const sisaPaguTersedia = paguKategoriTahapIni - realisasiKategoriTahapIni + hargaLamaEdit; if (totalHargaBaru > sisaPaguTersedia) { let displayTahapName = itemTahap === '1' ? 'Tahap 1' : (itemTahap === '2' ? 'Tahap 2' : (itemTahap === 'afirmasi' ? 'Afirmasi' : 'Kinerja')); Swal.fire({ icon: 'error', title: `Pagu ${displayTahapName} Tidak Mencukupi!`, html: `Sisa Anggaran Tersedia: <b class="text-green-600">${formatUang(sisaPaguTersedia)}</b><br>Total Input Baru: <b class="text-red-500">${formatUang(totalHargaBaru)}</b>` }); return; } let nSp = document.getElementById('inp-no-sp') ? document.getElementById('inp-no-sp').value : '-'; if(nSp === '') nSp = '-'; let tSp = document.getElementById('inp-tgl-sp') ? document.getElementById('inp-tgl-sp').value : '-'; if(tSp === '') tSp = '-'; let nSpv = document.getElementById('inp-no-spv') ? document.getElementById('inp-no-spv').value : '-'; if(nSpv === '') nSpv = '-'; let tSpv = document.getElementById('inp-tgl-spv') ? document.getElementById('inp-tgl-spv').value : '-'; if(tSpv === '') tSpv = '-'; let nBast = document.getElementById('inp-no-bast') ? document.getElementById('inp-no-bast').value : '-'; if(nBast === '') nBast = '-'; const dataAset = { id: editModeAsetId, npsn: currentUser.npsn, nama_sekolah: currentUser.nama, jenjang: currentUser.jenjang, kecamatan: currentUser.kecamatan || "Lainnya", no_sp: nSp, tgl_sp: tSp, penyedia: document.getElementById('inp-penyedia').value, rekening: document.getElementById('inp-rekening').value, kodefikasi: document.getElementById('inp-kodefikasi').value, uraian: document.getElementById('inp-uraian').value, merek: document.getElementById('inp-merek') ? document.getElementById('inp-merek').value : '', satuan: document.getElementById('inp-satuan').value, qty: document.getElementById('inp-qty').value, harga_satuan: inputHargaSatuan, total_harga: totalHargaBaru, no_bast: nBast, tgl_bast: tglBast, jenis_dana: jenisDana, no_spv: nSpv, tgl_spv: tSpv }; showLoading('Menyimpan Data...'); try { const res = await apiCall(editModeAsetId ? 'updateDataAset' : 'simpanDataAset', dataAset); hideLoading(); if(res.success) { Swal.fire('Sukses', `Data tersimpan!`, 'success'); document.getElementById('form-input-aset').reset(); safeSetText('txt-total-harga', 'Rp 0'); safeSetHTML('info-sisa-pagu', 'Sisa Anggaran: <span class="font-bold text-gray-400">-</span>'); const asetLinks = document.querySelectorAll('.nav-link'); let targetLink = null; asetLinks.forEach(link => { if (link.textContent.includes('Data')) targetLink = link; }); switchView('view-data-aset', targetLink); loadDataAset(); } else { Swal.fire('Gagal', res.message, 'error'); } } catch (err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
         function hapusAset(id) { Swal.fire({ title: 'Hapus Data?', text: "Data tidak dapat dikembalikan!", icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'Ya, Hapus' }).then(async (result) => { if (result.isConfirmed) { showLoading('Menghapus...'); try { const res = await apiCall('hapusDataAset', { id: id }); hideLoading(); if(res.success) { Swal.fire('Terhapus!', 'Data dihapus.', 'success'); loadDataAset(); } else Swal.fire('Gagal', res.message, 'error'); } catch (err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } } }); }
 
-        // --- BAST VIA LINK ---
-        function switchUploadTahap(t) { uploadTahap = t; document.getElementById('tab-up-1').className = t==='1'?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all'; document.getElementById('tab-up-2').className = t==='2'?'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all':'flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all'; if(allDokumenUrls) { ['pegawai', 'barjas', 'peralatan', 'aset'].forEach(k => { let dbKey = k==='aset'?'aset_lain':k; let link = t==='1' ? allDokumenUrls[dbKey+'_t1'] : allDokumenUrls[dbKey+'_t2']; let inp = document.getElementById('link-'+k); let btn = document.getElementById('btn-dok-'+k); inp.value = link || ''; if(link && link.trim() !== '') { btn.innerHTML = '<i class="fa-solid fa-link mr-1"></i> Lihat Dokumen'; btn.onclick = () => window.open(link, '_blank'); btn.className = 'w-full bg-indigo-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-indigo-600 transition-colors mt-2'; inp.readOnly = true; inp.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed'); } else { let btnClass = 'w-full bg-primary text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-indigo-600 transition-colors'; if(k === 'pegawai') btnClass = 'w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-amber-600 transition-colors'; if(k === 'barjas') btnClass = 'w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-purple-600 transition-colors'; if(k === 'peralatan') btnClass = 'w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-sky-600 transition-colors'; if(k === 'aset') btnClass = 'w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-emerald-600 transition-colors'; btn.innerHTML = 'Kirim Dokumen'; btn.onclick = () => simpanLinkDokumen(k); btn.className = btnClass; inp.readOnly = false; inp.classList.remove('bg-gray-100', 'text-gray-500', 'cursor-not-allowed'); } }); } }
-        async function loadDokumenUrls() { try { const res = await apiCall('getDokumenUrls', { npsn: currentUser.npsn }); if(res.success) { allDokumenUrls = res.data; switchUploadTahap(uploadTahap); } } catch(err){} }
-        async function simpanLinkDokumen(type) { const link = document.getElementById('link-'+type).value; if(!link) { Swal.fire('Perhatian', 'Link tidak boleh kosong!', 'warning'); return; } showLoading(`Menyimpan link...`); try { const res = await apiCall('simpanLinkDokumen', { npsn: currentUser.npsn, tipe: type, tahap: uploadTahap, linkUrl: link }); hideLoading(); if(res.success) { Swal.fire('Sukses', 'Link disimpan!', 'success'); loadDokumenUrls(); } else Swal.fire('Gagal', res.message, 'error'); } catch(err) { hideLoading(); Swal.fire('Error', err.message, 'error'); } }
+       // --- BAST VIA LINK ---
+function switchUploadTahap(t) { 
+    uploadTahap = t; 
+    document.getElementById('tab-up-1').className = t === '1' ? 'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all' : 'flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all'; 
+    document.getElementById('tab-up-2').className = t === '2' ? 'flex-1 py-2 text-sm font-bold rounded-md bg-white text-primary shadow-sm transition-all' : 'flex-1 py-2 text-sm font-bold rounded-md text-gray-500 hover:text-gray-700 transition-all'; 
+    
+    if (allDokumenUrls) { 
+        ['pegawai', 'barjas', 'peralatan', 'aset'].forEach(k => { 
+            let dbKey = (k === 'aset') ? 'aset_lain' : k; 
+            let link = t === '1' ? allDokumenUrls[dbKey + '_t1'] : allDokumenUrls[dbKey + '_t2']; 
+            let inp = document.getElementById('link-' + k); 
+            let btn = document.getElementById('btn-dok-' + k); 
+            if(!inp || !btn) return;
+
+            inp.value = link || ''; 
+            if (link && link.trim() !== '') { 
+                btn.innerHTML = '<i class="fa-solid fa-link mr-1"></i> Lihat Dokumen'; 
+                btn.onclick = () => window.open(link, '_blank'); 
+                btn.className = 'w-full bg-indigo-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-indigo-600 transition-colors mt-2 cursor-pointer'; 
+                inp.readOnly = true; 
+                inp.classList.add('bg-gray-100', 'text-gray-500', 'cursor-not-allowed'); 
+            } else { 
+                let btnClass = 'w-full bg-primary text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-indigo-600 transition-colors cursor-pointer'; 
+                if (k === 'pegawai') btnClass = 'w-full bg-amber-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-amber-600 transition-colors cursor-pointer'; 
+                if (k === 'barjas') btnClass = 'w-full bg-purple-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-purple-600 transition-colors cursor-pointer'; 
+                if (k === 'peralatan') btnClass = 'w-full bg-sky-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-sky-600 transition-colors cursor-pointer'; 
+                if (k === 'aset') btnClass = 'w-full bg-emerald-500 text-white py-2 rounded-lg text-xs font-semibold shadow-md hover:bg-emerald-600 transition-colors cursor-pointer'; 
+                
+                btn.innerHTML = 'Kirim Dokumen'; 
+                btn.onclick = () => simpanLinkDokumen(k); 
+                btn.className = btnClass; 
+                inp.readOnly = false; 
+                inp.classList.remove('bg-gray-100', 'text-gray-500', 'cursor-not-allowed'); 
+            } 
+        }); 
+    } 
+}
+
+async function loadDokumenUrls() { 
+    try { 
+        const res = await apiCall('getDokumenUrls', { npsn: currentUser.npsn }); 
+        if(res.success) { 
+            allDokumenUrls = res.data; 
+            switchUploadTahap(uploadTahap); 
+        } 
+    } catch(err){} 
+}
+
+async function simpanLinkDokumen(type) { 
+    const link = document.getElementById('link-' + type).value; 
+    if (!link) { Swal.fire('Perhatian', 'Link tidak boleh kosong!', 'warning'); return; } 
+    showLoading(`Menyimpan link...`); 
+    try { 
+        // --- INI BAGIAN YANG DIPERBAIKI (Menerjemahkan kata 'aset' ke 'aset_lain') ---
+        let tipeKolom = (type === 'aset') ? 'aset_lain' : type;
+        
+        const res = await apiCall('simpanLinkDokumen', { npsn: currentUser.npsn, tipe: tipeKolom, tahap: uploadTahap, linkUrl: link }); 
+        hideLoading(); 
+        if (res.success) { 
+            Swal.fire('Sukses', 'Link disimpan!', 'success'); 
+            loadDokumenUrls(); 
+        } else {
+            Swal.fire('Gagal', res.message, 'error');
+        }
+    } catch(err) { 
+        hideLoading(); 
+        Swal.fire('Error', err.message, 'error'); 
+    } 
+}
 
         // --- LPJ ---
         async function fetchMyLPJData() { try { const res = await apiCall('getLPJSekolah', { npsn: currentUser.npsn }); if(res.success) { allLpjData = res.data; renderLPJSekolahUI(); } } catch(e) {} }
@@ -1157,19 +1254,46 @@
         }
 
         function setupProgDocBtn(type, link, npsn, tahap) {
-            let c = document.getElementById('container-prog-doc-'+type); let l = document.getElementById('lbl-prog-doc-'+type);
-            let b1 = document.getElementById('btn-prog-doc-'+type); let b2 = document.getElementById('btn-prog-tolak-'+type);
-            if(link && link.trim() !== '') {
-                c.classList.remove('hidden'); c.classList.add('flex'); l.classList.add('hidden');
-                b1.onclick = () => window.open(link, '_blank'); b2.onclick = () => tolakDokumenAset(npsn, type, tahap);
-            } else { c.classList.add('hidden'); c.classList.remove('flex'); l.classList.remove('hidden'); l.textContent = 'Belum Upload'; }
-        }
+    let c = document.getElementById('container-prog-doc-'+type); let l = document.getElementById('lbl-prog-doc-'+type);
+    let b1 = document.getElementById('btn-prog-doc-'+type); let b2 = document.getElementById('btn-prog-tolak-'+type);
+    if(link && link.trim() !== '') {
+        c.classList.remove('hidden'); c.classList.add('flex'); l.classList.add('hidden');
+        b1.onclick = () => window.open(link, '_blank'); b2.onclick = () => tolakDokumenAset(npsn, type, tahap);
+    } else { c.classList.add('hidden'); c.classList.remove('flex'); l.classList.remove('hidden'); l.textContent = 'Belum Upload'; }
+}
 
-        function tolakDokumenAset(npsn, type, tahap) {
-            Swal.fire({title:'Tolak Dokumen?', text:'Link dihapus & sekolah harus upload ulang.', icon:'warning', showCancelButton:true, confirmButtonColor:'#ef4444', confirmButtonText:'Ya, Tolak'}).then(async (res)=>{
-                if(res.isConfirmed) { showLoading('Menghapus link...'); try { const r = await apiCall('simpanLinkDokumen', {npsn:npsn, tipe:type, tahap:tahap, linkUrl:''}); hideLoading(); if(r.success) { Swal.fire('Ditolak', 'Dokumen berhasil ditolak.', 'success'); selectSchoolProgres(npsn); } else Swal.fire('Gagal', r.message, 'error'); }catch(e){ hideLoading(); Swal.fire('Error', e.message, 'error'); } }
-            });
+function tolakDokumenAset(npsn, type, tahap) {
+    Swal.fire({
+        title: 'Tolak Dokumen?', 
+        text: 'Link dihapus & sekolah harus upload ulang.', 
+        icon: 'warning', 
+        showCancelButton: true, 
+        confirmButtonColor: '#ef4444', 
+        confirmButtonText: 'Ya, Tolak'
+    }).then(async (res) => {
+        if (res.isConfirmed) { 
+            showLoading('Menghapus link...'); 
+            try { 
+                // --- BAGIAN INI YANG PENTING AGAR DINAS BISA TOLAK DOKUMEN ---
+                let tipeKolom = type;
+                if (type === 'alat') tipeKolom = 'peralatan';
+                if (type === 'aset') tipeKolom = 'aset_lain';
+
+                const r = await apiCall('simpanLinkDokumen', { npsn: npsn, tipe: tipeKolom, tahap: tahap, linkUrl: '' }); 
+                hideLoading(); 
+                if (r.success) { 
+                    Swal.fire('Ditolak', 'Dokumen berhasil ditolak.', 'success'); 
+                    selectSchoolProgres(npsn); 
+                } else {
+                    Swal.fire('Gagal', r.message, 'error');
+                }
+            } catch(e) { 
+                hideLoading(); 
+                Swal.fire('Error', e.message, 'error'); 
+            } 
         }
+    });
+}
 // ==========================================
         // FITUR PENCARIAN DATA & LPJ (ADMIN DINAS)
         // ==========================================
